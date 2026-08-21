@@ -16,8 +16,10 @@
 
 ## Reproducibility record
 
-- Checkpoint implementation commit: recorded after the implementation commit
-  is created (a commit cannot contain its own hash).
+- Background implementation commit:
+  `600c3677290bb05e8ac0901b945f7f98806af98c`.
+- Annotated checkpoint tag: `background-v0.1-provisional` (placed on the
+  metadata-only commit that records the implementation hash).
 - Runtime: Python 3.14.3; NumPy 2.4.3; SciPy 1.17.1;
   Matplotlib 3.10.8; pytest 9.1.0.
 - Sequence command:
