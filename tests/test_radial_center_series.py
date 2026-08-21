@@ -1,16 +1,11 @@
 import pytest
 
-from background.ell_boson_star import solve_by_continuation
 from radial.center_series import center_d, center_series
 from radial.coefficients import RadialBackground
 
 
-@pytest.fixture(scope="module")
-def radial_background():
-    return RadialBackground(solve_by_continuation(1, 0.08))
-
-
-def test_operator_consistent_amplitude_and_center_data(radial_background):
+def test_operator_consistent_amplitude_and_center_data(ell1_background_a008):
+    radial_background = RadialBackground(ell1_background_a008)
     expected = (
         1.0
         + (2.0 * radial_background.omega**2 - 2.4e-4)

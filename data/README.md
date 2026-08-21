@@ -14,8 +14,10 @@ radial arrays. The sequence CSV is generated directly from solved profiles.
 The compact JSON radius audit is versioned because it documents a literature
 discrepancy central to the provisional Gate A decision.
 `radial_benchmarks.csv` is also versioned; it records the background checkpoint,
-integration settings, eigenvalues, center coefficients, residuals, and node
-counts used for the radial validation.
+global-BVP formulation, eigenvalues, center coefficients, direct physical
+boundary residuals, collocation residuals, adaptive node counts, and environment
+lock used for radial certification. Legacy affine residual normalizations are
+not included.
 
 Regenerate it with `python -m radial.diagnostics --output
 data/radial_benchmarks.csv`. The full Radau/DOP853 matrix is intentionally slow.

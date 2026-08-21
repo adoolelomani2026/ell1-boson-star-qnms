@@ -10,9 +10,10 @@ published perturbation benchmarks pass.
 - Gate A (background): in progress. The collocation solver reproduces the
   `ell=1`, `a10=0.08` frequency and the maximum-mass model; independent shooting
   and the published effective-radius convention still need resolution.
-- Gate B (perturbation benchmarks): radial `ell=1` ground modes are
-  provisionally reproduced, including the stability crossing; the ordinary
-  `ell=0` QNM benchmark remains unimplemented.
+- Gate B (perturbation benchmarks): radial `ell=1` physics is reproduced with a
+  nonlinear global BVP, including the stability crossing. Numerical
+  certification remains provisional until a second stable formulation is
+  implemented; the ordinary `ell=0` QNM benchmark remains unimplemented.
 - Gates C-H: not yet implemented.
 
 The conventions are fixed in [CONVENTIONS.md](CONVENTIONS.md). The equations and

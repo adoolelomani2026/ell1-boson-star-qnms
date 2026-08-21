@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import warnings
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -172,6 +173,12 @@ def solve_radial_mode(
     atol: float = 1e-12,
     sigma2_bracket: tuple[float, float] = (2e-4, 3e-4),
 ) -> RadialMode:
+    warnings.warn(
+        "solve_radial_mode uses cancellation-prone affine outward shooting and "
+        "is retained only for historical comparison; use solve_radial_bvp",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     background = RadialBackground(solution)
     del center_c_guess  # center_c is eliminated exactly from the linear basis.
 

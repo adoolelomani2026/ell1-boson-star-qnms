@@ -39,18 +39,28 @@ class RadialBackground:
         self.adm_mass = solution.adm_mass
         self.r_min = float(solution.r[0])
         self.r_max = float(solution.r[-1])
-        self._splines = tuple(
-            PchipInterpolator(solution.r, field, extrapolate=False)
-            for field in (solution.mass, solution.alpha, solution.psi, solution.dpsi)
-        )
+        # Interpolate the regular field u=psi/r^ell once, then obtain both psi
+        # and psi' from that same interpolant. This avoids the derivative
+        # inconsistency caused by independently interpolating psi and psi'.
+        regular_u = solution.psi / solution.r**solution.ell
+        self._mass_spline = PchipInterpolator(solution.r, solution.mass, extrapolate=False)
+        self._alpha_spline = PchipInterpolator(solution.r, solution.alpha, extrapolate=False)
+        self._u_spline = PchipInterpolator(solution.r, regular_u, extrapolate=False)
+        self._du_spline = self._u_spline.derivative()
 
-    def point(self, radius: float) -> BackgroundPoint:
-        if not self.r_min <= radius <= self.r_max:
-            raise ValueError(f"radius {radius} outside background domain")
-        mass, alpha, psi, dpsi = (float(spline(radius)) for spline in self._splines)
-        fields = np.array([[mass], [alpha], [psi], [dpsi]])
-        derivatives = _rhs(np.array([radius]), fields, self.omega, self.ell)[:, 0]
-        mass_prime, alpha_prime, _, ddpsi = (float(value) for value in derivatives)
+    def arrays(self, radius: np.ndarray):
+        radius = np.asarray(radius, dtype=float)
+        if np.any(radius < self.r_min) or np.any(radius > self.r_max):
+            raise ValueError("radius outside background domain")
+        mass = self._mass_spline(radius)
+        alpha = self._alpha_spline(radius)
+        u = self._u_spline(radius)
+        du = self._du_spline(radius)
+        psi = radius**self.ell * u
+        dpsi = self.ell * radius ** (self.ell - 1) * u + radius**self.ell * du
+        fields = np.vstack((mass, alpha, psi, dpsi))
+        derivatives = _rhs(radius, fields, self.omega, self.ell)
+        mass_prime, alpha_prime, _, ddpsi = derivatives
         gamma2 = 1.0 / (1.0 - 2.0 * mass / radius)
         gamma = np.sqrt(gamma2)
         log_alpha_prime = alpha_prime / alpha
@@ -71,6 +81,27 @@ class RadialBackground:
                 * (gamma * gamma_prime * psi**2 + gamma2 * psi * dpsi)
             )
         )
+        return (
+            mass,
+            alpha,
+            gamma,
+            psi,
+            dpsi,
+            ddpsi,
+            u,
+            du,
+            log_alpha_prime,
+            log_gamma_prime,
+            log_gamma_prime_derivative,
+        )
+
+    def point(self, radius: float) -> BackgroundPoint:
+        if not self.r_min <= radius <= self.r_max:
+            raise ValueError(f"radius {radius} outside background domain")
+        values = self.arrays(np.array([radius]))
+        mass, alpha, gamma, psi, dpsi, ddpsi, u, du, log_alpha_prime, log_gamma_prime, log_gamma_prime_derivative = (
+            float(value[0]) for value in values
+        )
         return BackgroundPoint(
             r=radius,
             mass=mass,
@@ -79,8 +110,8 @@ class RadialBackground:
             psi=psi,
             dpsi=dpsi,
             ddpsi=ddpsi,
-            u=psi / radius**self.ell,
-            du=dpsi / radius**self.ell - self.ell * psi / radius ** (self.ell + 1),
+            u=u,
+            du=du,
             log_alpha_prime=log_alpha_prime,
             log_gamma_prime=log_gamma_prime,
             log_gamma_prime_derivative=log_gamma_prime_derivative,
@@ -91,51 +122,53 @@ def pulsation_rhs(
     radius: float, state: np.ndarray, sigma2: float, background: RadialBackground
 ) -> np.ndarray:
     """Eqs. (A2a)-(A2b) / (70a)-(70b) of arXiv:2103.15012."""
-    phi, dphi, delta_l, ddelta_l = state
-    point = background.point(radius)
+    scalar_input = np.ndim(radius) == 0
+    radii = np.atleast_1d(np.asarray(radius, dtype=float))
+    values = np.asarray(state, dtype=float)
+    if values.ndim == 1:
+        values = values[:, None]
+    phi, dphi, delta_l, ddelta_l = values
+    _, alpha, gamma, psi, dpsi, _, _, _, la, lg, lg_derivative = background.arrays(radii)
     ell = background.ell
     kappa = background.kappa
     omega = background.omega
-    alpha = point.alpha
-    gamma2 = point.gamma**2
+    gamma2 = gamma**2
     inv_gamma2 = 1.0 / gamma2
-    mu_l2 = 1.0 + ell * (ell + 1) / radius**2
-    psi_ratio = point.dpsi / point.psi
-    la = point.log_alpha_prime
-    lg = point.log_gamma_prime
+    mu_l2 = 1.0 + ell * (ell + 1) / radii**2
+    psi_ratio = dpsi / psi
 
     phi_coefficient = 2.0 * gamma2 * (
         inv_gamma2 * psi_ratio**2
-        + kappa * radius * mu_l2 * point.psi * point.dpsi
+        + kappa * radii * mu_l2 * psi * dpsi
         + mu_l2
         + (2.0 * omega**2 - sigma2) / (2.0 * alpha**2)
     )
     l_in_phi = -2.0 * (
-        1.0 / radius**2
-        + 2.0 / radius * (psi_ratio - lg)
-        + kappa * point.psi * point.dpsi * (la - lg + psi_ratio + 1.0 / radius)
-        - kappa * gamma2 * point.psi**2 * (mu_l2 - omega**2 / alpha**2)
+        1.0 / radii**2
+        + 2.0 / radii * (psi_ratio - lg)
+        + kappa * psi * dpsi * (la - lg + psi_ratio + 1.0 / radii)
+        - kappa * gamma2 * psi**2 * (mu_l2 - omega**2 / alpha**2)
     )
     ddphi = (
-        -(2.0 / radius + la - lg) * dphi
-        - 2.0 / radius * ddelta_l
+        -(2.0 / radii + la - lg) * dphi
+        - 2.0 / radii * ddelta_l
         + phi_coefficient * phi
         + l_in_phi * delta_l
     )
 
-    dphi_in_l = -2.0 * (2.0 * psi_ratio - radius * gamma2 * mu_l2)
+    dphi_in_l = -2.0 * (2.0 * psi_ratio - radii * gamma2 * mu_l2)
     dl_derivative = -(4.0 * psi_ratio + 3.0 * (la - lg))
     phi_in_l = -2.0 * gamma2 * (
         2.0 * inv_gamma2 * psi_ratio**2
-        - radius * mu_l2 * (2.0 * psi_ratio + 2.0 * la + lg)
-        + ell * (ell + 1) / radius**2
+        - radii * mu_l2 * (2.0 * psi_ratio + 2.0 * la + lg)
+        + ell * (ell + 1) / radii**2
     )
     l_coefficient = 2.0 * (
-        2.0 * kappa * point.dpsi**2
-        - (psi_ratio - 1.0 / radius + la - lg) ** 2
-        + 2.0 / radius**2
-        - (4.0 * la / radius - lg / radius)
-        + point.log_gamma_prime_derivative
+        2.0 * kappa * dpsi**2
+        - (psi_ratio - 1.0 / radii + la - lg) ** 2
+        + 2.0 / radii**2
+        - (4.0 * la / radii - lg / radii)
+        + lg_derivative
         - gamma2 * (mu_l2 - (2.0 * omega**2 - sigma2) / (2.0 * alpha**2))
     )
     dddelta_l = (
@@ -144,4 +177,5 @@ def pulsation_rhs(
         + phi_in_l * phi
         + l_coefficient * delta_l
     )
-    return np.array((dphi, ddphi, ddelta_l, dddelta_l))
+    result = np.vstack((dphi, ddphi, ddelta_l, dddelta_l))
+    return result[:, 0] if scalar_input else result
