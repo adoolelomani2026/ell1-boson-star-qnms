@@ -7,6 +7,6 @@ build/
 dist/
 data/*.npz
 data/*.csv
+!data/radial_benchmarks.csv
 figures/*.pdf
 figures/*.png
-

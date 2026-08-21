@@ -48,11 +48,28 @@ reproduces representative profiles and this radius discrepancy is resolved.
 
 ## Not yet implemented
 
-- Gate B: radial ell=1 perturbation eigenfrequency and ordinary ell=0 QNM
-  benchmarks.
+- Gate B remainder: ordinary ell=0 QNM benchmark. The radial ell=1 solver is
+  now implemented separately from the tagged background checkpoint.
 - Gate C: fully relativistic nonradial harmonic reduction.
 - Gates D-H: new QNMs, parameter campaign, physical conclusions, and paper.
 
-The next hard milestone is the radial pulsation solver for the same
-`a_1^0=0.08` background, targeting `sigma_0^2=2.40e-4`, followed by an
-independent ordinary-boson-star QNM benchmark.
+The next hard milestone is an independent ordinary-boson-star QNM benchmark.
+
+## Radial pulsation progress after the background checkpoint
+
+- The Appendix system for `(delta varphi_11, delta L)` is implemented with
+  analytic background derivatives and `sigma2` as the eigenvalue.
+- At `a_1^0=0.08`, Radau gives `sigma2=2.40095e-4` and
+  `center_c=-2.78327e-2` at `r_max=25`, with zero resolved interior nodes.
+- The Radau domain plateau at `r_max=25,30,40` spans less than `0.03%`.
+- DOP853 and Radau independently reproduce the published rounded values.
+- The computed ground eigenvalue is positive at `a_1^0=0.050`, approximately
+  zero at `0.100`, and negative at `0.105`.
+- Detailed solver settings and results are versioned in
+  `data/radial_benchmarks.csv`.
+
+The center-series coefficient called `a0` in the Appendix must equal the
+actual leading coefficient of the background variable used in the ODE. For the
+validated repository normalization this is `a_1^0/kappa = 0.08/3`, not `0.24`.
+Using `0.24` leaves a non-vanishing `O(1)` center-operator residual; the
+difference is exactly accounted for by the quadratic `6 kappa a0^2` term.

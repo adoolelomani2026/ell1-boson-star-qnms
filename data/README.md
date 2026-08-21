@@ -13,4 +13,9 @@ The profile archive contains conventions and solver diagnostics alongside the
 radial arrays. The sequence CSV is generated directly from solved profiles.
 The compact JSON radius audit is versioned because it documents a literature
 discrepancy central to the provisional Gate A decision.
+`radial_benchmarks.csv` is also versioned; it records the background checkpoint,
+integration settings, eigenvalues, center coefficients, residuals, and node
+counts used for the radial validation.
 
+Regenerate it with `python -m radial.diagnostics --output
+data/radial_benchmarks.csv`. The full Radau/DOP853 matrix is intentionally slow.
