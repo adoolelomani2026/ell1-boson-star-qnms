@@ -1,0 +1,16 @@
+{
+  "ell": 1,
+  "a0": 0.1,
+  "omega": 0.8356721511964463,
+  "adm_mass_finite": 1.1763866475517741,
+  "adm_mass_extrapolated": 1.176386647551774,
+  "eta_at_published_radius": 0.9990484910332237,
+  "published_radius": 12.75,
+  "r99_mass": 10.178176588704583,
+  "r999_mass": 12.697043244943343,
+  "r99_proper_energy": 10.173811112742383,
+  "r99_noether_charge": 10.135752366928367,
+  "r99_mass_finite": 10.178176588704583,
+  "r99_mass_extrapolated": 10.178176588704561,
+  "extrapolation_anchor": 35.17885237384811
+}

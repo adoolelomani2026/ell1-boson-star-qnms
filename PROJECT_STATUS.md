@@ -1,0 +1,56 @@
+# Project status and publication gates
+
+## Completed in the initial implementation
+
+- Repository layout, frozen conventions, environment specification, and tests.
+- Nonlinear collocation solver for static, nodeless ell-boson-star backgrounds.
+- Physical bound-state restriction `0 < omega/mu < 1` and Schwarzschild plus
+  massive-tail outer boundary conditions.
+- Reproduction of the `ell=1`, `a_1^0=0.08` frequency from Table II of
+  arXiv:2103.15012: computed `0.8518974`, tabulated `0.8519`.
+- A 21-model `ell=1` sequence from `a_1^0=0.02` through `0.12`. Its grid maximum
+  is at `a_1^0=0.10`, with `omega=0.8356722` and `M=1.1763866`, consistent with
+  the published maximum model (`omega about 0.836`, `M about 1.18`).
+- Outer-domain comparison at `r_max=60, 80, 100`: the benchmark frequency and
+  ADM mass agree beyond ten and nine decimal places, respectively.
+
+## Reproducibility record
+
+- Checkpoint implementation commit: recorded after the implementation commit
+  is created (a commit cannot contain its own hash).
+- Runtime: Python 3.14.3; NumPy 2.4.3; SciPy 1.17.1;
+  Matplotlib 3.10.8; pytest 9.1.0.
+- Sequence command:
+  `python -m background.ell_boson_star scan --ell 1 --a0-min 0.02 --a0-max 0.12 --count 21 --output data/ell1_sequence.csv`.
+- Radius-audit command:
+  `python -m background.radius_audit --a0 0.10 --output data/background_radius_audit.json`.
+- BVP settings: `r_max=80`, 800 initial mesh points, relative collocation
+  tolerance `1e-7`, and a maximum of 40,000 adaptive nodes.
+- Outer-domain comparison: `r_max=60, 80, 100`, with 800 initial points and
+  tolerance `1e-7` in each run.
+- Large profiles (`*.npz`) and sequences (`*.csv`) are regenerated and ignored
+  by Git. The small JSON radius-audit record is committed.
+
+## Unresolved published-radius discrepancy
+
+For the maximum-mass model, the literal radius satisfying `M(r)=0.99 M_T` is
+about `10.18`, whereas the background paper explicitly defines that quantity
+but quotes `R(99%)=12.75`. The latter is close to this implementation's
+`M(r)=0.999 M_T` radius. This is classified as an unresolved numerical or
+labeling discrepancy, not an alternative published convention and not yet a
+published error. Both `R99` and `R999` are stored, and the committed audit also
+records proper-energy, Noether-charge, finite-mass, and extrapolated-mass radii.
+
+Gate A remains **in progress**, not passed, until an independent shooting solver
+reproduces representative profiles and this radius discrepancy is resolved.
+
+## Not yet implemented
+
+- Gate B: radial ell=1 perturbation eigenfrequency and ordinary ell=0 QNM
+  benchmarks.
+- Gate C: fully relativistic nonradial harmonic reduction.
+- Gates D-H: new QNMs, parameter campaign, physical conclusions, and paper.
+
+The next hard milestone is the radial pulsation solver for the same
+`a_1^0=0.08` background, targeting `sigma_0^2=2.40e-4`, followed by an
+independent ordinary-boson-star QNM benchmark.
