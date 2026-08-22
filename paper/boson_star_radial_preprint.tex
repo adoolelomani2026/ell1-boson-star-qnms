@@ -12,7 +12,6 @@
 \usepackage{fancyhdr}
 \usepackage{enumitem}
 \usepackage{url}
-\usepackage{seqsplit}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage[section]{placeins}
@@ -512,9 +511,9 @@ The radial discretizations also share the same physical background interface. Th
 
 Finally, this manuscript does not report ordinary $\ell=0$ boson-star quasinormal modes or new nonradial $\ell=1$ modes. The massive-scalar sideband sheets, outgoing gravitational asymptotics, gauge constraints, special $J=0$ and $J=1$ sectors, and complex-frequency root-counting protocol remain future work. The present result is the certification layer for that program.
 
-\section{Reproducibility, gate decisions, and data}\label{sec:repro}
+\section{Reproducibility and scope of the release}\label{sec:repro}
 
-The numerical implementation is versioned and the generated tables carry runtime provenance. The implementation commit used for the radial certification is \texttt{\seqsplit{a5f1385069ff4fa0886e5584464f0b18232e4c3a}}. The preprint source commit is \texttt{\seqsplit{@@COMMIT@@}}, and its source tree is \texttt{\seqsplit{@@TREE@@}}. The tagged numerical release is \nolinkurl{radial-v0.3.1-hardened}. The report environment uses Python~@@PYTHON@@, NumPy~@@NUMPY@@, and SciPy~@@SCIPY@@.
+All numerical results reported here can be regenerated from the accompanying code and supporting data. The archived tables retain the physical model, radial domain, numerical resolution, background representation, eigenvalue, node count, residual measures, conditioning diagnostic, and cross-method overlap for every certification run. This information is sufficient to trace each quoted result without interrupting the scientific discussion with software bookkeeping.
 
 \begin{table}[t]
 \centering
@@ -533,15 +532,7 @@ Production nonradial & Not certified & Multidomain complex-frequency system, bra
 \end{tabularx}
 \end{table}
 
-The principal machine-readable files are listed below.
-\begin{itemize}[nosep,leftmargin=2em]
-\item \path{data/background_radius_audit.json} and \path{data/radial_benchmarks.csv};
-\item \path{data/radial_uncertainty.json} and \path{data/radial_overtone_uncertainty.json};
-\item \path{data/report_radial_stability.csv}.
-\end{itemize}
-The certification CSV contains 27 rows with solver formulation, background representation, domain, resolution, eigenvalue, node count, BVP residuals, scaled and unscaled pencil residuals, left/right condition number, overlap, Git commit and tree, runtime versions, platform, and the version-pin hash.
-
-The full automated suite contains 20 tests. It covers background benchmarks and domains, Hermite derivative consistency, radial center behavior, physical outer conditions, stability crossing, Chebyshev differentiation, broad spectral resolution, PCHIP rejection, higher-mode nodes, overlap tracking, independent matrix assembly, center and outer rows, equilibration, and BVP--spectral eigenfunction agreement.
+The supporting material includes the equilibrium and radial benchmark data, the radius-definition audit, and the separate uncertainty budgets for the ground mode and first overtone. The implementation was exercised by a 20-test verification suite covering background benchmarks and domain dependence, interpolation consistency, regular center behavior, physical outer conditions, the stability crossing, spectral differentiation, resolution envelopes, higher-mode node counting, overlap tracking, independent matrix assembly, equilibration, and BVP--spectral eigenfunction agreement.
 
 \section{Conclusions}
 
@@ -557,9 +548,9 @@ The radial portion of the perturbation benchmark gate therefore passes. The next
 
 \noindent\textbf{Competing interests.} None declared.
 
-\noindent\textbf{Data availability.} Machine-readable background, radial certification, stability-curve, and uncertainty data are included in the tagged repository described in Sec.~\ref{sec:repro}.
+\noindent\textbf{Data availability.} Machine-readable background, radial certification, stability-curve, and uncertainty data accompany this manuscript and will be deposited in a public archive upon submission.
 
-\noindent\textbf{Code availability.} The source, tests, report generator, and complete Git history are included in the project release. A public archival URL and DOI will be assigned before journal submission.
+\noindent\textbf{Code availability.} The numerical source and verification tests accompany this manuscript. A public archival URL and DOI will be assigned before journal submission.
 
 \noindent\textbf{Author contribution.} Adel H. Al-Yoorby: conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, and writing.
 
@@ -608,18 +599,11 @@ Overlap & Normalized physical-field inner product & Mode identity across methods
 \end{tabularx}
 \end{table}
 
-\section{Reproduction commands and data schema}
+\section{Reproducibility and data coverage}
 
-The principal commands are
-\begin{verbatim}
-python -m radial.diagnostics --output data/radial_benchmarks.csv \
-  --uncertainty-output data/radial_uncertainty.json \
-  --overtone-uncertainty-output data/radial_overtone_uncertainty.json
-python paper/build_preprint.py
-python -m pytest -q
-\end{verbatim}
+The accompanying material provides the inputs and tabulated outputs needed to reproduce the equilibrium sequence, radius audit, radial eigenvalues, uncertainty estimates, and cross-method comparisons. It also includes the numerical source and verification tests. These materials are supplementary to the manuscript rather than part of its scientific narrative.
 
-The future nonradial catalog will extend the present schema with background identifier, $a_{1}^{0}$, $\omega_{s}$, mass, charge, radius, compactness, total angular momentum $J$, parity, mode identifier, complex frequency, dominant channel, mode character, resolution, solver, residual, condition number, uncertainty, and Git commit. No such nonradial rows are claimed in the present data release.
+A future nonradial catalog will add the background parameters, total angular momentum $J$, parity, mode identifier, complex frequency, dominant channel, mode character, numerical resolution, residual, conditioning diagnostic, and uncertainty. No such nonradial frequencies are claimed in the present release.
 
 \begin{table}[h]
 \centering
@@ -630,7 +614,7 @@ The future nonradial catalog will extend the present schema with background iden
 \toprule
 Check & Status \\
 \midrule
-Portable tagged source and complete Git bundle & Verified \\
+Reproducibility package & Verified \\
 Background frequency and maximum-mass benchmarks & Reproduced \\
 Literal $R_{99}$ versus $R_{999}$ audit & Recorded; discrepancy open \\
 Global BVP ground and first overtone & Reproduced \\
