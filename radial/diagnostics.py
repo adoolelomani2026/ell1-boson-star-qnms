@@ -255,11 +255,8 @@ def main() -> None:
     components = {
         "outer_domain_r30_to_r40": abs(bvp_modes[0.08, 30.0].sigma2 - reference),
         "bvp_to_spectral_n80": abs(spectral_modes[80].sigma2 - reference),
-        "spectral_resolution_envelope_n50_to_n160": max(
-            mode.sigma2 for mode in spectral_modes.values()
-        )
-        - min(
-            mode.sigma2 for mode in spectral_modes.values()
+        "spectral_resolution_max_displacement_from_bvp_n50_to_n160": max(
+            abs(mode.sigma2 - reference) for mode in spectral_modes.values()
         ),
         "hermite_to_pchip": abs(pchip_mode.sigma2 - reference),
     }
@@ -286,10 +283,10 @@ def main() -> None:
         "bvp_to_spectral_at_r60_n160": abs(
             r60_selected[1][1].sigma2 - overtone_reference
         ),
-        "spectral_resolution_envelope_r40_n50_to_n160": max(
-            mode.sigma2 for mode in spectral_overtones.values()
-        )
-        - min(mode.sigma2 for mode in spectral_overtones.values()),
+        "spectral_resolution_max_displacement_from_r40_bvp_n50_to_n160": max(
+            abs(mode.sigma2 - overtone_bvp_modes[40.0].sigma2)
+            for mode in spectral_overtones.values()
+        ),
     }
     overtone_uncertainty = {
         "provenance": provenance,
