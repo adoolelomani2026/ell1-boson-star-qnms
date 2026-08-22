@@ -74,6 +74,12 @@ The next hard milestone is the ordinary-boson-star ell=0 QNM benchmark.
 - A Chebyshev generalized eigenproblem independently reproduces the ground mode,
   one-node first overtone, and sign change across the stability boundary without
   a nonlinear eigenvalue initial guess.
+- At `a_1^0=0.08` and `r_max=40`, the Hermite-background BVP gives
+  `sigma0^2=2.4004311e-4`; the 80-point spectral result differs by
+  `1.64e-9`. The first overtone is `sigma1^2~=8.227e-3`.
+- The versioned uncertainty record gives a quadrature numerical uncertainty of
+  `4.01e-9` and a conservative component sum of `6.80e-9` in absolute
+  `sigma0^2`.
 - The default background representation is a Hermite reconstruction of the
   regular field from stored `psi` and `psi'`; PCHIP is retained as an uncertainty
   variation.

@@ -1,0 +1,27 @@
+{
+  "provenance": {
+    "implementation_commit": "3ebebbdbc6689972fa21e4ddfdbad235ba0d53fc",
+    "implementation_tree": "8cb71fa0f97b55de0e182f840bf38f4051c61769",
+    "working_tree_dirty_at_start": true,
+    "solver_version": "radial-v0.3-spectral",
+    "python_version": "3.14.3",
+    "python_implementation": "CPython",
+    "numpy_version": "2.4.3",
+    "scipy_version": "1.17.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "version_pin_file": "environment/requirements-pins.txt",
+    "version_pin_sha256": "f419489ab39b3955cc143f63108082defee9f7d7f87897a92470d034104f7e75"
+  },
+  "quantity": "ground radial sigma2 at a0=0.08, epsilon=1e-3",
+  "reference_method": "Hermite-background nonlinear global BVP",
+  "reference_r_max": 40.0,
+  "reference_sigma2": 0.00024004311443394838,
+  "components_absolute_sigma2": {
+    "outer_domain_r30_to_r40": 6.740814319488447e-10,
+    "bvp_to_spectral_n80": 1.6368754751703955e-09,
+    "spectral_resolution_n60_n80_n100": 3.4342776454674567e-09,
+    "hermite_to_pchip": 1.0506933109742222e-09
+  },
+  "combined_quadrature_absolute_sigma2": 4.003993815928789e-09,
+  "conservative_sum_absolute_sigma2": 6.795927863560919e-09
+}

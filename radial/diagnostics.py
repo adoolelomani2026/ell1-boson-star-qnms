@@ -29,10 +29,19 @@ def _git(*arguments: str) -> str:
 
 def _provenance(solver_version: str) -> dict[str, object]:
     pin_sha = hashlib.sha256(PIN_FILE.read_bytes()).hexdigest()
+    tracked_status = _git(
+        "status",
+        "--porcelain",
+        "--untracked-files=no",
+        "--",
+        ".",
+        ":!data/radial_benchmarks.csv",
+        ":!data/radial_uncertainty.json",
+    )
     return {
         "implementation_commit": _git("rev-parse", "HEAD"),
         "implementation_tree": _git("rev-parse", "HEAD^{tree}"),
-        "working_tree_dirty_at_start": bool(_git("status", "--porcelain")),
+        "implementation_worktree_dirty_excluding_outputs": bool(tracked_status),
         "solver_version": solver_version,
         "python_version": platform.python_version(),
         "python_implementation": platform.python_implementation(),
