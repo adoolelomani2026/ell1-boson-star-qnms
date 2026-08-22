@@ -21,6 +21,21 @@ that result and implements the audit's pre-production hardening actions.
 - Automated matrix-assembly, center/outer-row, higher-node, overlap, and
   BVP-versus-spectral eigenfunction checks.
 
+## Certified results
+
+```text
+ground BVP, r_max=40:       sigma0^2 = 2.4004311443394838e-4
+ground conservative bound:            7.70e-9 in absolute sigma0^2
+overtone BVP, r_max=60:     sigma1^2 = 8.227160870356460e-3
+                             sigma1   = 0.09070369821763861
+overtone conservative bound:           6.44e-7 in absolute sigma1^2
+```
+
+The expanded automated suite passes `20/20`. The certification CSV contains 27
+rows and records scaled/unscaled pencil residuals, condition numbers, overlap
+tracking, runtime versions, Git commit/tree hashes, and the environment-pin
+hash.
+
 The raw single-domain pencil becomes increasingly ill-conditioned for higher
 modes and larger domains. This release measures that behavior; it does not
 claim that equilibration turns one dense domain into a production nonradial

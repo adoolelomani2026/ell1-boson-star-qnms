@@ -77,9 +77,9 @@ The next hard milestone is the ordinary-boson-star ell=0 QNM benchmark.
 - At `a_1^0=0.08` and `r_max=40`, the Hermite-background BVP gives
   `sigma0^2=2.4004311e-4`; the 80-point spectral result differs by
   `1.64e-9`. The first overtone is `sigma1^2~=8.227e-3`.
-- The versioned uncertainty record gives a quadrature numerical uncertainty of
-  `4.01e-9` and a conservative component sum of `6.80e-9` in absolute
-  `sigma0^2`.
+- The v0.3.1 versioned uncertainty record uses the conservative deterministic
+  component sum, `7.70e-9` in absolute `sigma0^2`, as the headline ground-mode
+  uncertainty. The `4.80e-9` quadrature value is secondary only.
 - The default background representation is a Hermite reconstruction of the
   regular field from stored `psi` and `psi'`; PCHIP is retained as an uncertainty
   variation.
@@ -108,7 +108,9 @@ formulation for nonradial QNMs.
   normalized eigenfunction overlap supports mode continuation.
 - Ground-mode resolution coverage spans `N=50` through `160`. The first
   overtone has BVP domain rows at `r_max=40,50,60` and its own conservative
-  uncertainty record.
+  uncertainty record. Its domain-converged BVP reference is
+  `sigma1=0.0907036982`, with a conservative `sigma1^2` systematic bound of
+  `6.44e-7`.
 - A smooth-background mapped multidomain architecture remains a pre-production
   requirement for complex nonradial QNMs; increasing one dense domain is not
   the intended production strategy.
