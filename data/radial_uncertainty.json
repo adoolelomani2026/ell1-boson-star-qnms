@@ -1,8 +1,8 @@
 {
   "provenance": {
-    "implementation_commit": "3ebebbdbc6689972fa21e4ddfdbad235ba0d53fc",
-    "implementation_tree": "8cb71fa0f97b55de0e182f840bf38f4051c61769",
-    "working_tree_dirty_at_start": true,
+    "implementation_commit": "17f768efa77c19f19e7d8d0e973fab52611a84d4",
+    "implementation_tree": "dddb84b156dc848f49a8ebb568cde6523f65faec",
+    "implementation_worktree_dirty_excluding_outputs": false,
     "solver_version": "radial-v0.3-spectral",
     "python_version": "3.14.3",
     "python_implementation": "CPython",
