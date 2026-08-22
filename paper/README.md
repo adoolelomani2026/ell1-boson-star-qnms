@@ -1,7 +1,7 @@
 # Publication artifacts
 
 `build_preprint.py` is the primary manuscript builder. It regenerates the
-numerical figures and compiles the line-numbered LaTeX author manuscript.
+numerical figures and compiles the conventionally paginated LaTeX author manuscript.
 
 ```powershell
 pip install -r environment/requirements-report.txt
