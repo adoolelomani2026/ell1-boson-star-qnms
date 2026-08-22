@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.interpolate import PchipInterpolator
+from scipy.interpolate import CubicHermiteSpline, PchipInterpolator
 
 from background.ell_boson_star import BackgroundSolution, _rhs
 
@@ -29,7 +29,7 @@ class BackgroundPoint:
 class RadialBackground:
     """Read-only interpolated background with analytic derivative identities."""
 
-    def __init__(self, solution: BackgroundSolution):
+    def __init__(self, solution: BackgroundSolution, representation: str = "hermite"):
         self.solution = solution
         self.ell = solution.ell
         self.kappa = 2 * solution.ell + 1
@@ -37,6 +37,7 @@ class RadialBackground:
         self.alpha_c = float(solution.alpha[0])
         self.a0 = solution.a0
         self.adm_mass = solution.adm_mass
+        self.representation = representation
         self.r_min = float(solution.r[0])
         self.r_max = float(solution.r[-1])
         # Interpolate the regular field u=psi/r^ell once, then obtain both psi
@@ -45,7 +46,18 @@ class RadialBackground:
         regular_u = solution.psi / solution.r**solution.ell
         self._mass_spline = PchipInterpolator(solution.r, solution.mass, extrapolate=False)
         self._alpha_spline = PchipInterpolator(solution.r, solution.alpha, extrapolate=False)
-        self._u_spline = PchipInterpolator(solution.r, regular_u, extrapolate=False)
+        regular_du = (
+            solution.dpsi / solution.r**solution.ell
+            - solution.ell * solution.psi / solution.r ** (solution.ell + 1)
+        )
+        if representation == "hermite":
+            self._u_spline = CubicHermiteSpline(
+                solution.r, regular_u, regular_du, extrapolate=False
+            )
+        elif representation == "pchip":
+            self._u_spline = PchipInterpolator(solution.r, regular_u, extrapolate=False)
+        else:
+            raise ValueError("representation must be 'hermite' or 'pchip'")
         self._du_spline = self._u_spline.derivative()
 
     def arrays(self, radius: np.ndarray):

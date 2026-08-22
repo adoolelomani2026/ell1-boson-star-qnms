@@ -11,10 +11,10 @@ jobs:
         include:
           - os: windows-latest
             python: "3.14"
-            locked: true
+            pinned: true
           - os: ubuntu-latest
             python: "3.13"
-            locked: false
+            pinned: false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -22,8 +22,8 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m pip install --upgrade pip
-      - if: matrix.locked
-        run: python -m pip install -r environment/requirements-lock.txt
-      - if: ${{ !matrix.locked }}
+      - if: matrix.pinned
+        run: python -m pip install -r environment/requirements-pins.txt
+      - if: ${{ !matrix.pinned }}
         run: python -m pip install -r environment/requirements.txt
       - run: python -m pytest -q

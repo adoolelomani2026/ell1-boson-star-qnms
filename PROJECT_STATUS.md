@@ -48,31 +48,35 @@ reproduces representative profiles and this radius discrepancy is resolved.
 
 ## Not yet implemented
 
-- Gate B remainder: ordinary ell=0 QNM benchmark. The radial ell=1 solver is
-  now implemented separately from the tagged background checkpoint.
+- Gate B remainder: ordinary ell=0 QNM benchmark. The radial ell=1 sector now
+  has independent BVP and generalized-eigenvalue certification.
 - Gate C: fully relativistic nonradial harmonic reduction.
 - Gates D-H: new QNMs, parameter campaign, physical conclusions, and paper.
 
-The next hard milestone is an independent ordinary-boson-star QNM benchmark.
+The next hard milestone is the ordinary-boson-star ell=0 QNM benchmark.
 
 ## Radial pulsation progress after the background checkpoint
 
 - The Appendix system for `(delta varphi_11, delta L)` is implemented with
   analytic background derivatives and `sigma2` as the eigenvalue.
-- The official nonlinear global BVP directly imposes both physical outer
+- The nonlinear global BVP directly imposes both physical outer
   conditions. At `a_1^0=0.08`, it gives `sigma2=2.40091e-4` and
   `center_c=-2.78360e-2` at `r_max=25`, with zero resolved interior nodes.
 - The BVP domain plateau at `r_max=25,30,40` spans about `0.02%`.
-- Direct physical boundary residuals are at or below `O(1e-20)` and the stored
-  collocation residual is about `3e-6`.
+- Diagnostics distinguish SciPy's interval RMS relative residual from a dense
+  pointwise relative ODE residual; direct endpoint residuals are also recorded.
 - The computed ground eigenvalue is positive at `a_1^0=0.050`, approximately
   zero at `0.100`, and negative at `0.105`.
 - Detailed solver settings and results are versioned in
   `data/radial_benchmarks.csv`.
 - The affine outward-basis solver is deprecated: subtracting exponentially
   amplified basis states gives misleading normalized boundary residuals.
-- The background perturbation interface now derives `psi` and `psi'` from one
-  interpolant of the regular field `u=psi/r^ell`.
+- A Chebyshev generalized eigenproblem independently reproduces the ground mode,
+  one-node first overtone, and sign change across the stability boundary without
+  a nonlinear eigenvalue initial guess.
+- The default background representation is a Hermite reconstruction of the
+  regular field from stored `psi` and `psi'`; PCHIP is retained as an uncertainty
+  variation.
 
 The center-series coefficient called `a0` in the Appendix must equal the
 actual leading coefficient of the background variable used in the ODE. For the
@@ -80,8 +84,7 @@ validated repository normalization this is `a_1^0/kappa = 0.08/3`, not `0.24`.
 Using `0.24` leaves a non-vanishing `O(1)` center-operator residual; the
 difference is exactly accounted for by the quadratic `6 kappa a0^2` term.
 
-The radial physics is reproduced, but the numerical milestone remains
-**provisional** until a second well-conditioned formulation (for example,
-multiple shooting with QR stabilization or global spectral collocation)
-independently reproduces the BVP result. Do not use the deprecated affine
+The radial numerical milestone is independently certified by the BVP and
+spectral formulations. Gate A remains in progress, and full Gate B still
+requires the ordinary `ell=0` QNM benchmark. Do not use the deprecated affine
 formulation for nonradial QNMs.

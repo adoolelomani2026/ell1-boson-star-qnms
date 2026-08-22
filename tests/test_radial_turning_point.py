@@ -2,6 +2,7 @@ import pytest
 
 from background.ell_boson_star import solve_by_continuation
 from radial.bvp import solve_radial_bvp
+from radial.spectral import solve_radial_spectrum
 
 
 @pytest.mark.slow
@@ -26,3 +27,13 @@ def test_bvp_stability_crossing_executes_solver(radial_bvp_a008):
     assert near_turning.success and abs(near_turning.sigma2) < 5e-6
     assert unstable.success and unstable.sigma2 < 0.0
     assert unstable.sigma2 == pytest.approx(-7.11e-5, rel=0.01)
+    spectral = solve_radial_spectrum(
+        unstable_background,
+        points=80,
+        r_max=40.0,
+        sigma2_min=-1e-3,
+        sigma2_max=0.02,
+    )
+    spectral_ground = next(mode for mode in spectral if mode.node_count == 0)
+    assert spectral_ground.sigma2 < 0.0
+    assert spectral_ground.sigma2 == pytest.approx(unstable.sigma2, abs=1e-8)

@@ -13,11 +13,12 @@ The profile archive contains conventions and solver diagnostics alongside the
 radial arrays. The sequence CSV is generated directly from solved profiles.
 The compact JSON radius audit is versioned because it documents a literature
 discrepancy central to the provisional Gate A decision.
-`radial_benchmarks.csv` is also versioned; it records the background checkpoint,
-global-BVP formulation, eigenvalues, center coefficients, direct physical
-boundary residuals, collocation residuals, adaptive node counts, and environment
-lock used for radial certification. Legacy affine residual normalizations are
-not included.
+`radial_benchmarks.csv` is also versioned. It combines global-BVP and independent
+Chebyshev generalized-eigenvalue results, including the first overtone, explicit
+residual definitions, runtime and Git provenance, background representation,
+and the SHA-256 of the top-level version-pin file. `radial_uncertainty.json`
+assembles domain, spectral-resolution, representation, and cross-method changes.
+Legacy affine residual normalizations are not included.
 
-Regenerate it with `python -m radial.diagnostics --output
-data/radial_benchmarks.csv`. The full Radau/DOP853 matrix is intentionally slow.
+Regenerate both records with `python -m radial.diagnostics --output
+data/radial_benchmarks.csv --uncertainty-output data/radial_uncertainty.json`.

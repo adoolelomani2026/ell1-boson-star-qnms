@@ -24,7 +24,8 @@ class BvpRadialMode:
     physical_scalar: np.ndarray
     delta_lambda: np.ndarray
     physical_boundary_residual: np.ndarray
-    max_collocation_residual: float
+    max_scipy_interval_rms_relative_residual: float
+    max_dense_pointwise_relative_residual: float
     node_count: int
     success: bool
     message: str
@@ -41,9 +42,10 @@ def solve_radial_bvp(
     points: int = 500,
     tolerance: float = 1e-6,
     max_nodes: int = 30000,
+    background_representation: str = "hermite",
 ) -> BvpRadialMode:
     """Solve the mode globally while imposing both physical outer conditions."""
-    background = RadialBackground(solution)
+    background = RadialBackground(solution, representation=background_representation)
     mesh = np.geomspace(epsilon, r_max, points)
 
     # An outward IVP supplies only an initial Newton guess. Certification comes
@@ -94,12 +96,18 @@ def solve_radial_bvp(
     )
     radii = np.geomspace(epsilon, r_max, 3000)
     state = result.sol(radii)
+    state_derivative = result.sol(radii, 1)
+    equation_values = pulsation_rhs(radii, state, float(result.p[0]), background)
+    pointwise_relative = np.abs(state_derivative - equation_values) / (1.0 + np.abs(equation_values))
     _, _, _, psi, _, _, _, _, _, _, _ = background.arrays(radii)
     physical_scalar = psi * state[0]
     delta_lambda = 2.0 * background.kappa * psi**2 * state[2]
     physical_residual = outer_residual(state[:, -1], r_max, background)
     center_c = float(state[1, 0] / (2.0 * epsilon))
-    max_residual = float(np.max(result.rms_residuals)) if result.rms_residuals.size else float("nan")
+    max_rms_residual = (
+        float(np.max(result.rms_residuals)) if result.rms_residuals.size else float("nan")
+    )
+    max_pointwise_residual = float(np.max(pointwise_relative))
     return BvpRadialMode(
         sigma2=float(result.p[0]),
         center_c=center_c,
@@ -110,7 +118,8 @@ def solve_radial_bvp(
         physical_scalar=physical_scalar,
         delta_lambda=delta_lambda,
         physical_boundary_residual=physical_residual,
-        max_collocation_residual=max_residual,
+        max_scipy_interval_rms_relative_residual=max_rms_residual,
+        max_dense_pointwise_relative_residual=max_pointwise_residual,
         node_count=_node_count(delta_lambda),
         success=bool(result.success),
         message=result.message,
