@@ -1,0 +1,686 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[a4paper,left=25mm,right=25mm,top=23mm,bottom=24mm,headsep=7mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{amsmath,bm}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,longtable,array,multirow}
+\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\usepackage{lineno}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage{seqsplit}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[section]{placeins}
+\usepackage{float}
+
+\definecolor{linkblue}{RGB}{24,68,125}
+\hypersetup{colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue,pdfauthor={Boson Star QNM Project},pdftitle={Relativistic radial modes of ell=1 boson stars: background construction and two-method numerical certification}}
+\graphicspath{{./}}
+\setlength{\parindent}{1.15em}
+\setlength{\parskip}{0pt}
+\setlength{\tabcolsep}{4.5pt}
+\renewcommand{\arraystretch}{1.08}
+\setcounter{secnumdepth}{3}
+\modulolinenumbers[1]
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize Page \thepage\ of \pageref{LastPage}}
+\fancyhead[C]{\footnotesize AUTHOR SUBMITTED MANUSCRIPT -- BOSON-QNM-v0.3.1}
+\fancyhead[R]{\footnotesize \thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\sigmatwo}{\sigma^{2}}
+\newcommand{\rmax}{r_{\mathrm{max}}}
+\newcommand{\amax}{a_{1}^{0}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\statuspass}{\textsc{pass}}
+\newcommand{\statusopen}{\textsc{in progress}}
+
+\begin{document}
+\linenumbers
+
+\begin{center}
+{\Large\bfseries Relativistic radial modes of $\ell=1$ boson stars:\\[2pt]
+background construction and two-method numerical certification\par}
+\vspace{0.7em}
+{\normalsize Boson Star QNM Project$^{1,*}$\par}
+\vspace{0.35em}
+{\small $^{1}$Numerical Relativity and Spectral Analysis Working Group\par}
+{\small Working preprint; author and institutional metadata to be finalized before submission\par}
+\vspace{0.3em}
+{\small ORCID: to be supplied\par}
+\end{center}
+
+\vspace{0.8em}
+\noindent\textbf{Abstract.}
+We construct static, spherically symmetric $\ell=1$ boson-star backgrounds and certify their fully relativistic radial pulsation spectrum with two well-conditioned numerical discretizations. The equilibrium solver reproduces the published $a_{1}^{0}=0.08$ frequency and the maximum-mass configuration. A dedicated radius audit gives $R_{99}=10.18$ for the maximum-mass grid model, whereas the published value $12.75$ lies close to the computed $R_{999}=12.70$; we retain this as an unresolved numerical or labeling discrepancy rather than declaring a published error. Radial perturbations are solved first as a nonlinear global boundary-value problem that imposes both physical outer conditions directly, and independently as an equilibrated Chebyshev generalized eigenproblem with a separately transcribed coefficient matrix. At $a_{1}^{0}=0.08$ and $\rmax=40$, the boundary-value calculation gives
+$\sigma_{0}^{2}=2.4004311443\times10^{-4}$, while the $N=80$ spectral result differs by $1.64\times10^{-9}$. Both methods reproduce the stable-to-unstable sign change. The one-node first overtone converges to $\sigma_{1}=0.0907036982$ at $\rmax=60$, consistent with the published $0.0907$. Physical eigenfunctions agree after normalization and phase alignment. Conservative deterministic-systematics bounds are $7.70\times10^{-9}$ in absolute $\sigma_{0}^{2}$ and $6.44\times10^{-7}$ in absolute $\sigma_{1}^{2}$. The radial portion of the perturbation benchmark gate therefore passes. The background gate remains open pending independent shooting and resolution of the radius discrepancy, while the full perturbation gate still requires an ordinary $\ell=0$ boson-star quasinormal-mode benchmark.
+
+\medskip
+\noindent\textbf{Keywords.} Boson stars; radial stability; relativistic perturbations; Chebyshev spectral methods; generalized eigenvalue problems; numerical certification.
+
+\section{Introduction}
+
+Boson stars are self-gravitating configurations of complex scalar fields whose macroscopic support is provided by harmonic time dependence rather than a material pressure law. They provide a controlled setting for studying compact, horizonless relativistic objects, scalar-field dynamics, gravitational-wave phenomenology, and alternatives to black holes. The $\ell$-boson-star construction is especially useful because a multiplet of $2\ell+1$ fields can carry nontrivial angular structure while their summed stress tensor remains spherically symmetric \cite{Alcubierre2018}. This diagonal spatial--internal symmetry produces equilibrium families that are spherical at the level of the metric but retain internal angular momentum structure in the matter sector.
+
+The radial stability of these configurations was analyzed relativistically by Alcubierre \emph{et al.} \cite{Alcubierre2021}. That work derived a coupled pulsation system, identified the change of sign of the fundamental eigenvalue near the maximum-mass turning point, and tabulated a benchmark ground mode and first overtone. Those results supply an unusually stringent code-validation problem: the background normalization, regular center series, coupled perturbation coefficients, physical outer conditions, node classification, and the sign of $\sigmatwo$ must all be consistent.
+
+Our broader objective is a fully relativistic calculation of nonradial gravito-scalar quasinormal modes of $\ell=1$ boson stars. Such a calculation is substantially more delicate than reporting isolated eigenvalues. Massive scalar sidebands introduce propagating and evanescent channels, the angular reduction couples spatial and internal harmonics, low multipoles contain gauge and symmetry modes, and the complex-frequency problem is non-self-adjoint. Before those issues are confronted, the static backgrounds and published radial system must be supported by an explicit chain of analytical and numerical evidence.
+
+This manuscript presents that certification chain. It is intentionally written as a working preprint rather than a milestone brochure. The contribution is fourfold. First, we construct the $\ell=1$ equilibrium sequence and isolate a radius-definition discrepancy that affects the interpretation of compactness benchmarks. Second, we solve the radial equations with a global nonlinear boundary-value method that directly enforces both physical outer conditions. Third, we derive a Chebyshev generalized eigenvalue problem whose coefficient matrix and center condition are transcribed independently of the boundary-value right-hand side. Fourth, we combine domain, resolution, interpolation, cross-method, residual, conditioning, nodal, and eigenfunction-overlap diagnostics into conservative uncertainty statements.
+
+The paper is organized as follows. Section~\ref{sec:conventions} fixes conventions and acceptance criteria. Section~\ref{sec:background} gives the equilibrium equations, center and outer expansions, and collocation method. Section~\ref{sec:radial} summarizes the radial pulsation problem and its boundary data. Section~\ref{sec:methods} describes the nonlinear boundary-value and generalized-eigenvalue discretizations. Section~\ref{sec:results} presents background and radial results, including the radius audit, stability curve, convergence, and eigenfunctions. Section~\ref{sec:discussion} discusses numerical interpretation and limitations. Reproducibility and gate decisions are collected in Sec.~\ref{sec:repro}, followed by conclusions and technical appendices.
+
+\subsection{Literature context and scope}
+
+Ordinary boson-star perturbations have been studied with frequency-domain, time-domain, and catastrophe-theory methods; the $\ell$-boson-star literature has established equilibrium sequences, radial stability, nonlinear dynamics, and nonrelativistic nonspherical modes. The remaining target is the fully relativistic, coupled nonradial gravito-scalar spectrum. The present work does not claim that target. It certifies the numerical substrate on which it must rest.
+
+The distinction matters because agreement between two discretizations is not automatically agreement between two physical formulations. The boundary-value and spectral methods below use different algebraic representations and independently coded radial coefficients, but they share the same equilibrium profiles and published perturbation model. A common physics error could therefore survive pure resolution studies. We counter this risk with literature benchmarks, direct center and matrix-assembly identities, physical boundary checks, and eigenfunction comparisons. A time-domain radial evolution or an independently derived self-adjoint formulation would strengthen the certification further.
+
+\section{Conventions and numerical acceptance}\label{sec:conventions}
+
+We use signature $(-,+,+,+)$ and units
+\begin{equation}
+G=c=\hbar=\mu=1,
+\end{equation}
+unless a dimensional factor is shown. The spherically symmetric metric is
+\begin{equation}
+\dd s^{2}=-\alpha(r)^{2}\dd t^{2}+\gamma(r)^{2}\dd r^{2}+r^{2}\dd\Omega^{2},
+\qquad
+\gamma^{2}=\left(1-\frac{2M(r)}{r}\right)^{-1}.
+\label{eq:metric}
+\end{equation}
+There are $\kappa_{\ell}=2\ell+1$ equal-mass complex fields,
+\begin{equation}
+\Phi_{\ell m}(t,r,\theta,\phi)=e^{+\ii\omega t}\psi_{\ell}(r)Y_{\ell m}(\theta,\phi),
+\qquad
+\sum_{m=-\ell}^{\ell}|Y_{\ell m}|^{2}=\frac{2\ell+1}{4\pi}.
+\end{equation}
+Perturbations use $e^{-\ii\sigma t}$, so $\operatorname{Im}\sigma<0$ is damped and $\operatorname{Im}\sigma>0$ is unstable. The radial problem is real and depends on $\sigmatwo$; negative $\sigmatwo$ therefore represents exponential growth without changing the numerical code path.
+
+\begin{table}[t]
+\centering
+\caption{Frozen conventions and their numerical consequences.}
+\label{tab:conventions}
+\small
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Quantity & Convention & Consequence \\
+\midrule
+Geometry & Areal radius and signature $(-,+,+,+)$ & $\gamma^{2}=(1-2M/r)^{-1}$ \\
+Matter & $2\ell+1$ equal-mass complex fields & $\kappa_{\ell}=2\ell+1$ \\
+Center amplitude & $\psi_{\ell}/r^{\ell}\to a_{\ell}^{0}/\kappa_{\ell}$ & Reproduces the published background normalization \\
+Perturbation time & $e^{-\ii\sigma t}$ & $\operatorname{Im}\sigma<0$ denotes damping \\
+Radius & $M(R_{99})=0.99M_{T}$ & $R_{999}$ is stored and reported separately \\
+Certification & Domain, resolution, method, residual, and shape tests & Solver success alone cannot pass a gate \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Every headline numerical result must survive five classes of checks: outer-domain variation, discretization variation, branch or mode continuity, direct equation and boundary diagnostics, and an independent numerical method. For radial modes, node count and normalized physical-eigenfunction overlap are part of mode identification. Deterministic numerical shifts are not assumed statistically independent; their conservative sum is the headline uncertainty, while quadrature is retained only as a secondary descriptive quantity.
+
+\section{Relativistic $\ell=1$ backgrounds}\label{sec:background}
+
+\subsection{Einstein--Klein--Gordon reduction}
+
+For $\kappa=2\ell+1$, the static equations in the normalization of Ref.~\cite{Alcubierre2021} are
+\begin{align}
+M'&=\frac{\kappa r^{2}}{2}\left[\frac{\psi'^{2}}{\gamma^{2}}+
+\left(\frac{\omega^{2}}{\alpha^{2}}+1+\frac{\ell(\ell+1)}{r^{2}}\right)\psi^{2}\right],
+\label{eq:mass}\\
+\frac{\alpha'}{\alpha}&=\gamma^{2}\left\{\frac{M}{r^{2}}+
+\frac{\kappa r}{2}\left[\frac{\psi'^{2}}{\gamma^{2}}+
+\left(\frac{\omega^{2}}{\alpha^{2}}-1-\frac{\ell(\ell+1)}{r^{2}}\right)\psi^{2}\right]\right\},
+\label{eq:lapse}\\
+\psi''&+\left(\frac{2}{r}+\frac{\alpha'}{\alpha}-\frac{\gamma'}{\gamma}\right)\psi'
++\gamma^{2}\left(\frac{\omega^{2}}{\alpha^{2}}-1-\frac{\ell(\ell+1)}{r^{2}}\right)\psi=0.
+\label{eq:kg}
+\end{align}
+The center expansion is regular,
+\begin{equation}
+\psi_{\ell}(r)=\frac{a_{\ell}^{0}}{\kappa_{\ell}}r^{\ell}+O(r^{\ell+2}),
+\qquad M(r)=O(r^{2\ell+1}),
+\label{eq:centerbackground}
+\end{equation}
+and the finite outer boundary enforces the Schwarzschild lapse together with a massive decaying Robin condition through first order in $1/r$. The bound-state frequency is parametrized so that $0<\omega<1$ throughout the nonlinear solve.
+
+The total Noether charge and the mass-fraction radii are
+\begin{equation}
+Q=\kappa\omega\int_{0}^{\infty}\frac{\psi^{2}\gamma}{\alpha}r^{2}\dd r,
+\qquad
+M(R_{p})=pM_{T},qquad M_{T}=\lim_{r\to\infty}M(r).
+\end{equation}
+We store both $p=0.99$ and $p=0.999$ because the published maximum-mass radius is numerically closer to the latter.
+
+\subsection{Nonlinear collocation and continuation}
+
+The background equations are solved as a nonlinear two-point boundary-value problem with adaptive collocation on a geometric radial mesh. The unknown frequency is included as a solver parameter. Continuation starts from the validated $a_{1}^{0}=0.08$ configuration and advances along the nodeless branch in steps no larger than $0.005$. Dense output is used to compute global charges and mass-fraction radii, while independent first-order residuals and the scalar-tail logarithmic derivative diagnose the stored solution.
+
+The production settings are $\rmax=80$, 800 initial mesh points, relative collocation tolerance $10^{-7}$, and at most 40,000 adaptive nodes. Outer-domain checks use $\rmax=60,80,100$ at otherwise fixed settings. This provides same-formulation convergence, but it is not a substitute for the missing independent background shooting solution. Gate A therefore remains open.
+
+\section{Relativistic radial perturbations}\label{sec:radial}
+
+\subsection{Variables and center behavior}
+
+Following Ref.~\cite{Alcubierre2021}, we evolve the numerical variables $\delta\varphi_{11}$ and
+\begin{equation}
+\delta L=\frac{\delta\lambda}{2\kappa\psi_{1}^{2}},
+\end{equation}
+where $\delta\lambda$ is the physical radial metric perturbation. The first-order state is
+\begin{equation}
+\bm{y}=(\delta\varphi,\delta\varphi',\delta L,\delta L')^{T},
+\qquad
+\bm{y}'=\bm{F}(r,\bm{y};\sigmatwo).
+\label{eq:firstorder}
+\end{equation}
+Near the center, the arbitrary overall mode normalization is fixed by
+\begin{align}
+\delta\varphi&=1+cr^{2}+O(r^{4}), & \delta\varphi'&=2cr+O(r^{3}),\\
+\delta L&=1+dr^{2}+O(r^{4}), & \delta L'&=2dr+O(r^{3}),
+\end{align}
+with
+\begin{equation}
+d=\frac{1}{5}\left[1+\frac{2\omega^{2}-\sigmatwo}{2\alpha_{c}^{2}}
++6\kappa\left(\frac{a_{1}^{0}}{\kappa}\right)^{2}\right].
+\label{eq:center-d}
+\end{equation}
+The coefficient in Eq.~\eqref{eq:center-d} must use the actual leading coefficient of the radial field in the implemented normalization. Replacing $a_{1}^{0}/\kappa$ by an unconverted tabulated amplitude leaves a nonvanishing center-operator defect.
+
+\subsection{Physical outer conditions}
+
+At a finite outer radius, the published physical conditions can be written
+\begin{align}
+F_{1}&=\sqrt{\frac{\gamma}{\alpha}}\,r\psi\,\delta\varphi=0,\\
+F_{2}&=\sqrt{\frac{\alpha}{\gamma}}\,
+\frac{\psi\delta L-r\psi'\delta\varphi}{\omega}=0.
+\end{align}
+Because $\psi$ and $\omega$ are nonzero at the finite boundary, these conditions are equivalent to Dirichlet data for both numerical variables in the spectral problem. The nonlinear boundary-value formulation imposes $F_{1}=F_{2}=0$ directly. Endpoint values are reported, but because they are imposed equations they are not interpreted as independent error estimates.
+
+\subsection{Physical reconstruction and nodes}
+
+The two fields used for cross-method comparison are
+\begin{equation}
+\delta\Phi_{\mathrm{phys}}=\psi\,\delta\varphi,
+\qquad
+\delta\lambda=2\kappa\psi^{2}\delta L.
+\end{equation}
+Interior zeros of $\delta\lambda$ are located by shape-preserving interpolation and bracketing. Only samples at the level of floating-point and interpolation noise are removed; the former fixed threshold $10^{-4}\max|\delta\lambda|$ is not used because it merges low-amplitude lobes of higher modes.
+
+\section{Numerical methods}\label{sec:methods}
+
+\subsection{Global nonlinear boundary-value solve}
+
+The first discretization treats Eq.~\eqref{eq:firstorder} as a nonlinear global boundary-value problem with $\sigmatwo$ as a free parameter. The center series supplies three independent regularity conditions after fixing the normalization, and the two physical outer equations complete the five conditions required for four first-order fields plus one eigenvalue. An outward initial-value integration is used only to seed Newton iteration; it is not used to certify the outer boundary.
+
+The solver returns an adaptive collocation polynomial. We record the maximum interval RMS relative residual reported by \code{solve\_bvp}, and separately sample
+\begin{equation}
+\mathcal{R}_{\infty}=\max_{r,i}
+\frac{|y'_{i,\mathrm{coll}}(r)-F_{i}(r,\bm{y};\sigmatwo)|}{1+|F_{i}(r,\bm{y};\sigmatwo)|}
+\end{equation}
+on a 3000-point geometric grid. The terminology is explicit because an interval RMS residual is not a maximum pointwise differential-equation defect.
+
+The earlier affine outward-basis method is deprecated. It formed linear combinations of exponentially amplified solutions and could reproduce an interior eigenfunction while generating misleading normalized boundary residuals through catastrophic cancellation. No number in the present certification uses that formulation.
+
+\subsection{Independent Chebyshev generalized eigenproblem}
+
+The second discretization uses $N$ Chebyshev--Lobatto points on $[\epsilon,\rmax]$,
+\begin{equation}
+x_{j}=\cos\frac{\pi j}{N-1},
+\qquad
+r_{j}=\frac{\rmax+\epsilon}{2}+\frac{\rmax-\epsilon}{2}x_{j},
+\end{equation}
+with first- and second-derivative matrices $D$ and $D^{2}$. The coupled second-order equations are linear in $\sigmatwo$, producing
+\begin{equation}
+A\bm{x}=\sigmatwo B\bm{x}.
+\label{eq:pencil}
+\end{equation}
+The spectral coefficient blocks and the $\sigmatwo=0$ center coefficient are transcribed in a dedicated module that does not call the boundary-value right-hand side or center function. Tests evaluate the assembled matrix on arbitrary smooth fields and compare every interior, center, and outer row with a direct differential-operator calculation.
+
+One dense Chebyshev domain becomes ill-scaled as $N$ increases. Before solving Eq.~\eqref{eq:pencil}, positive diagonal row and column scalings are applied,
+\begin{equation}
+A_{s}=D_{r}AD_{c},
+\qquad
+B_{s}=D_{r}BD_{c},
+\qquad
+A_{s}\bm{v}=\sigmatwo B_{s}\bm{v}.
+\end{equation}
+The right eigenvector is transformed back with $\bm{x}=D_{c}\bm{v}$. We report both scaled and unscaled residuals,
+\begin{equation}
+\rho(A,B;\bm{x})=
+\frac{\|A\bm{x}-\sigmatwo B\bm{x}\|_{2}}
+{\|A\bm{x}\|_{2}+|\sigmatwo|\,\|B\bm{x}\|_{2}},
+\label{eq:residual}
+\end{equation}
+and a left/right condition diagnostic for the equilibrated pencil,
+\begin{equation}
+\kappa_{\lambda}=\frac{\|\bm{w}\|_{2}\|\bm{v}\|_{2}}
+{|\bm{w}^{\dagger}B_{s}\bm{v}|}.
+\label{eq:condition}
+\end{equation}
+Small algebraic residual establishes that the finite pencil was solved accurately; it does not by itself bound continuum error.
+
+\subsection{Background smoothness, filtering, and continuation}
+
+The official spectral solver requires a $C^{1}$ cubic-Hermite reconstruction of the regular field $u=\psi/r^{\ell}$ from the stored $\psi$ and $\psi'$. PCHIP is rejected by the public spectral API. Although PCHIP can yield a small matrix residual, its piecewise-smooth derivatives bias the continuum eigenvalues, especially for overtones. It remains available only as a local boundary-value representation variation.
+
+Finite eigenvalues are retained if their imaginary contamination is below tolerance and their real part lies inside the requested interval. Mode identity combines frequency continuity, resolved nodal structure, and the normalized physical overlap
+\begin{equation}
+\mathcal{O}[f,g]=
+\frac{|\int f(r)g(r)\dd r|}
+{\left(\int f^{2}\dd r\right)^{1/2}\left(\int g^{2}\dd r\right)^{1/2}}.
+\end{equation}
+The arbitrary real sign of an eigenvector is fixed by the sign of the overlap before plotting.
+
+\subsection{Uncertainty policy}
+
+The ground-mode budget contains the $\rmax=30$ to 40 boundary-value shift, the boundary-value to $N=80$ spectral difference, the maximum displacement of the $N=50$--160 spectral sequence from the boundary-value reference, and the Hermite-to-PCHIP local boundary-value shift. The overtone budget is separate because its outer-domain dependence is stronger. Since these are deterministic systematic variations with no demonstrated probabilistic independence, the conservative sum is the quoted uncertainty.
+
+\section{Results}\label{sec:results}
+
+\subsection{Equilibrium sequence}
+
+Figure~\ref{fig:sequence} shows the 21-model $\ell=1$ sequence. The grid maximum occurs at $a_{1}^{0}=0.10$, with $\omega=0.8356722$ and $M_{T}=1.1763866$, consistent with the published values $\omega\simeq0.836$ and $M\simeq1.18$ \cite{Alcubierre2021}. The $a_{1}^{0}=0.08$ benchmark gives $\omega=0.8518974$, reproducing the tabulated $0.8519$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.94\textwidth]{figure_01_equilibrium_sequence.pdf}
+\caption{Global $\ell=1$ equilibrium sequence. The four panels show ADM mass, Noether charge, $R_{99}$, and $C_{99}$ versus central amplitude. The dashed line marks the maximum-mass grid point; pale vertical bands identify representative profiles used below.}
+\label{fig:sequence}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Representative equilibrium models.}
+\label{tab:models}
+\small
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Model & $a_{1}^{0}$ & $\omega$ & $M_{T}$ & $Q$ & $R_{99}$ & $C_{99}$ \\
+\midrule
+Dilute & 0.040 & 0.8964258 & 1.1016307 & 1.1337079 & 14.7365 & 0.07476 \\
+Benchmark & 0.080 & 0.8518974 & 1.1712712 & 1.2129650 & 11.1673 & 0.10489 \\
+Maximum grid & 0.100 & 0.8356722 & 1.1763866 & 1.2190106 & 10.1782 & 0.11558 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Representative profiles are shown in Fig.~\ref{fig:backgrounds}. Increasing central amplitude narrows the scalar distribution, deepens the central lapse, increases the radial metric peak, and moves the enclosed mass inward. The trend is smooth along the sampled branch and does not show resolved radial nodes.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.94\textwidth]{figure_02_representative_backgrounds.pdf}
+\caption{Scalar field, lapse, radial metric function, and enclosed mass for dilute, benchmark, and maximum-mass-grid configurations.}
+\label{fig:backgrounds}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Published-versus-computed benchmark quantities. Published values are quoted at the precision given in Ref.~\cite{Alcubierre2021}.}
+\label{tab:benchmarks}
+\small
+\begin{tabularx}{\textwidth}{@{}lXXX@{}}
+\toprule
+Benchmark & Published & Computed & Assessment \\
+\midrule
+$a_{1}^{0}=0.08$ frequency & $\omega=0.8519$ & $0.8518974$ & Agrees at quoted precision \\
+Maximum-model frequency & $\omega\simeq0.836$ & $0.8356722$ & Consistent \\
+Maximum-model mass & $M\simeq1.18$ & $1.1763866$ & Consistent \\
+Radial ground mode & $\sigma_{0}^{2}=2.40\times10^{-4}$ & $2.4004311\times10^{-4}$ & Independently certified \\
+First radial overtone & $\sigma_{1}=0.0907$ & $0.0907036982$ & Agrees beyond quoted precision \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Radius-definition audit}
+
+The literal radius satisfying $M(R)=0.99M_{T}$ for the maximum-mass grid model is $10.1782$, whereas $M(R)=0.999M_{T}$ gives $12.6970$. At the published radius $12.75$, the computed mass fraction is $0.9990485$. Figure~\ref{fig:radius} makes the numerical relationship explicit.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.88\textwidth]{figure_03_radius_audit.pdf}
+\caption{Radius-definition audit for the maximum-mass grid model. The published value $12.75$ lies close to $R_{999}$ rather than the literal $R_{99}$. This is retained as an unresolved discrepancy, not declared a published error.}
+\label{fig:radius}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Radius-definition cross-checks at $a_{1}^{0}=0.10$.}
+\label{tab:radii}
+\small
+\begin{tabular}{@{}lrl@{}}
+\toprule
+Definition & Radius & Note \\
+\midrule
+$M(R)=0.99M_{T}$ & 10.178177 & Literal $R_{99}$ \\
+$M(R)=0.999M_{T}$ & 12.697043 & Literal $R_{999}$ \\
+Published value & 12.750000 & Encloses mass fraction 0.9990485 \\
+Proper-energy 99\% & 10.173811 & Independent measure \\
+Noether-charge 99\% & 10.135752 & Independent measure \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Outer-domain convergence of the $a_{1}^{0}=0.08$ background is summarized in Table~\ref{tab:bgdomain}. Frequency and mass are stable to substantially more digits than required by the benchmark. The $R_{99}$ drift is also small, but its interpretation remains subordinate to the unresolved published-radius comparison.
+
+\begin{table}[t]
+\centering
+\caption{Background outer-domain convergence at fixed collocation tolerance $10^{-7}$.}
+\label{tab:bgdomain}
+\small
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$\rmax$ & $\omega$ & $M_{T}$ & $R_{99}$ & Tail residual \\
+\midrule
+60 & 0.851897404302 & 1.171271161072 & 11.16752149 & $9.04\times10^{-14}$ \\
+80 & 0.851897404290 & 1.171271161113 & 11.16733443 & $8.94\times10^{-15}$ \\
+100 & 0.851897404282 & 1.171271161143 & 11.16745834 & $9.51\times10^{-16}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Radial stability transition}
+
+Figure~\ref{fig:stability} gives the ground spectral eigenvalue across 13 regenerated models between $a_{1}^{0}=0.05$ and $0.11$. The eigenvalue decreases continuously, is small and positive at $0.10$, and becomes negative by $0.105$. This reproduces the turning-point stability transition found in Ref.~\cite{Alcubierre2021}. The plotted curve is a numerical branch diagnostic; a more precise location of the zero would require a dedicated continuation and root solve in background parameter space.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.90\textwidth]{figure_04_radial_stability.pdf}
+\caption{Ground radial eigenvalue along the equilibrium sequence. Positive $\sigma_{0}^{2}$ denotes oscillatory stability; negative $\sigma_{0}^{2}$ denotes the unstable branch.}
+\label{fig:stability}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Representative stability points from the two discretizations.}
+\label{tab:stability}
+\small
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$a_{1}^{0}$ & BVP $\sigma_{0}^{2}$ & Spectral $\sigma_{0}^{2}$ & Sign & Interpretation \\
+\midrule
+0.050 & $3.8045892\times10^{-4}$ & $3.8044151\times10^{-4}$ & $+$ & Stable \\
+0.080 & $2.4004311\times10^{-4}$ & $2.4004147\times10^{-4}$ & $+$ & Stable benchmark \\
+0.100 & $4.0654\times10^{-6}$ & $4.0676\times10^{-6}$ & $+$ & Near crossing \\
+0.105 & $-7.1022\times10^{-5}$ & $-7.1013\times10^{-5}$ & $-$ & Unstable \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Ground mode, first overtone, and convergence}
+
+At $a_{1}^{0}=0.08$, the domain-converged ground result is
+\begin{equation}
+\boxed{\sigma_{0}^{2}=2.4004311443\times10^{-4}},
+\qquad
+\sigma_{0}=0.01549332483.
+\end{equation}
+The one-node first overtone converges at the larger domain to
+\begin{equation}
+\boxed{\sigma_{1}^{2}=8.2271608704\times10^{-3}},
+\qquad
+\sigma_{1}=0.09070369822.
+\end{equation}
+The latter agrees with the published $0.0907$ beyond the quoted precision. It is also more sensitive to the outer domain, as expected for a higher mode with a more extended physical profile.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figure_05_radial_convergence.pdf}
+\caption{Numerical certification of the low radial modes. The panels show ground-mode BVP outer-domain convergence, the broad $N=50$--160 spectral envelope, scaled and unscaled pencil residuals, and first-overtone domain convergence. Spectral drift is oscillatory rather than monotonic, motivating an envelope instead of a formal extrapolation.}
+\label{fig:convergence}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Cross-method comparison at common finite domains.}
+\label{tab:crossmethod}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Mode/domain & BVP $\sigmatwo$ & Spectral $\sigmatwo$ & $|\Delta\sigmatwo|$ & $\kappa_{\lambda}$ \\
+\midrule
+Ground, $\rmax=40$, $N=80$ & $2.4004311443\times10^{-4}$ & $2.4004147098\times10^{-4}$ & $1.643\times10^{-9}$ & $4.93\times10^{1}$ \\
+Overtone, $\rmax=60$, $N=160$ & $8.2271608704\times10^{-3}$ & $8.2271973040\times10^{-3}$ & $3.643\times10^{-8}$ & $4.20\times10^{7}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The overtone condition number is much larger than the ground-mode value. Equilibration reduces the algebraic residual, but it does not make the underlying one-domain discretization uniformly well-conditioned. This behavior supports a mapped multidomain architecture for future complex nonradial calculations rather than indefinite growth of one dense Chebyshev domain.
+
+\subsection{Eigenfunction comparison}
+
+Figure~\ref{fig:eigenfunctions} compares the physical scalar and metric fields at a common $\rmax=40$ domain. The independent normalization and sign are matched only for display. The normalized $L^{2}$ overlaps for the ground mode are $0.999999273$ and $0.999995403$ for the scalar and metric fields, respectively. The overtone curves likewise coincide visually and display one resolved interior node.
+
+\clearpage
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figure_06_radial_eigenfunctions.pdf}
+\caption{Physical scalar and metric eigenfunctions for the ground mode and first overtone. Solid lines are nonlinear BVP solutions and dashed lines are spectral reconstructions at a common domain. The arbitrary eigenvector sign is aligned by physical-field overlap.}
+\label{fig:eigenfunctions}
+\end{figure}
+
+\subsection{Deterministic uncertainty}
+
+The uncertainty components are listed in Table~\ref{tab:uncertainty}. The broad spectral-resolution displacement is the largest ground-mode contribution. For the overtone, the outer-domain change and the spectral envelope dominate. We therefore recommend
+\begin{equation}
+\sigma_{0}^{2}=(2.40043\pm0.00008)\times10^{-4},
+\end{equation}
+where the uncertainty is a conservative deterministic-systematics bound rather than a statistical standard deviation.
+
+\begin{table}[t]
+\centering
+\caption{Numerical-systematics budgets in absolute $\sigmatwo$. Components are summed conservatively for the headline bound.}
+\label{tab:uncertainty}
+\small
+\begin{tabularx}{\textwidth}{@{}Xrr@{}}
+\toprule
+Component & Ground & First overtone \\
+\midrule
+BVP outer-domain variation & $6.741\times10^{-10}$ & $3.340\times10^{-7}$ \\
+Cross-method difference & $1.643\times10^{-9}$ & $3.643\times10^{-8}$ \\
+Spectral-resolution displacement & $4.334\times10^{-9}$ & $2.732\times10^{-7}$ \\
+Background representation & $1.051\times10^{-9}$ & --- \\
+\midrule
+Conservative sum & $7.702\times10^{-9}$ & $6.436\times10^{-7}$ \\
+Quadrature sum (secondary) & $4.800\times10^{-9}$ & $4.330\times10^{-7}$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Physical interpretation}
+
+The decreasing ground eigenvalue along the equilibrium sequence provides a dynamical interpretation of the maximum-mass turning point. On the dilute and intermediate branch, the lowest radial perturbation oscillates. As the maximum is approached, its restoring scale tends toward zero. Beyond the turning point, $\sigma_{0}^{2}<0$ and the same mode becomes exponentially unstable. The sign transition is reproduced by both discretizations and is not an artifact of a nonlinear initial guess.
+
+The first overtone is a distinct physical branch rather than a higher-resolution representation of the ground mode. Its metric perturbation contains one resolved interior zero, its frequency agrees with the published value, and its physical fields match across methods. Its stronger domain sensitivity is not a failure; it is a quantitative warning that higher modes demand larger domains and more careful branch tracking.
+
+\subsection{What the residuals do and do not establish}
+
+The BVP endpoint residuals show that the finite-radius boundary equations were imposed. The interval RMS and dense pointwise residuals show that the collocation solution satisfies the discretized differential equations at the claimed tolerance. The generalized residuals show that the matrix eigenpairs solve the equilibrated and original pencils. None of these alone is a continuum error bar. The continuum claim rests on the combined domain, resolution, representation, method, and eigenfunction evidence.
+
+The spectral condition diagnostic increases strongly with mode number, resolution, and domain size. A low residual can therefore coexist with a sensitive eigenvalue. This is precisely why we retain broad resolution envelopes and why the future nonradial solver should use smooth background representations, mapped subdomains, overlap continuation, and contour or argument-principle root counts.
+
+\subsection{Limits of the current certification}
+
+The background and perturbation gates have different status. The radial result is supported by two independent discretizations and passes its benchmark. The background profiles, however, still come from one collocation formulation. Agreement with published frequencies, outer-domain convergence, and internal residuals makes a large background error unlikely, but Gate A remains open until an independent shooting or equivalent formulation reproduces representative profiles.
+
+The radial discretizations also share the same physical background interface. The spectral coefficient matrix is independently transcribed and tested against the BVP operator, which substantially reduces common-code risk, but it is not an independent derivation of the underlying perturbation theory. A symbolic derivation, self-adjoint first-order system, or time-domain radial evolution would provide an additional physics-level check.
+
+Finally, this manuscript does not report ordinary $\ell=0$ boson-star quasinormal modes or new nonradial $\ell=1$ modes. The massive-scalar sideband sheets, outgoing gravitational asymptotics, gauge constraints, special $J=0$ and $J=1$ sectors, and complex-frequency root-counting protocol remain future work. The present result is the certification layer for that program.
+
+\section{Reproducibility, gate decisions, and data}\label{sec:repro}
+
+The numerical implementation is versioned and the generated tables carry runtime provenance. The implementation commit used for the radial certification is \texttt{\seqsplit{a5f1385069ff4fa0886e5584464f0b18232e4c3a}}. The preprint source commit is \texttt{\seqsplit{@@COMMIT@@}}, and its source tree is \texttt{\seqsplit{@@TREE@@}}. The tagged numerical release is \nolinkurl{radial-v0.3.1-hardened}. The report environment uses Python~@@PYTHON@@, NumPy~@@NUMPY@@, and SciPy~@@SCIPY@@.
+
+\begin{table}[t]
+\centering
+\caption{Gate decision at this checkpoint.}
+\label{tab:gates}
+\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+Gate & Decision & Evidence or blocker \\
+\midrule
+A: backgrounds & \statusopen & Collocation converged; independent shooting and radius discrepancy remain \\
+B: radial portion & \statuspass & Global BVP, independent equilibrated spectral pencil, shape agreement, and uncertainty budget \\
+B: full benchmark & \statusopen & Ordinary $\ell=0$ boson-star QNM benchmark remains \\
+Production nonradial & Not certified & Multidomain complex-frequency system, branch rules, constraints, and independent physical validation remain \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The principal machine-readable files are listed below.
+\begin{itemize}[nosep,leftmargin=2em]
+\item \path{data/background_radius_audit.json} and \path{data/radial_benchmarks.csv};
+\item \path{data/radial_uncertainty.json} and \path{data/radial_overtone_uncertainty.json};
+\item \path{data/report_radial_stability.csv}.
+\end{itemize}
+The certification CSV contains 27 rows with solver formulation, background representation, domain, resolution, eigenvalue, node count, BVP residuals, scaled and unscaled pencil residuals, left/right condition number, overlap, Git commit and tree, runtime versions, platform, and the version-pin hash.
+
+The full automated suite contains 20 tests. It covers background benchmarks and domains, Hermite derivative consistency, radial center behavior, physical outer conditions, stability crossing, Chebyshev differentiation, broad spectral resolution, PCHIP rejection, higher-mode nodes, overlap tracking, independent matrix assembly, center and outer rows, equilibration, and BVP--spectral eigenfunction agreement.
+
+\section{Conclusions}
+
+We have established a reproducible, two-method certification of relativistic radial modes of $\ell=1$ boson stars. The equilibrium sequence reproduces the published benchmark frequency and maximum-mass configuration. The radius audit isolates an unresolved $R_{99}$ versus $R_{999}$ discrepancy and prevents premature closure of the background gate.
+
+For the $a_{1}^{0}=0.08$ benchmark, a nonlinear global boundary-value solve and an independently assembled Chebyshev generalized eigenproblem agree on the ground mode at the few-$10^{-9}$ level in absolute $\sigmatwo$. They independently reproduce the sign change across the stability turning point. The first overtone converges to $\sigma_{1}=0.0907036982$, agrees with the published precision, and has the expected one-node structure. Cross-method physical eigenfunctions agree to high normalized overlap.
+
+The radial portion of the perturbation benchmark gate therefore passes. The next hard milestone is the ordinary $\ell=0$ boson-star QNM benchmark, including complex-frequency boundary conditions, published scalar-led and gravitational-led modes, root convergence, and an independent time-domain or second-method comparison. New nonradial $\ell=1$ frequencies should not be promoted to publication claims before that benchmark and the remaining background checks are complete.
+
+\section*{Acknowledgements and declarations}
+
+\noindent\textbf{Funding.} No external funding is declared for this working manuscript.
+
+\noindent\textbf{Competing interests.} None declared.
+
+\noindent\textbf{Data availability.} Machine-readable background, radial certification, stability-curve, and uncertainty data are included in the tagged repository described in Sec.~\ref{sec:repro}.
+
+\noindent\textbf{Code availability.} The source, tests, report generator, and complete Git history are included in the project release. A public archival URL and DOI will be assigned before journal submission.
+
+\noindent\textbf{Author contribution.} To be replaced by the final CRediT statement when the author list is fixed.
+
+\noindent\textbf{Use of AI tools.} Automated tools assisted with code generation, numerical cross-checks, report generation, and language editing. All equations, numerical outputs, claims, and limitations remain subject to author verification; responsibility for the final content rests with the authors.
+
+\appendix
+
+\section{Center and boundary audit identities}
+
+The spectral center rows can be checked without solving the eigenproblem. Define the leading-value functional
+\begin{equation}
+\mathcal{L}_{\epsilon}[f]=f(\epsilon)-\frac{\epsilon}{2}f'(\epsilon).
+\end{equation}
+The first homogeneous center equation is
+\begin{equation}
+\mathcal{L}_{\epsilon}[\delta L]-\mathcal{L}_{\epsilon}[\delta\varphi]=0.
+\end{equation}
+Writing $d(\sigmatwo)=d_{0}-\sigmatwo/(10\alpha_{c}^{2})$, the second is
+\begin{equation}
+\delta L'(\epsilon)-2\epsilon d_{0}\mathcal{L}_{\epsilon}[\delta\varphi]
+=-\sigmatwo\frac{\epsilon}{5\alpha_{c}^{2}}\mathcal{L}_{\epsilon}[\delta\varphi].
+\end{equation}
+These expressions are placed directly into $A$ and $B$ and are tested against the independent center-series function. At the outer boundary, the two matrix rows are the numerical Dirichlet conditions equivalent to $F_{1}=F_{2}=0$.
+
+\section{Diagnostic definitions}
+
+For completeness, Table~\ref{tab:diagnostics} distinguishes the principal diagnostics. This terminology is also used in the CSV headers.
+
+\begin{table}[h]
+\centering
+\caption{Diagnostic definitions and interpretation.}
+\label{tab:diagnostics}
+\small
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Diagnostic & Definition & Interpretation \\
+\midrule
+SciPy interval RMS & $\max$ of \code{solve\_bvp.rms\_residuals} & Relative RMS defect over adaptive intervals \\
+Dense pointwise residual & $\mathcal{R}_{\infty}$ on 3000 points & Sampled maximum local ODE defect \\
+Physical $F_{1},F_{2}$ & Published finite-radius equations & Verifies imposed endpoint data \\
+Scaled pencil residual & Eq.~\eqref{eq:residual} for $(A_{s},B_{s},\bm{v})$ & Accuracy of equilibrated algebraic eigenpair \\
+Unscaled pencil residual & Eq.~\eqref{eq:residual} for $(A,B,\bm{x})$ & Accuracy after transformation to original pencil \\
+Condition diagnostic & Eq.~\eqref{eq:condition} & Local left/right eigenvalue sensitivity \\
+Overlap & Normalized physical-field inner product & Mode identity across methods or resolutions \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Reproduction commands and data schema}
+
+The principal commands are
+\begin{verbatim}
+python -m radial.diagnostics --output data/radial_benchmarks.csv \
+  --uncertainty-output data/radial_uncertainty.json \
+  --overtone-uncertainty-output data/radial_overtone_uncertainty.json
+python paper/build_preprint.py
+python -m pytest -q
+\end{verbatim}
+
+The future nonradial catalog will extend the present schema with background identifier, $a_{1}^{0}$, $\omega_{s}$, mass, charge, radius, compactness, total angular momentum $J$, parity, mode identifier, complex frequency, dominant channel, mode character, resolution, solver, residual, condition number, uncertainty, and Git commit. No such nonradial rows are claimed in the present data release.
+
+\begin{table}[h]
+\centering
+\caption{Release checklist for the current radial checkpoint.}
+\label{tab:checklist}
+\small
+\begin{tabularx}{\textwidth}{@{}Xl@{}}
+\toprule
+Check & Status \\
+\midrule
+Portable tagged source and complete Git bundle & Verified \\
+Background frequency and maximum-mass benchmarks & Reproduced \\
+Literal $R_{99}$ versus $R_{999}$ audit & Recorded; discrepancy open \\
+Global BVP ground and first overtone & Reproduced \\
+Independent equilibrated spectral low modes & Reproduced \\
+Independent spectral coefficient transcription & Direct operator tests pass \\
+Conservative ground and overtone uncertainty & Recorded separately \\
+Ordinary $\ell=0$ QNM benchmark & Not implemented \\
+New nonradial spectrum & Not implemented \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{thebibliography}{99}
+
+\bibitem{Alcubierre2018}
+M.~Alcubierre, J.~Barranco, A.~Bernal, J.~C.~Degollado, A.~Diez-Tejedor, M.~Megevand, D.~Nunez, and O.~Sarbach,
+``$\ell$-boson stars,''
+\emph{Class. Quantum Grav.} \textbf{35}, 19LT01 (2018), arXiv:1805.11488.
+
+\bibitem{Alcubierre2021}
+M.~Alcubierre, J.~Barranco, A.~Bernal, J.~C.~Degollado, A.~Diez-Tejedor, M.~Megevand, D.~Nunez, and O.~Sarbach,
+``On the linear stability of $\ell$-boson stars with respect to radial perturbations,''
+\emph{Phys. Rev. D} \textbf{103}, 124046 (2021), arXiv:2103.15012.
+
+\bibitem{Virtanen2020}
+P.~Virtanen \emph{et al.},
+``SciPy 1.0: fundamental algorithms for scientific computing in Python,''
+\emph{Nature Methods} \textbf{17}, 261--272 (2020).
+
+\bibitem{Trefethen2000}
+L.~N.~Trefethen,
+\emph{Spectral Methods in MATLAB}
+(SIAM, Philadelphia, 2000).
+
+\bibitem{Boyd2001}
+J.~P.~Boyd,
+\emph{Chebyshev and Fourier Spectral Methods}, 2nd ed.
+(Dover, New York, 2001).
+
+\bibitem{Batic2026}
+D.~Batic, D.~Dutykh, and M.~E.~Sukaiti,
+``Quasinormal modes of the Kazakov--Solodukhin quantum-corrected black hole: a spectral analysis,''
+\emph{Eur. Phys. J. C} \textbf{86}, 847 (2026), doi:10.1140/epjc/s10052-026-16102-3.
+
+\end{thebibliography}
+
+\end{document}
