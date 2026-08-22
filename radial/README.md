@@ -16,10 +16,20 @@ residuals, SciPy's maximum interval RMS relative residual, and a separately
 sampled maximum pointwise relative ODE residual.
 
 `solve_radial_spectrum` is an independent Chebyshev-Lobatto discretization of
-`A x = sigma2 B x`. It has no nonlinear eigenvalue guess and returns the ground
-mode and overtones simultaneously. At `a_1^0=0.08`, both methods reproduce
+`A x = sigma2 B x`. Its coefficient matrix is transcribed separately from the
+BVP right-hand side and checked against direct operator evaluations. The pencil
+is equilibrated on both sides before solution and reports scaled and unscaled
+residuals plus a left/right eigenvalue condition number. It has no nonlinear
+eigenvalue guess and returns the ground mode and overtones simultaneously. At
+`a_1^0=0.08`, both methods reproduce
 `sigma0^2 ~= 2.40043e-4`; the spectral first overtone has one node and
 `sigma1^2 ~= 8.227e-3`.
+
+The spectral solver deliberately rejects PCHIP backgrounds: a small algebraic
+matrix residual does not certify a pencil built from nonsmooth coefficient
+interpolation. PCHIP is retained only for local-BVP representation uncertainty.
+Nodes are located by interpolation and bracketing, and modes can additionally
+be continued by normalized physical-eigenfunction overlap.
 
 The earlier affine outward-basis implementation is retained in
 `radial/shooting.py` only for historical comparison and emits a deprecation
@@ -36,7 +46,7 @@ python -m pytest tests/test_radial_a008.py -q
 Regenerate the complete, slower validation table with:
 
 ```powershell
-python -m radial.diagnostics --output data/radial_benchmarks.csv --uncertainty-output data/radial_uncertainty.json
+python -m radial.diagnostics --output data/radial_benchmarks.csv --uncertainty-output data/radial_uncertainty.json --overtone-uncertainty-output data/radial_overtone_uncertainty.json
 ```
 
 The default background interface reconstructs the regular field `u=psi/r^ell`

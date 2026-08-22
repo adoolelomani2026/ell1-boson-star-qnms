@@ -17,8 +17,13 @@ discrepancy central to the provisional Gate A decision.
 Chebyshev generalized-eigenvalue results, including the first overtone, explicit
 residual definitions, runtime and Git provenance, background representation,
 and the SHA-256 of the top-level version-pin file. `radial_uncertainty.json`
-assembles domain, spectral-resolution, representation, and cross-method changes.
+assembles domain, broad spectral-resolution, representation, and cross-method
+changes for the ground mode. `radial_overtone_uncertainty.json` separately
+records the more domain-sensitive first overtone. Conservative sums of the
+deterministic systematic changes are the headline uncertainties; quadrature
+sums are retained as secondary diagnostics only.
 Legacy affine residual normalizations are not included.
 
 Regenerate both records with `python -m radial.diagnostics --output
-data/radial_benchmarks.csv --uncertainty-output data/radial_uncertainty.json`.
+data/radial_benchmarks.csv --uncertainty-output data/radial_uncertainty.json
+--overtone-uncertainty-output data/radial_overtone_uncertainty.json`.

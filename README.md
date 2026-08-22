@@ -10,10 +10,11 @@ published perturbation benchmarks pass.
 - Gate A (background): in progress. The collocation solver reproduces the
   `ell=1`, `a10=0.08` frequency and the maximum-mass model; independent shooting
   and the published effective-radius convention still need resolution.
-- Gate B (perturbation benchmarks): the radial `ell=1` ground mode, first
-  overtone, and stability crossing are independently reproduced by a nonlinear
-  global BVP and a Chebyshev generalized-eigenvalue solver. The ordinary
-  `ell=0` QNM benchmark remains unimplemented.
+- Gate B (perturbation benchmarks): the radial `ell=1` milestone passes. The
+  ground mode, first overtone, eigenfunctions, and stability crossing are
+  independently reproduced by a nonlinear global BVP and an equilibrated
+  Chebyshev generalized-eigenvalue solver. The ordinary `ell=0` QNM benchmark
+  is the next hard milestone.
 - Gates C-H: not yet implemented.
 
 The conventions are fixed in [CONVENTIONS.md](CONVENTIONS.md). The equations and

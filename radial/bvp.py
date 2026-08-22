@@ -10,7 +10,8 @@ from scipy.integrate import solve_bvp
 from background.ell_boson_star import BackgroundSolution
 from .center_series import center_d, center_series
 from .coefficients import RadialBackground, pulsation_rhs
-from .shooting import _node_count, integrate_mode, outer_residual
+from .mode_tracking import node_count
+from .shooting import integrate_mode, outer_residual
 
 
 @dataclass(frozen=True)
@@ -120,7 +121,7 @@ def solve_radial_bvp(
         physical_boundary_residual=physical_residual,
         max_scipy_interval_rms_relative_residual=max_rms_residual,
         max_dense_pointwise_relative_residual=max_pointwise_residual,
-        node_count=_node_count(delta_lambda),
+        node_count=node_count(radii, delta_lambda),
         success=bool(result.success),
         message=result.message,
         nodes_used=result.x.size,

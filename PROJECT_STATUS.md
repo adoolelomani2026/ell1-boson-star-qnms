@@ -94,3 +94,21 @@ The radial numerical milestone is independently certified by the BVP and
 spectral formulations. Gate A remains in progress, and full Gate B still
 requires the ordinary `ell=0` QNM benchmark. Do not use the deprecated affine
 formulation for nonradial QNMs.
+
+## v0.3.1 spectral hardening
+
+- The radial portion of Gate B is a pass, as confirmed by the v0.3 audit.
+- The generalized pencil is now row-and-column equilibrated and reports both
+  scaled and unscaled residuals plus a left/right conditioning diagnostic.
+- The spectral coefficient matrix and center coefficient are independently
+  transcribed rather than generated through the BVP `pulsation_rhs` and
+  `center_d`; matrix-operator identity tests guard the two implementations.
+- PCHIP backgrounds are rejected by the global spectral solver.
+- Interpolated/bracketed zero finding replaces the fixed `1e-4` threshold, and
+  normalized eigenfunction overlap supports mode continuation.
+- Ground-mode resolution coverage spans `N=50` through `160`. The first
+  overtone has BVP domain rows at `r_max=40,50,60` and its own conservative
+  uncertainty record.
+- A smooth-background mapped multidomain architecture remains a pre-production
+  requirement for complex nonradial QNMs; increasing one dense domain is not
+  the intended production strategy.

@@ -8,9 +8,9 @@ import numpy as np
 from scipy.linalg import eig
 
 from background.ell_boson_star import BackgroundSolution
-from .center_series import center_d
-from .coefficients import RadialBackground, pulsation_rhs
-from .shooting import _node_count
+from .coefficients import RadialBackground
+from .independent_operator import independent_center_d0, independent_coefficient_blocks
+from .mode_tracking import node_count
 
 
 @dataclass(frozen=True)
@@ -22,7 +22,31 @@ class SpectralRadialMode:
     physical_scalar: np.ndarray
     delta_lambda: np.ndarray
     node_count: int
-    generalized_residual: float
+    scaled_generalized_residual: float
+    unscaled_generalized_residual: float
+    eigenvalue_condition_number: float
+
+    @property
+    def generalized_residual(self) -> float:
+        """Backward-compatible name for the unscaled pencil residual."""
+        return self.unscaled_generalized_residual
+
+
+def equilibrate_pencil(matrix_a: np.ndarray, matrix_b: np.ndarray):
+    """Two-sided max-norm equilibration of a generalized eigenvalue pencil."""
+    combined = np.maximum(np.abs(matrix_a), np.abs(matrix_b))
+    row_norm = np.max(combined, axis=1)
+    row_scale = 1.0 / np.maximum(row_norm, np.finfo(float).tiny)
+    row_a = row_scale[:, None] * matrix_a
+    row_b = row_scale[:, None] * matrix_b
+    column_norm = np.max(np.maximum(np.abs(row_a), np.abs(row_b)), axis=0)
+    column_scale = 1.0 / np.maximum(column_norm, np.finfo(float).tiny)
+    return (
+        row_a * column_scale[None, :],
+        row_b * column_scale[None, :],
+        row_scale,
+        column_scale,
+    )
 
 
 def chebyshev_lobatto(points: int, r_min: float, r_max: float):
@@ -54,19 +78,7 @@ def assemble_generalized_problem(
 ):
     background = RadialBackground(solution, representation=background_representation)
     radius, d1, d2 = chebyshev_lobatto(points, epsilon, r_max)
-    zeros = np.zeros((4, points))
-
-    def response(component: int, sigma2: float = 0.0):
-        state = zeros.copy()
-        state[component] = 1.0
-        return pulsation_rhs(radius, state, sigma2, background)
-
-    phi = response(0)
-    dphi = response(1)
-    delta_l = response(2)
-    ddelta_l = response(3)
-    phi_lambda = response(0, 1.0)[1] - phi[1]
-    l_lambda = response(2, 1.0)[3] - delta_l[3]
+    coefficients = independent_coefficient_blocks(radius, background)
 
     size = 2 * points
     matrix_a = np.zeros((size, size))
@@ -74,19 +86,25 @@ def assemble_generalized_problem(
     interior = range(1, points - 1)
     for i in interior:
         # delta-varphi equation: D2 phi - RHS(lambda=0) = lambda q phi.
-        matrix_a[i, :points] = d2[i] - dphi[1, i] * d1[i]
-        matrix_a[i, i] -= phi[1, i]
-        matrix_a[i, points:] = -ddelta_l[1, i] * d1[i]
-        matrix_a[i, points + i] -= delta_l[1, i]
-        matrix_b[i, i] = phi_lambda[i]
+        matrix_a[i, :points] = (
+            d2[i] - coefficients.phi_prime_in_phi_equation[i] * d1[i]
+        )
+        matrix_a[i, i] -= coefficients.phi_in_phi_equation[i]
+        matrix_a[i, points:] = (
+            -coefficients.delta_l_prime_in_phi_equation[i] * d1[i]
+        )
+        matrix_a[i, points + i] -= coefficients.delta_l_in_phi_equation[i]
+        matrix_b[i, i] = coefficients.sigma2_phi_in_phi_equation[i]
 
         # delta-L equation.
         row = points + i
-        matrix_a[row, :points] = -dphi[3, i] * d1[i]
-        matrix_a[row, i] -= phi[3, i]
-        matrix_a[row, points:] = d2[i] - ddelta_l[3, i] * d1[i]
-        matrix_a[row, points + i] -= delta_l[3, i]
-        matrix_b[row, points + i] = l_lambda[i]
+        matrix_a[row, :points] = -coefficients.phi_prime_in_l_equation[i] * d1[i]
+        matrix_a[row, i] -= coefficients.phi_in_l_equation[i]
+        matrix_a[row, points:] = (
+            d2[i] - coefficients.delta_l_prime_in_l_equation[i] * d1[i]
+        )
+        matrix_a[row, points + i] -= coefficients.delta_l_in_l_equation[i]
+        matrix_b[row, points + i] = coefficients.sigma2_delta_l_in_l_equation[i]
 
     # Regular center conditions, homogeneous in the arbitrary mode amplitude.
     center_value = np.zeros(points)
@@ -95,7 +113,7 @@ def assemble_generalized_problem(
     matrix_a[0, :points] = -leading_value
     matrix_a[0, points:] = leading_value
 
-    d0 = center_d(0.0, background)
+    d0 = independent_center_d0(background)
     matrix_a[points, :points] = -2.0 * epsilon * d0 * leading_value
     matrix_a[points, points:] = d1[0]
     matrix_b[points, :points] = (
@@ -120,6 +138,11 @@ def solve_radial_spectrum(
     sigma2_max: float = 0.1,
     imaginary_tolerance: float = 1e-7,
 ) -> list[SpectralRadialMode]:
+    if background_representation != "hermite":
+        raise ValueError(
+            "the spectral certification solver requires the C1 Hermite background; "
+            "PCHIP is permitted only for local-BVP uncertainty checks"
+        )
     matrix_a, matrix_b, radius, background = assemble_generalized_problem(
         solution,
         points=points,
@@ -127,7 +150,10 @@ def solve_radial_spectrum(
         r_max=r_max,
         background_representation=background_representation,
     )
-    eigenvalues, eigenvectors = eig(matrix_a, matrix_b, check_finite=True)
+    scaled_a, scaled_b, _, column_scale = equilibrate_pencil(matrix_a, matrix_b)
+    eigenvalues, left_vectors, right_vectors = eig(
+        scaled_a, scaled_b, left=True, right=True, check_finite=True
+    )
     modes: list[SpectralRadialMode] = []
     for index, value in enumerate(eigenvalues):
         if not np.isfinite(value) or abs(value.imag) > imaginary_tolerance:
@@ -135,7 +161,8 @@ def solve_radial_spectrum(
         sigma2 = float(value.real)
         if not sigma2_min <= sigma2 <= sigma2_max:
             continue
-        vector = eigenvectors[:, index]
+        scaled_vector = right_vectors[:, index]
+        vector = column_scale * scaled_vector
         pivot = int(np.argmax(np.abs(vector)))
         vector = vector * np.exp(-1j * np.angle(vector[pivot]))
         if np.max(np.abs(vector.imag)) > 1e-6 * np.max(np.abs(vector.real)):
@@ -147,11 +174,22 @@ def solve_radial_spectrum(
         _, _, _, psi, _, _, _, _, _, _, _ = background.arrays(radius)
         physical_scalar = psi * phi
         delta_lambda = 2.0 * background.kappa * psi**2 * delta_l
-        residual_vector = matrix_a @ vector - sigma2 * (matrix_b @ vector)
-        denominator = (
+        unscaled_residual_vector = matrix_a @ vector - sigma2 * (matrix_b @ vector)
+        unscaled_denominator = (
             np.linalg.norm(matrix_a @ vector)
             + abs(sigma2) * np.linalg.norm(matrix_b @ vector)
             + 1e-300
+        )
+        scaled_residual_vector = scaled_a @ scaled_vector - sigma2 * (scaled_b @ scaled_vector)
+        scaled_denominator = (
+            np.linalg.norm(scaled_a @ scaled_vector)
+            + abs(sigma2) * np.linalg.norm(scaled_b @ scaled_vector)
+            + 1e-300
+        )
+        left = left_vectors[:, index]
+        pairing = abs(np.vdot(left, scaled_b @ scaled_vector))
+        condition_number = float(
+            np.linalg.norm(left) * np.linalg.norm(scaled_vector) / max(pairing, 1e-300)
         )
         modes.append(
             SpectralRadialMode(
@@ -161,9 +199,14 @@ def solve_radial_spectrum(
                 delta_l=delta_l,
                 physical_scalar=physical_scalar,
                 delta_lambda=delta_lambda,
-                node_count=_node_count(delta_lambda),
-                generalized_residual=float(np.linalg.norm(residual_vector) / denominator),
+                node_count=node_count(radius, delta_lambda),
+                scaled_generalized_residual=float(
+                    np.linalg.norm(scaled_residual_vector) / scaled_denominator
+                ),
+                unscaled_generalized_residual=float(
+                    np.linalg.norm(unscaled_residual_vector) / unscaled_denominator
+                ),
+                eigenvalue_condition_number=condition_number,
             )
         )
     return sorted(modes, key=lambda mode: mode.sigma2)
-

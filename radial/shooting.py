@@ -13,6 +13,7 @@ from background.ell_boson_star import BackgroundSolution
 
 from .center_series import center_series
 from .coefficients import RadialBackground, pulsation_rhs
+from .mode_tracking import node_count
 
 
 @dataclass(frozen=True)
@@ -150,17 +151,6 @@ def eliminate_center_c(
     return center_c, residual, zero, stepped
 
 
-def _node_count(values: np.ndarray) -> int:
-    # The published outer conditions drive the physical perturbation to zero;
-    # cancellation of exponentially large numerical variables can create a
-    # tiny sign flip in that tail. Count only resolved interior nodes.
-    threshold = 1e-4 * np.max(np.abs(values))
-    significant = values[np.abs(values) > threshold]
-    if significant.size < 2:
-        return 0
-    return int(np.count_nonzero(significant[1:] * significant[:-1] < 0.0))
-
-
 def solve_radial_mode(
     solution: BackgroundSolution,
     *,
@@ -241,7 +231,7 @@ def solve_radial_mode(
         state=state,
         physical_scalar=physical_scalar,
         delta_lambda=delta_lambda,
-        node_count=_node_count(delta_lambda),
+        node_count=node_count(radii, delta_lambda),
         ivp_success=zero.success and stepped.success,
         root_success=bool(root_result.converged),
         root_message=f"brentq converged in {root_result.iterations} iterations",
