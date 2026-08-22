@@ -2,11 +2,13 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+tmp/
 *.egg-info/
 build/
 dist/
 data/*.npz
 data/*.csv
 !data/radial_benchmarks.csv
+!data/report_radial_stability.csv
 figures/*.pdf
 figures/*.png
