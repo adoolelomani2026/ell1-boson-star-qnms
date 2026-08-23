@@ -162,7 +162,9 @@ manuscript under `pdfs/axial_matter_channel_ell1_preprint.pdf`.
 The current author manuscript is stored under `pdfs/`. Publication metadata and
 a repository DOI should be added after the author deposits the final release.
 Until then, cite the manuscript title and author information printed in the PDF
-and include this repository URL once it is public.
+and include the repository URL:
+
+`https://github.com/adoolelomani2026/ell1-boson-star-qnms`
 
 ## License
 
