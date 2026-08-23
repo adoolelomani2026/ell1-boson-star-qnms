@@ -1,0 +1,239 @@
+{
+  "calculation": "neutral ell=1, J=L=2 axial two-channel scattering",
+  "background": {
+    "a1_0": 0.08,
+    "omega": 0.8518974043710469,
+    "adm_mass": 1.1712711606475235,
+    "first_open_scalar_threshold": 0.14810259562895312
+  },
+  "normalization": "positive diagonal reciprocity metric inferred algebraically from the two-channel S matrix; this is not labeled a canonical physical flux",
+  "frequency_scan": [
+    {
+      "sigma": 0.16,
+      "linear_residual": 6.2706344248456145e-12,
+      "raw_matrix": [
+        [
+          {
+            "real": -0.6285473438687581,
+            "imag": -0.7777692119096579
+          },
+          {
+            "real": -1.230879133780578,
+            "imag": -0.5618844809217343
+          }
+        ],
+        [
+          {
+            "real": 2.2116348851458133e-06,
+            "imag": 1.009590125612082e-06
+          },
+          {
+            "real": -0.9993986412305315,
+            "imag": 0.03462753716736152
+          }
+        ]
+      ],
+      "scalar_to_gravity_flux_weight_ratio": 556547.1611181798,
+      "reciprocity_ratio_imaginary_fraction": 3.361061253637919e-08,
+      "gravity_incident": {
+        "gravity_fraction": 0.9999967104790412,
+        "scalar_fraction": 3.2895282554314465e-06,
+        "sum": 1.0000000000072966
+      },
+      "scalar_incident": {
+        "gravity_fraction": 3.2895282552494357e-06,
+        "scalar_fraction": 0.9999967104237094,
+        "sum": 0.9999999999519646
+      },
+      "unitarity_spectral_defect": 8.73131993187958e-11
+    },
+    {
+      "sigma": 0.18,
+      "linear_residual": 1.614879987061236e-11,
+      "raw_matrix": [
+        [
+          {
+            "real": 0.7773553683819368,
+            "imag": -0.6290560323432219
+          },
+          {
+            "real": 2.302067424147617,
+            "imag": 0.15443188328146024
+          }
+        ],
+        [
+          {
+            "real": -3.0874255172843426e-06,
+            "imag": -2.0711685456385884e-07
+          },
+          {
+            "real": 0.6863690315361065,
+            "imag": 0.7272485222466857
+          }
+        ]
+      ],
+      "scalar_to_gravity_flux_weight_ratio": 745626.869604353,
+      "reciprocity_ratio_imaginary_fraction": 6.079873220593245e-09,
+      "gravity_incident": {
+        "gravity_fraction": 0.9999928605796133,
+        "scalar_fraction": 7.1394471537956045e-06,
+        "sum": 1.000000000026767
+      },
+      "scalar_incident": {
+        "gravity_fraction": 7.139447153668434e-06,
+        "scalar_fraction": 0.9999928605618009,
+        "sum": 1.0000000000089546
+      },
+      "unitarity_spectral_defect": 3.638716159395594e-11
+    },
+    {
+      "sigma": 0.2,
+      "linear_residual": 4.3170600617916004e-11,
+      "raw_matrix": [
+        [
+          {
+            "real": 0.5987268036189454,
+            "imag": 0.8009471281259627
+          },
+          {
+            "real": -2.747812896761149,
+            "imag": 1.3358977021516591
+          }
+        ],
+        [
+          {
+            "real": 2.917793537761847e-06,
+            "imag": -1.4185367196551096e-06
+          },
+          {
+            "real": -0.26009986115001577,
+            "imag": -0.96557658921181
+          }
+        ]
+      ],
+      "scalar_to_gravity_flux_weight_ratio": 941743.4396185782,
+      "reciprocity_ratio_imaginary_fraction": 2.271179100970617e-08,
+      "gravity_incident": {
+        "gravity_fraction": 0.9999900874249864,
+        "scalar_fraction": 9.91257065745653e-06,
+        "sum": 0.9999999999956438
+      },
+      "scalar_incident": {
+        "gravity_fraction": 9.912570657250186e-06,
+        "scalar_fraction": 0.9999900874041701,
+        "sum": 0.9999999999748274
+      },
+      "unitarity_spectral_defect": 8.702393835360945e-11
+    },
+    {
+      "sigma": 0.25,
+      "linear_residual": 2.959477952751233e-10,
+      "raw_matrix": [
+        [
+          {
+            "real": 0.3458821446659339,
+            "imag": -0.938272576722434
+          },
+          {
+            "real": -3.1634222852708356,
+            "imag": 2.2177372958335075
+          }
+        ],
+        [
+          {
+            "real": 2.143577673043917e-06,
+            "imag": -1.5027686245569592e-06
+          },
+          {
+            "real": 0.9999811436308869,
+            "imag": -0.005253434279074695
+          }
+        ]
+      ],
+      "scalar_to_gravity_flux_weight_ratio": 1475767.5505941743,
+      "reciprocity_ratio_imaginary_fraction": 3.9212678458878086e-08,
+      "gravity_incident": {
+        "gravity_fraction": 0.9999898862280618,
+        "scalar_fraction": 1.0113787407001743e-05,
+        "sum": 1.0000000000154687
+      },
+      "scalar_incident": {
+        "gravity_fraction": 1.011378740660731e-05,
+        "scalar_fraction": 0.999989886189061,
+        "sum": 0.9999999999764676
+      },
+      "unitarity_spectral_defect": 1.3025152899588089e-10
+    },
+    {
+      "sigma": 0.3,
+      "linear_residual": 3.0867501063570393e-10,
+      "raw_matrix": [
+        [
+          {
+            "real": -0.9909607897518865,
+            "imag": 0.13413025179203628
+          },
+          {
+            "real": -1.3729344000400454,
+            "imag": 3.1847869102746733
+          }
+        ],
+        [
+          {
+            "real": 6.607651847365396e-07,
+            "imag": -1.5327732562944896e-06
+          },
+          {
+            "real": 0.5828409269427717,
+            "imag": 0.8125827127811346
+          }
+        ]
+      ],
+      "scalar_to_gravity_flux_weight_ratio": 2077794.0192544148,
+      "reciprocity_ratio_imaginary_fraction": 1.420924126771987e-07,
+      "gravity_incident": {
+        "gravity_fraction": 0.9999942112714778,
+        "scalar_fraction": 5.788743455658695e-06,
+        "sum": 1.0000000000149334
+      },
+      "scalar_incident": {
+        "gravity_fraction": 5.788743455420197e-06,
+        "scalar_fraction": 0.9999942112302571,
+        "sum": 0.9999999999737126
+      },
+      "unitarity_spectral_defect": 3.481683448603838e-10
+    }
+  ],
+  "domain_audit_at_sigma_0p20": [
+    {
+      "r_match": 12.0,
+      "r_end": 30.0,
+      "linear_residual": 1.1664594975734513e-11,
+      "gravity_to_scalar_fraction": 9.916715460978498e-06,
+      "scalar_to_gravity_fraction": 9.916715460790676e-06,
+      "gravity_balance": 1.000000000025014,
+      "scalar_balance": 1.0000000000060727,
+      "unitarity_spectral_defect": 1.41562221049111e-10
+    },
+    {
+      "r_match": 14.0,
+      "r_end": 35.0,
+      "linear_residual": 4.3170600617916004e-11,
+      "gravity_to_scalar_fraction": 9.91257065745653e-06,
+      "scalar_to_gravity_fraction": 9.912570657250186e-06,
+      "gravity_balance": 0.9999999999956438,
+      "scalar_balance": 0.9999999999748274,
+      "unitarity_spectral_defect": 8.702393835360945e-11
+    },
+    {
+      "r_match": 16.0,
+      "r_end": 40.0,
+      "linear_residual": 3.823520618228237e-10,
+      "gravity_to_scalar_fraction": 9.912513656097839e-06,
+      "scalar_to_gravity_fraction": 9.912513655665673e-06,
+      "gravity_balance": 1.0000000000175078,
+      "scalar_balance": 0.9999999999739057,
+      "unitarity_spectral_defect": 2.0122353030499358e-10
+    }
+  ]
+}

@@ -6,9 +6,7 @@ tmp/
 *.egg-info/
 build/
 dist/
-data/*.npz
-data/*.csv
-!data/radial_benchmarks.csv
-!data/report_radial_stability.csv
-figures/*.pdf
-figures/*.png
+output/
+tmp/
+FINAL_TO_PRESENT/
+_OLD_GENERATED_OUTPUTS/

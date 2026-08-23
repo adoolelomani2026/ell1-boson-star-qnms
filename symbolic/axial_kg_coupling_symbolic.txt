@@ -1,0 +1,8 @@
+derived_delta_box_coefficient
+2*I*omega*F(r)*h0(r)/alpha(r)**2 - I*sigma*F(r)*h0(r)/alpha(r)**2 - F(r)*Derivative(h1(r), r)/gamma(r)**2 + F(r)*h1(r)*Derivative(gamma(r), r)/gamma(r)**3 - F(r)*h1(r)*Derivative(alpha(r), r)/(alpha(r)*gamma(r)**2) - 2*h1(r)*Derivative(F(r), r)/gamma(r)**2
+
+expected_coefficient
+I*(2*omega - sigma)*F(r)*h0(r)/alpha(r)**2 - (((-Derivative(gamma(r), r)/gamma(r) + Derivative(alpha(r), r)/alpha(r))*F(r) + 2*Derivative(F(r), r))*h1(r) + F(r)*Derivative(h1(r), r))/gamma(r)**2
+
+residual
+0

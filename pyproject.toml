@@ -7,15 +7,19 @@ name = "ell1-qnms"
 version = "0.1.0"
 description = "Relativistic ell-boson-star backgrounds and QNM research code"
 requires-python = ">=3.11"
-dependencies = ["numpy>=2.0", "scipy>=1.14", "matplotlib>=3.9"]
+dependencies = ["numpy>=2.0", "scipy>=1.14", "matplotlib>=3.9", "sympy>=1.14"]
 
 [project.optional-dependencies]
 test = ["pytest>=8.0"]
 
+[tool.setuptools]
+package-dir = {"" = "python"}
+
 [tool.setuptools.packages.find]
-include = ["background*", "radial*"]
+where = ["python"]
+include = ["background*", "radial*", "nonradial*", "experiments*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = ["python"]
 markers = ["slow: solver-executing convergence and stability tests"]

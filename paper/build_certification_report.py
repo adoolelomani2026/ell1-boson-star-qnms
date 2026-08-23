@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "python"))
 
 import matplotlib
 
@@ -45,11 +45,11 @@ from radial.spectral import solve_radial_spectrum
 
 OUTPUT = ROOT / "output" / "pdf" / "boson_star_background_radial_certification_v031.pdf"
 ASSETS = ROOT / "tmp" / "pdfs" / "certification_report"
-SEQUENCE = ROOT / "data" / "ell1_sequence.csv"
-RADIAL = ROOT / "data" / "radial_benchmarks.csv"
-GROUND_UNCERTAINTY = ROOT / "data" / "radial_uncertainty.json"
-OVERTONE_UNCERTAINTY = ROOT / "data" / "radial_overtone_uncertainty.json"
-RADIUS_AUDIT = ROOT / "data" / "background_radius_audit.json"
+SEQUENCE = ROOT / "reports" / "background" / "ell1_sequence.csv"
+RADIAL = ROOT / "reports" / "radial" / "radial_benchmarks.csv"
+GROUND_UNCERTAINTY = ROOT / "reports" / "radial" / "radial_uncertainty.json"
+OVERTONE_UNCERTAINTY = ROOT / "reports" / "radial" / "radial_overtone_uncertainty.json"
+RADIUS_AUDIT = ROOT / "reports" / "background" / "background_radius_audit.json"
 
 NAVY = colors.HexColor("#15324B")
 BLUE = colors.HexColor("#1F6F8B")
@@ -89,6 +89,8 @@ def _configure_plotting() -> None:
             "legend.frameon": False,
             "figure.facecolor": "white",
             "savefig.facecolor": "white",
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
         }
     )
 
@@ -211,7 +213,7 @@ def _build_numerical_assets():
     axes[1, 0].set_ylabel(r"$\gamma$")
     axes[1, 1].set_ylabel(r"$M(r)/M_T$")
     axes[0, 0].legend(ncol=1)
-    fig.suptitle("Representative relativistic ell=1 boson-star backgrounds", y=1.01)
+    fig.suptitle(r"Representative relativistic $\ell=1$ boson-star backgrounds", y=1.01)
     fig.tight_layout()
     fig2 = _save_figure(fig, "figure_02_representative_backgrounds")
 
@@ -373,7 +375,7 @@ def _build_numerical_assets():
     fig.tight_layout()
     fig6 = _save_figure(fig, "figure_06_radial_eigenfunctions")
 
-    stability_path = ROOT / "data" / "report_radial_stability.csv"
+    stability_path = ROOT / "reports" / "radial" / "report_radial_stability.csv"
     with stability_path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(
             stream,
@@ -737,7 +739,7 @@ def _build_pdf(data) -> None:
 
     # 3. Background results.
     h1("3. Background sequence and radius audit")
-    story.append(_figure(data["figures"][0], "The 21-model equilibrium sequence from a1^0=0.02 to 0.12. The vertical dashed line marks the maximum-mass grid point; translucent bands identify representative profiles used throughout this report. The sequence data are stored in data/ell1_sequence.csv.", 1, styles))
+    story.append(_figure(data["figures"][0], "The 21-model equilibrium sequence from a1^0=0.02 to 0.12. The vertical dashed line marks the maximum-mass grid point; translucent bands identify representative profiles used throughout this report. The sequence data are stored in reports/background/ell1_sequence.csv.", 1, styles))
     h2("3.1 Representative models")
     reps = data["representatives"]
     table2 = [["Model", "a1^0", "omega", "M_T", "Q", "R99", "C99"]]
@@ -937,17 +939,17 @@ def _build_pdf(data) -> None:
         ["NumPy / SciPy", f"{np.__version__} / {gu['provenance']['scipy_version']}"],
         ["Platform", platform.platform()],
         ["Top-level pin SHA-256", pin_sha],
-        ["Background sequence", "data/ell1_sequence.csv"],
-        ["Radial certification", "data/radial_benchmarks.csv (27 rows)"],
-        ["Ground uncertainty", "data/radial_uncertainty.json"],
-        ["Overtone uncertainty", "data/radial_overtone_uncertainty.json"],
-        ["Report stability curve", "data/report_radial_stability.csv (13 regenerated models)"],
+        ["Background sequence", "reports/background/ell1_sequence.csv"],
+        ["Radial certification", "reports/radial/radial_benchmarks.csv (27 rows)"],
+        ["Ground uncertainty", "reports/radial/radial_uncertainty.json"],
+        ["Overtone uncertainty", "reports/radial/radial_overtone_uncertainty.json"],
+        ["Report stability curve", "reports/radial/report_radial_stability.csv (13 regenerated models)"],
         ["Automated suite", "20 tests"],
     ]
     story.append(_table(manifest, [5.0 * cm, 11.4 * cm], styles))
     h2("Regeneration commands")
     p(
-        "python -m radial.diagnostics --output data/radial_benchmarks.csv --uncertainty-output data/radial_uncertainty.json --overtone-uncertainty-output data/radial_overtone_uncertainty.json<br/>"
+        "python -m radial.diagnostics --output reports/radial/radial_benchmarks.csv --uncertainty-output reports/radial/radial_uncertainty.json --overtone-uncertainty-output reports/radial/radial_overtone_uncertainty.json<br/>"
         "python paper/build_certification_report.py<br/>"
         "python -m pytest -q",
         "code",
@@ -963,8 +965,7 @@ def _build_pdf(data) -> None:
     refs = [
         "[1] M. Alcubierre et al., On the linear stability of ell-boson stars with respect to radial perturbations, Phys. Rev. D 103, 124046 (2021), arXiv:2103.15012.",
         "[2] M. Alcubierre et al., L-boson stars, Class. Quantum Grav. 35, 19LT01 (2018), arXiv:1805.11488.",
-        "[3] D. Batic, D. Dutykh, and M. E. Sukaiti, Quasinormal modes of the Kazakov-Solodukhin quantum-corrected black hole: a spectral analysis, Eur. Phys. J. C 86, 847 (2026), doi:10.1140/epjc/s10052-026-16102-3. Used as a structural exemplar for evidence-rich spectral reporting, not as a source of boson-star physics.",
-        "[4] SciPy documentation for solve_bvp and scipy.linalg.eig, runtime version recorded in the manifest.",
+        "[3] SciPy documentation for solve_bvp and scipy.linalg.eig, runtime version recorded in the manifest.",
     ]
     for ref in refs:
         p(ref)

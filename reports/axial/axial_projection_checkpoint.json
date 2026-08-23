@@ -1,0 +1,266 @@
+{
+  "calculation": "ell=1, J=2, L=2 odd-parity scalar bilinears",
+  "convention_note": "Overall complex phases depend on harmonic convention; vanishing, magnitudes, and M-degeneracy do not.",
+  "m_modes": [
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": -2,
+      "density_norm": 2.830918954005202e-17,
+      "vector_coefficient": {
+        "real": 5.998973041218825e-20,
+        "imag": -0.28209479177387703
+      },
+      "vector_source_norm": 0.2820947917738776,
+      "vector_harmonic_norm": 0.999999999999998,
+      "tensor_coefficient": {
+        "real": -2.0394053064027018e-18,
+        "imag": 0.5641895835477598
+      },
+      "tensor_source_norm": 0.3989422804014339,
+      "tensor_harmonic_norm": 1.4142135623730996,
+      "quadrature_theta": 48,
+      "quadrature_phi": 64
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": -1,
+      "density_norm": 2.684242445223914e-17,
+      "vector_coefficient": {
+        "real": -4.700786412814111e-19,
+        "imag": -0.2820947917738799
+      },
+      "vector_source_norm": 0.28209479177387903,
+      "vector_harmonic_norm": 1.000000000000003,
+      "tensor_coefficient": {
+        "real": 1.4891795355769142e-18,
+        "imag": 0.5641895835477542
+      },
+      "tensor_source_norm": 0.3989422804014319,
+      "tensor_harmonic_norm": 1.4142135623730925,
+      "quadrature_theta": 48,
+      "quadrature_phi": 64
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 0,
+      "density_norm": 1.0133872327764957e-17,
+      "vector_coefficient": {
+        "real": 0.0,
+        "imag": -0.2820947917738773
+      },
+      "vector_source_norm": 0.28209479177387775,
+      "vector_harmonic_norm": 0.9999999999999982,
+      "tensor_coefficient": {
+        "real": 0.0,
+        "imag": 0.5641895835477541
+      },
+      "tensor_source_norm": 0.3989422804014319,
+      "tensor_harmonic_norm": 1.414213562373092,
+      "quadrature_theta": 48,
+      "quadrature_phi": 64
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 1,
+      "density_norm": 2.693486785101353e-17,
+      "vector_coefficient": {
+        "real": 6.289691340604301e-19,
+        "imag": -0.2820947917738799
+      },
+      "vector_source_norm": 0.28209479177387903,
+      "vector_harmonic_norm": 1.000000000000003,
+      "tensor_coefficient": {
+        "real": -1.0434969367903548e-18,
+        "imag": 0.5641895835477542
+      },
+      "tensor_source_norm": 0.3989422804014319,
+      "tensor_harmonic_norm": 1.4142135623730925,
+      "quadrature_theta": 48,
+      "quadrature_phi": 64
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 2,
+      "density_norm": 2.830918954005202e-17,
+      "vector_coefficient": {
+        "real": -5.998973041218825e-20,
+        "imag": -0.28209479177387703
+      },
+      "vector_source_norm": 0.2820947917738776,
+      "vector_harmonic_norm": 0.999999999999998,
+      "tensor_coefficient": {
+        "real": 2.0394053064027018e-18,
+        "imag": 0.5641895835477598
+      },
+      "tensor_source_norm": 0.3989422804014339,
+      "tensor_harmonic_norm": 1.4142135623730996,
+      "quadrature_theta": 48,
+      "quadrature_phi": 64
+    }
+  ],
+  "convergence": [
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 2,
+      "density_norm": 2.814547326888529e-17,
+      "vector_coefficient": {
+        "real": -3.2336268130168593e-19,
+        "imag": -0.28209479177387825
+      },
+      "vector_source_norm": 0.2820947917738782,
+      "vector_harmonic_norm": 1.0000000000000002,
+      "tensor_coefficient": {
+        "real": -1.6995565776774507e-18,
+        "imag": 0.5641895835477561
+      },
+      "tensor_source_norm": 0.39894228040143254,
+      "tensor_harmonic_norm": 1.414213562373095,
+      "quadrature_theta": 16,
+      "quadrature_phi": 24
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 2,
+      "density_norm": 2.2058604289446167e-17,
+      "vector_coefficient": {
+        "real": -7.244837622963276e-21,
+        "imag": -0.2820947917738779
+      },
+      "vector_source_norm": 0.28209479177387803,
+      "vector_harmonic_norm": 0.9999999999999996,
+      "tensor_coefficient": {
+        "real": -2.4248923108349947e-18,
+        "imag": 0.5641895835477572
+      },
+      "tensor_source_norm": 0.398942280401433,
+      "tensor_harmonic_norm": 1.414213562373096,
+      "quadrature_theta": 24,
+      "quadrature_phi": 32
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 2,
+      "density_norm": 2.2818374227132e-17,
+      "vector_coefficient": {
+        "real": -2.949778885187553e-19,
+        "imag": -0.2820947917738779
+      },
+      "vector_source_norm": 0.28209479177387803,
+      "vector_harmonic_norm": 0.9999999999999994,
+      "tensor_coefficient": {
+        "real": -6.519053971892991e-19,
+        "imag": 0.5641895835477571
+      },
+      "tensor_source_norm": 0.398942280401433,
+      "tensor_harmonic_norm": 1.414213562373096,
+      "quadrature_theta": 32,
+      "quadrature_phi": 48
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 2,
+      "density_norm": 2.830918954005202e-17,
+      "vector_coefficient": {
+        "real": -5.998973041218825e-20,
+        "imag": -0.28209479177387703
+      },
+      "vector_source_norm": 0.2820947917738776,
+      "vector_harmonic_norm": 0.999999999999998,
+      "tensor_coefficient": {
+        "real": 2.0394053064027018e-18,
+        "imag": 0.5641895835477598
+      },
+      "tensor_source_norm": 0.3989422804014339,
+      "tensor_harmonic_norm": 1.4142135623730996,
+      "quadrature_theta": 48,
+      "quadrature_phi": 64
+    },
+    {
+      "ell": 1,
+      "total_j": 2,
+      "orbital_l": 2,
+      "magnetic_m": 2,
+      "density_norm": 2.6877252981306188e-17,
+      "vector_coefficient": {
+        "real": -8.802988234315702e-20,
+        "imag": -0.28209479177387864
+      },
+      "vector_source_norm": 0.28209479177387836,
+      "vector_harmonic_norm": 1.0000000000000007,
+      "tensor_coefficient": {
+        "real": -6.297091640546098e-19,
+        "imag": 0.5641895835477553
+      },
+      "tensor_source_norm": 0.3989422804014323,
+      "tensor_harmonic_norm": 1.4142135623730936,
+      "quadrature_theta": 64,
+      "quadrature_phi": 96
+    }
+  ],
+  "ell0_control": {
+    "ell": 0,
+    "total_j": 2,
+    "orbital_l": 2,
+    "magnetic_m": 0,
+    "density_norm": 0.28209479177388036,
+    "vector_coefficient": {
+      "real": 0.0,
+      "imag": 0.0
+    },
+    "vector_source_norm": 0.6909882989426697,
+    "vector_harmonic_norm": 0.9999999999999982,
+    "tensor_coefficient": {
+      "real": 0.0,
+      "imag": 0.0
+    },
+    "tensor_source_norm": 0.0,
+    "tensor_harmonic_norm": 1.414213562373092,
+    "quadrature_theta": 48,
+    "quadrature_phi": 64
+  },
+  "symbolic_M0": {
+    "density": "0",
+    "polar_vector_component": "0",
+    "vector_coefficient": "-I/(2*sqrt(pi))",
+    "tensor_coefficient": "I/sqrt(pi)"
+  },
+  "summary": {
+    "maximum_density_norm": 2.830918954005202e-17,
+    "vector_magnitude_mean": 0.2820947917738782,
+    "vector_magnitude_M_spread": 2.886579864025407e-15,
+    "vector_exact_1_over_2sqrtpi": 0.28209479177387814,
+    "vector_exact_absolute_error": 1.7763568394002505e-15,
+    "tensor_magnitude_mean": 0.5641895835477564,
+    "tensor_magnitude_M_spread": 5.773159728050814e-15,
+    "tensor_exact_1_over_sqrtpi": 0.5641895835477563,
+    "tensor_exact_absolute_error": 3.552713678800501e-15,
+    "ell0_vector_projection_magnitude": 0.0,
+    "ell0_tensor_projection_magnitude": 0.0
+  },
+  "gate_status": {
+    "nonzero_after_multiplet_sum": true,
+    "M_independent": true,
+    "ell0_axial_null_control": true,
+    "newtonian_density_decoupling": true,
+    "full_weak_field_radial_matching": false,
+    "closed_relativistic_axial_EKG_system": false
+  }
+}

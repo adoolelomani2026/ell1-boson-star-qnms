@@ -1,0 +1,192 @@
+{
+  "calculation": "independent Schwarzschild ell=2 Regge-Wheeler QNM control",
+  "boundary_conditions": "Leaver minimal solution: ingoing horizon and outgoing infinity",
+  "search_bounds": {
+    "real": [
+      0.34,
+      0.41
+    ],
+    "imaginary": [
+      -0.115,
+      -0.065
+    ]
+  },
+  "scan_shape": [
+    6,
+    5
+  ],
+  "seed": {
+    "real": 0.368,
+    "imaginary": -0.09
+  },
+  "frequency": {
+    "real": 0.37367168441804177,
+    "imaginary": -0.08896231568893571
+  },
+  "relative_mismatch": 7.740925363892226e-15,
+  "solver_success": true,
+  "function_evaluations": 6,
+  "literature_reference": {
+    "real": 0.37367168,
+    "imaginary": -0.08896232
+  },
+  "absolute_error": 6.1728735852179966e-09,
+  "options": {
+    "mass": 1.0,
+    "ell": 2,
+    "spin": 2,
+    "terms": 300
+  },
+  "scan": [
+    {
+      "frequency_real": 0.34,
+      "frequency_imag": -0.115,
+      "mismatch_abs": 0.819741931823635
+    },
+    {
+      "frequency_real": 0.35400000000000004,
+      "frequency_imag": -0.115,
+      "mismatch_abs": 0.675615815510548
+    },
+    {
+      "frequency_real": 0.368,
+      "frequency_imag": -0.115,
+      "mismatch_abs": 0.5945989090783889
+    },
+    {
+      "frequency_real": 0.382,
+      "frequency_imag": -0.115,
+      "mismatch_abs": 0.6576762860211401
+    },
+    {
+      "frequency_real": 0.39599999999999996,
+      "frequency_imag": -0.115,
+      "mismatch_abs": 0.8879241610295963
+    },
+    {
+      "frequency_real": 0.41,
+      "frequency_imag": -0.115,
+      "mismatch_abs": 1.2393665656202757
+    },
+    {
+      "frequency_real": 0.34,
+      "frequency_imag": -0.10250000000000001,
+      "mismatch_abs": 0.707589245646519
+    },
+    {
+      "frequency_real": 0.35400000000000004,
+      "frequency_imag": -0.10250000000000001,
+      "mismatch_abs": 0.49731405579104787
+    },
+    {
+      "frequency_real": 0.368,
+      "frequency_imag": -0.10250000000000001,
+      "mismatch_abs": 0.3270349587794381
+    },
+    {
+      "frequency_real": 0.382,
+      "frequency_imag": -0.10250000000000001,
+      "mismatch_abs": 0.3788886381529275
+    },
+    {
+      "frequency_real": 0.39599999999999996,
+      "frequency_imag": -0.10250000000000001,
+      "mismatch_abs": 0.6647242007147155
+    },
+    {
+      "frequency_real": 0.41,
+      "frequency_imag": -0.10250000000000001,
+      "mismatch_abs": 1.0500994454375914
+    },
+    {
+      "frequency_real": 0.34,
+      "frequency_imag": -0.09,
+      "mismatch_abs": 0.663385119637506
+    },
+    {
+      "frequency_real": 0.35400000000000004,
+      "frequency_imag": -0.09,
+      "mismatch_abs": 0.41211639263264377
+    },
+    {
+      "frequency_real": 0.368,
+      "frequency_imag": -0.09,
+      "mismatch_abs": 0.1282810018981517
+    },
+    {
+      "frequency_real": 0.382,
+      "frequency_imag": -0.09,
+      "mismatch_abs": 0.19852714769080845
+    },
+    {
+      "frequency_real": 0.39599999999999996,
+      "frequency_imag": -0.09,
+      "mismatch_abs": 0.5612321803733602
+    },
+    {
+      "frequency_real": 0.41,
+      "frequency_imag": -0.09,
+      "mismatch_abs": 0.965666699102359
+    },
+    {
+      "frequency_real": 0.34,
+      "frequency_imag": -0.0775,
+      "mismatch_abs": 0.7062403809757046
+    },
+    {
+      "frequency_real": 0.35400000000000004,
+      "frequency_imag": -0.0775,
+      "mismatch_abs": 0.47807666815774574
+    },
+    {
+      "frequency_real": 0.368,
+      "frequency_imag": -0.0775,
+      "mismatch_abs": 0.2841682395459137
+    },
+    {
+      "frequency_real": 0.382,
+      "frequency_imag": -0.0775,
+      "mismatch_abs": 0.33301282622475026
+    },
+    {
+      "frequency_real": 0.39599999999999996,
+      "frequency_imag": -0.0775,
+      "mismatch_abs": 0.6230694855361941
+    },
+    {
+      "frequency_real": 0.41,
+      "frequency_imag": -0.0775,
+      "mismatch_abs": 0.9963032120666306
+    },
+    {
+      "frequency_real": 0.34,
+      "frequency_imag": -0.065,
+      "mismatch_abs": 0.826402485608019
+    },
+    {
+      "frequency_real": 0.35400000000000004,
+      "frequency_imag": -0.065,
+      "mismatch_abs": 0.6530875093860302
+    },
+    {
+      "frequency_real": 0.368,
+      "frequency_imag": -0.065,
+      "mismatch_abs": 0.5466287624284354
+    },
+    {
+      "frequency_real": 0.382,
+      "frequency_imag": -0.065,
+      "mismatch_abs": 0.5931491136504577
+    },
+    {
+      "frequency_real": 0.39599999999999996,
+      "frequency_imag": -0.065,
+      "mismatch_abs": 0.8055422046259849
+    },
+    {
+      "frequency_real": 0.41,
+      "frequency_imag": -0.065,
+      "mismatch_abs": 1.123465925018925
+    }
+  ]
+}

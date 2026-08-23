@@ -1,0 +1,436 @@
+{
+  "calculation": "coherent-state occupation-noise toy estimate for the axial QNM",
+  "state": "product coherent state in the three ell=1 magnetic modes with equal mean occupation and Poisson total-number variance",
+  "renormalization": "normal ordering relative to the asymptotic Minkowski vacuum; vacuum-polarization terms are zero by this specified prescription",
+  "response_model": "adiabatic one-mode map N proportional to the computed Noether charge Q(a1^0)",
+  "qnm_branch_source": "reports/axial/axial_qnm_branch.json; every input mode has two domains and a locally counted contour",
+  "charge_response": {
+    "Q": 1.2129669121348114,
+    "dQ_d_a1_0": 0.6580752435911608,
+    "d2Q_d_a1_0_squared": -41.768370139889655,
+    "Q_over_dQ_d_a1_0": 1.8432039860906628
+  },
+  "mean_semiclassical_equations": "identical to the classical EKG equations at leading coherent-state order",
+  "qnm_sensitivity": {
+    "center_sigma": {
+      "real": 0.04939773073857036,
+      "imag": -5.965193316691604e-07
+    },
+    "d_sigma_d_a1_0": {
+      "real": 0.39409893515962996,
+      "imag": -1.6646252661322002e-05
+    },
+    "d2_sigma_d_a1_0_squared": {
+      "real": -1.9157536702596456,
+      "imag": -0.00022079971801398248
+    },
+    "side_mode_audit": [
+      {
+        "a1_0": 0.075,
+        "sigma": {
+          "real": 0.04740328914189396,
+          "imag": -5.160480648377252e-07
+        },
+        "determinant_abs": 5.5330020744310445e-14,
+        "normalized_min_singular_value": 9.286909180881782e-12
+      },
+      {
+        "a1_0": 0.085,
+        "sigma": {
+          "real": 0.05134427849349026,
+          "imag": -6.825105914509452e-07
+        },
+        "determinant_abs": 4.0135861573693815e-13,
+        "normalized_min_singular_value": 7.962835749917447e-11
+      }
+    ]
+  },
+  "mass_scaling": [
+    {
+      "boson_mass_ev": 1e-22,
+      "particle_number": 1.8080136321559687e+100,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-51,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-49,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-99,
+        "imag": -1.2001170379763508e-103
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-98
+    },
+    {
+      "boson_mass_ev": 1e-21,
+      "particle_number": 1.808013632155969e+98,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.40228898750549e-50,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-48,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741896e-97,
+        "imag": -1.2001170379763505e-101
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118275e-96
+    },
+    {
+      "boson_mass_ev": 1e-20,
+      "particle_number": 1.8080136321559686e+96,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.4022889875054914e-49,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-47,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741903e-95,
+        "imag": -1.2001170379763507e-99
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-94
+    },
+    {
+      "boson_mass_ev": 1e-19,
+      "particle_number": 1.808013632155969e+94,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.4022889875054914e-48,
+      "qnm_fractional_standard_deviation": 1.0936310041654243e-46,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-93,
+        "imag": -1.2001170379763506e-97
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-92
+    },
+    {
+      "boson_mass_ev": 1e-18,
+      "particle_number": 1.8080136321559683e+92,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-47,
+      "qnm_fractional_standard_deviation": 1.0936310041654241e-45,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741905e-91,
+        "imag": -1.200117037976351e-95
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-90
+    },
+    {
+      "boson_mass_ev": 1e-17,
+      "particle_number": 1.8080136321559684e+90,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-46,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-44,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741903e-89,
+        "imag": -1.2001170379763508e-93
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-88
+    },
+    {
+      "boson_mass_ev": 1e-16,
+      "particle_number": 1.808013632155969e+88,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-45,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-43,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741897e-87,
+        "imag": -1.2001170379763505e-91
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-86
+    },
+    {
+      "boson_mass_ev": 1e-15,
+      "particle_number": 1.8080136321559686e+86,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-44,
+      "qnm_fractional_standard_deviation": 1.0936310041654243e-42,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741902e-85,
+        "imag": -1.2001170379763509e-89
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-84
+    },
+    {
+      "boson_mass_ev": 1e-14,
+      "particle_number": 1.8080136321559685e+84,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.4022889875054915e-43,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-41,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741904e-83,
+        "imag": -1.2001170379763509e-87
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118295e-82
+    },
+    {
+      "boson_mass_ev": 1e-13,
+      "particle_number": 1.808013632155969e+82,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.4022889875054903e-42,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-40,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741897e-81,
+        "imag": -1.2001170379763506e-85
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118274e-80
+    },
+    {
+      "boson_mass_ev": 1e-12,
+      "particle_number": 1.8080136321559687e+80,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-41,
+      "qnm_fractional_standard_deviation": 1.0936310041654241e-39,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-79,
+        "imag": -1.2001170379763508e-83
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118285e-78
+    },
+    {
+      "boson_mass_ev": 1e-11,
+      "particle_number": 1.8080136321559692e+78,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.40228898750549e-40,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-38,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741895e-77,
+        "imag": -1.2001170379763504e-81
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911827e-76
+    },
+    {
+      "boson_mass_ev": 1e-10,
+      "particle_number": 1.8080136321559684e+76,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-39,
+      "qnm_fractional_standard_deviation": 1.0936310041654241e-37,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741903e-75,
+        "imag": -1.2001170379763509e-79
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-74
+    },
+    {
+      "boson_mass_ev": 1e-09,
+      "particle_number": 1.8080136321559687e+74,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-38,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-36,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-73,
+        "imag": -1.2001170379763507e-77
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118284e-72
+    },
+    {
+      "boson_mass_ev": 1e-08,
+      "particle_number": 1.8080136321559683e+72,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505492e-37,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-35,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741904e-71,
+        "imag": -1.200117037976351e-75
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-70
+    },
+    {
+      "boson_mass_ev": 1e-07,
+      "particle_number": 1.808013632155969e+70,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-36,
+      "qnm_fractional_standard_deviation": 1.0936310041654241e-34,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741894e-69,
+        "imag": -1.2001170379763505e-73
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911827e-68
+    },
+    {
+      "boson_mass_ev": 1e-06,
+      "particle_number": 1.808013632155969e+68,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-35,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-33,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741895e-67,
+        "imag": -1.2001170379763504e-71
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118273e-66
+    },
+    {
+      "boson_mass_ev": 1e-05,
+      "particle_number": 1.8080136321559682e+66,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505492e-34,
+      "qnm_fractional_standard_deviation": 1.0936310041654244e-32,
+      "mean_qnm_shift": {
+        "real": 2.170139818274191e-65,
+        "imag": -1.200117037976351e-69
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118296e-64
+    },
+    {
+      "boson_mass_ev": 0.0001,
+      "particle_number": 1.808013632155968e+64,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505492e-33,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-31,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741908e-63,
+        "imag": -1.2001170379763512e-67
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.39319739791183e-62
+    },
+    {
+      "boson_mass_ev": 0.001,
+      "particle_number": 1.8080136321559688e+62,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-32,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-30,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-61,
+        "imag": -1.2001170379763506e-65
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-60
+    },
+    {
+      "boson_mass_ev": 0.01,
+      "particle_number": 1.808013632155969e+60,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.4022889875054905e-31,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-29,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741897e-59,
+        "imag": -1.2001170379763505e-63
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-58
+    },
+    {
+      "boson_mass_ev": 0.1,
+      "particle_number": 1.8080136321559685e+58,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.4022889875054916e-30,
+      "qnm_fractional_standard_deviation": 1.0936310041654243e-28,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741903e-57,
+        "imag": -1.2001170379763508e-61
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-56
+    },
+    {
+      "boson_mass_ev": 1.0,
+      "particle_number": 1.808013632155969e+56,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-29,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-27,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741898e-55,
+        "imag": -1.2001170379763505e-59
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-54
+    },
+    {
+      "boson_mass_ev": 10.0,
+      "particle_number": 1.8080136321559686e+54,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-28,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-26,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-53,
+        "imag": -1.2001170379763508e-57
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-52
+    },
+    {
+      "boson_mass_ev": 100.0,
+      "particle_number": 1.8080136321559687e+52,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-27,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-25,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-51,
+        "imag": -1.2001170379763508e-55
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-50
+    },
+    {
+      "boson_mass_ev": 1000.0,
+      "particle_number": 1.808013632155969e+50,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-26,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-24,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741897e-49,
+        "imag": -1.2001170379763506e-53
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-48
+    },
+    {
+      "boson_mass_ev": 10000.0,
+      "particle_number": 1.808013632155969e+48,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.40228898750549e-25,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-23,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741898e-47,
+        "imag": -1.2001170379763506e-51
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118285e-46
+    },
+    {
+      "boson_mass_ev": 100000.0,
+      "particle_number": 1.8080136321559685e+46,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-24,
+      "qnm_fractional_standard_deviation": 1.0936310041654243e-22,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741903e-45,
+        "imag": -1.2001170379763508e-49
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118293e-44
+    },
+    {
+      "boson_mass_ev": 1000000.0,
+      "particle_number": 1.808013632155969e+44,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.40228898750549e-23,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-21,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741897e-43,
+        "imag": -1.2001170379763505e-47
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911828e-42
+    },
+    {
+      "boson_mass_ev": 10000000.0,
+      "particle_number": 1.8080136321559686e+42,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-22,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-20,
+      "mean_qnm_shift": {
+        "real": 2.17013981827419e-41,
+        "imag": -1.2001170379763508e-45
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-40
+    },
+    {
+      "boson_mass_ev": 100000000.0,
+      "particle_number": 1.8080136321559691e+40,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.40228898750549e-21,
+      "qnm_fractional_standard_deviation": 1.093631004165424e-19,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741896e-39,
+        "imag": -1.2001170379763505e-43
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.3931973979118275e-38
+    },
+    {
+      "boson_mass_ev": 1000000000.0,
+      "particle_number": 1.8080136321559685e+38,
+      "delta_a1_0_times_sqrt_N": 1.8432039860906628,
+      "qnm_absolute_standard_deviation": 5.402288987505491e-20,
+      "qnm_fractional_standard_deviation": 1.0936310041654242e-18,
+      "mean_qnm_shift": {
+        "real": 2.1701398182741904e-37,
+        "imag": -1.200117037976351e-41
+      },
+      "mean_qnm_fractional_shift_magnitude": 4.393197397911829e-36
+    }
+  ],
+  "largest_fractional_standard_deviation": 1.0936310041654242e-18,
+  "largest_mean_fractional_shift": 4.393197397911829e-36
+}

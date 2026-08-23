@@ -1,0 +1,208 @@
+"""Assemble the audited PRD manuscript and a clean reproducibility deposit."""
+
+from __future__ import annotations
+
+import hashlib
+import shutil
+import subprocess
+import zipfile
+from pathlib import Path
+
+from pypdf import PdfReader
+
+
+ROOT = Path(__file__).resolve().parents[1]
+BUILD = ROOT / "tmp" / "pdfs" / "boson_star_radial_preprint"
+PDF = ROOT / "output" / "pdf" / "axial_matter_channel_ell1_preprint.pdf"
+NAME = "PRD_Audit_Repaired_v3"
+DEST = ROOT / "output" / "submission" / NAME
+ARCHIVE = DEST.with_suffix(".zip")
+
+
+def copy_tree(source: Path, target: Path) -> None:
+    shutil.copytree(
+        source,
+        target,
+        ignore=shutil.ignore_patterns(
+            "__pycache__", "*.pyc", ".pytest_cache", ".mypy_cache", ".ruff_cache"
+        ),
+    )
+
+
+def write(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text.strip() + "\n", encoding="utf-8")
+
+
+def hashes(root: Path) -> str:
+    lines: list[str] = []
+    for path in sorted(item for item in root.rglob("*") if item.is_file()):
+        if path.name == "SHA256SUMS.txt":
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        lines.append(f"{digest}  {path.relative_to(root).as_posix()}")
+    return "\n".join(lines) + "\n"
+
+
+def main() -> None:
+    if DEST.exists() or ARCHIVE.exists():
+        raise SystemExit(f"Refusing to overwrite existing release: {DEST}")
+    if not PDF.exists() or not (BUILD / "manuscript.tex").exists():
+        raise SystemExit("Build the manuscript with paper/build_preprint.py first.")
+
+    manuscript = DEST / "Main_Manuscript"
+    figures = manuscript / "Figures"
+    supplement = DEST / "Supplemental_Material"
+    deposit = supplement / "Deposit"
+    figures.mkdir(parents=True)
+    deposit.mkdir(parents=True)
+
+    shutil.copy2(PDF, manuscript / "PRD_Manuscript.pdf")
+    for name in ("manuscript.tex", "axial_channel.tex", "axial_dynamics.tex", "axial_response.tex"):
+        shutil.copy2(BUILD / name, manuscript / name)
+    for figure in sorted(BUILD.glob("figure_*.pdf")):
+        shutil.copy2(figure, figures / figure.name)
+        shutil.copy2(figure, manuscript / figure.name)
+    shutil.copy2(BUILD / "manuscript.log", manuscript / "manuscript.log")
+
+    for directory in ("background", "radial", "nonradial", "experiments"):
+        copy_tree(ROOT / "python" / directory, deposit / "python" / directory)
+    for directory in ("tests", "environment", "symbolic"):
+        copy_tree(ROOT / directory, deposit / directory)
+    copy_tree(ROOT / "reports", deposit / "reports")
+    for name in ("README.md", "PROJECT_STATUS.md", "CONVENTIONS.md", "pyproject.toml"):
+        shutil.copy2(ROOT / name, deposit / name)
+    copy_tree(ROOT / "paper", deposit / "paper")
+
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=False, capture_output=True, text=True
+    ).stdout.strip()
+    page_count = len(PdfReader(PDF).pages)
+    write(
+        DEST / "README_FIRST.txt",
+        f"""
+PRD AUDIT-REPAIRED PRESENTATION PACKAGE
+
+Title: Hidden axial matter in relativistic ell=1 boson stars:
+       Coupled modes, ringdown, and resonant response
+Author: Adel H. Al-Yoorby
+Prepared: 2026-08-23
+
+Main_Manuscript/PRD_Manuscript.pdf is the visually inspected {page_count}-page REVTeX
+author manuscript. Main_Manuscript contains the complete compile source and
+vector figures. Supplemental_Material/Supplemental_Material.zip is the clean
+code-and-data deposit. SHA256SUMS.txt authenticates every packaged file.
+
+This package repairs the numerical and presentation defects identified in the
+submission audit. It does not conceal the remaining scientific boundaries:
+the independent unused-equation monitor has a roughly 2e-6 pointwise floor,
+the scattering weight is not yet a canonically derived physical flux, and the
+short time evolution does not independently measure the extremely long damping
+time. These limits are stated in the manuscript.
+
+Repository base commit: {commit}
+The package also contains uncommitted audit-repair working-tree changes, whose
+exact contents are fixed by SHA256SUMS.txt.
+""",
+    )
+    write(
+        DEST / "VALIDATION_REPORT.txt",
+        f"""
+AUDIT REPAIR VALIDATION
+
+- Automated regression: 73 tests passed.
+- Bibliography: 36/36 entries cited; no missing or orphaned entries; numbered
+  bibliography is in first-appearance order.
+- Schwarzschild control: M omega = 0.37367168441804177
+  - 0.08896231568893571 i; absolute reference error 6.17e-9; normalized
+  continued-fraction residual 7.74e-15.
+- Axial pole: sigma = 0.049397730785015435 - 5.9651932712628e-7 i.
+- Seven-background branch: a0=0.065--0.095, compactness 0.0953--0.1131;
+  the same long-lived pole is continued across every independently solved star,
+  with adjacent normalized profile overlaps above 0.99918.
+- Root count: the base, strict pi/4, and expanded local exterior-algebra Evans
+  contours each have winding number one. The strict-contour maximum resolved
+  phase step is 0.60975 < pi/4.
+- Far boundary: r_far=600 to 900 shifts are 5.3e-13 (real) and 4.2e-13
+  (imaginary); third-order exterior series used.
+- Predeclared targeted response (fit does not load the stored pole): center error 1.07e-9 fractionally; half-width error 4.49e-5;
+  fit covariance uncertainties are recorded in the data file.
+- Static response: six two-sided domains; B/(A M^5) = -122.47418 with
+  3.15e-5 full domain spread; no Love-number claim.
+- PDF: {page_count} pages, US letter, embedded fonts, no Type 3 fonts, no undefined
+  references, no overfull boxes; all pages rendered and visually inspected.
+
+OPEN BUT DISCLOSED
+
+- Independent unused-equation pointwise residual floor: about 2e-6.
+- Same-pipeline ordinary ell=0 stellar-QNM benchmark: not yet completed.
+- Canonical graviton/scalar energy-current normalization: not derived.
+- Independent time-domain damping measurement: infeasible in the short run
+  because the predicted lifetime is about 1.68e6 code units.
+""",
+    )
+    write(
+        DEST / "AUTHOR_ACTIONS_REQUIRED.txt",
+        """
+Before journal upload, the author must personally confirm:
+
+1. Corresponding-author email, affiliation, and ORCID.
+2. Funding statement, conflicts declaration, and any institutional wording.
+3. Data-repository DOI or persistent URL after depositing the supplement.
+4. The cover letter and the journal's current AI-use disclosure fields.
+5. Confirm that the charged/coherent-state side-study data should remain in
+   supporting material, as in this audited package.
+
+No placeholder in this file should be treated as an author declaration.
+""",
+    )
+    write(
+        DEST / "Cover_Letter_DRAFT.txt",
+        """
+Dear Editors of Physical Review D,
+
+Please consider the manuscript “Hidden axial matter in relativistic ell=1
+boson stars: Coupled modes, ringdown, and resonant response.” The work derives
+an odd-parity matter channel produced by the internal angular structure of a
+collectively spherical scalar multiplet and reports a counted, long-lived
+coupled gravito-scalar pole. The numerical claim is supported by a seven-star
+equilibrium sequence, independent radial discretizations, a Schwarzschild
+Leaver benchmark, multiple exterior-algebra Evans contours, far-boundary and
+matching-domain studies, and a predeclared targeted driven-response fit.
+
+The manuscript distinguishes the certified pole from two current limitations:
+the open-channel scattering weight has not been derived from a canonical
+energy current, and the short evolution checks the real frequency but is not
+long enough to measure the damping time. These are stated explicitly.
+
+The manuscript is original and is not under consideration elsewhere.
+[AUTHOR: confirm this sentence, funding, conflicts, and suggested editors.]
+
+Sincerely,
+Adel H. Al-Yoorby
+""",
+    )
+    write(
+        supplement / "README.txt",
+        """
+The deposit contains the Python source, tests, manuscript build source,
+machine-readable result tables, and equilibrium profiles used in the paper.
+Run `pytest -q` for the regression suite and `python paper/build_preprint.py`
+to rebuild the manuscript. See the root README.md and PROJECT_STATUS.md for
+the precise claim boundaries.
+""",
+    )
+    (deposit / "SHA256SUMS.txt").write_text(hashes(deposit), encoding="utf-8")
+    with zipfile.ZipFile(supplement / "Supplemental_Material.zip", "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(item for item in deposit.rglob("*") if item.is_file()):
+            archive.write(path, path.relative_to(deposit))
+    (DEST / "SHA256SUMS.txt").write_text(hashes(DEST), encoding="utf-8")
+    with zipfile.ZipFile(ARCHIVE, "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(item for item in DEST.rglob("*") if item.is_file()):
+            archive.write(path, Path(NAME) / path.relative_to(DEST))
+    print(DEST)
+    print(ARCHIVE)
+
+
+if __name__ == "__main__":
+    main()

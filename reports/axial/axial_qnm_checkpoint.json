@@ -1,0 +1,60 @@
+{
+  "calculation": "neutral ell=1, J=L=2 axial EKG two-sided QNM matching",
+  "background": {
+    "a1_0": 0.08,
+    "omega": 0.8518974043710469,
+    "adm_mass": 1.1712711606475235,
+    "compactness_R99": 0.1048865407742853
+  },
+  "mode": {
+    "sigma_real_mean": 0.049397730785015435,
+    "sigma_imag_mean": -5.9651932712628e-07,
+    "quality_factor": 41404.97091937325,
+    "first_scalar_threshold": 0.14810259562895312,
+    "below_first_scalar_threshold": true,
+    "domain_spread_real": 6.298989108088904e-13,
+    "domain_spread_imag": 2.6540171110108152e-14
+  },
+  "matching_setups": [
+    {
+      "r_match": 14.0,
+      "r_end": 35.0,
+      "r_far": 600.0,
+      "sigma_real": 0.049397730785330385,
+      "sigma_imag": -5.965193403963656e-07,
+      "determinant_real": -47515589.5835495,
+      "determinant_imag": 9163524.997317791,
+      "determinant_abs": 48391129.80545903,
+      "exterior_algebra_evans_residual_relative_to_fixed_frequency_offset": 2.1465733017643297e-05,
+      "conditioned_matching_determinant_residual_relative_to_local_offset": 4.1416514301266e-09,
+      "normalized_min_singular_value": 7.914551528504091e-15,
+      "root_solver_success": true
+    },
+    {
+      "r_match": 12.0,
+      "r_end": 30.0,
+      "r_far": 600.0,
+      "sigma_real": 0.049397730784700486,
+      "sigma_imag": -5.965193138561944e-07,
+      "determinant_real": -393485.6963982582,
+      "determinant_imag": 42545.38876906037,
+      "determinant_abs": 395779.109321769,
+      "exterior_algebra_evans_residual_relative_to_fixed_frequency_offset": 1.96825392160036e-05,
+      "conditioned_matching_determinant_residual_relative_to_local_offset": 4.5870428320198385e-09,
+      "normalized_min_singular_value": 2.0249605674848657e-14,
+      "root_solver_success": true
+    }
+  ],
+  "acceptance": {
+    "closed_six_state_operator": true,
+    "flat_vacuum_Regge_Wheeler_control": true,
+    "flat_massive_sideband_control": true,
+    "exact_flat_hankel_exterior_control": true,
+    "two_domain_complex_root": true,
+    "from_scratch_grid_discovery": true,
+    "analytic_raw_determinant_contour_count": true,
+    "time_domain_real_frequency_check": true,
+    "time_domain_damping_certified": false,
+    "status": "frequency-domain pole; short evolution checks only the real oscillation frequency"
+  }
+}

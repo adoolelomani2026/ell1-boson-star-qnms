@@ -1,116 +1,64 @@
 # Project status and publication gates
 
-## Completed in the initial implementation
+## Headline result
 
-- Repository layout, frozen conventions, environment specification, and tests.
-- Nonlinear collocation solver for static, nodeless ell-boson-star backgrounds.
-- Physical bound-state restriction `0 < omega/mu < 1` and Schwarzschild plus
-  massive-tail outer boundary conditions.
-- Reproduction of the `ell=1`, `a_1^0=0.08` frequency from Table II of
-  arXiv:2103.15012: computed `0.8518974`, tabulated `0.8519`.
-- A 21-model `ell=1` sequence from `a_1^0=0.02` through `0.12`. Its grid maximum
-  is at `a_1^0=0.10`, with `omega=0.8356722` and `M=1.1763866`, consistent with
-  the published maximum model (`omega about 0.836`, `M about 1.18`).
-- Outer-domain comparison at `r_max=60, 80, 100`: the benchmark frequency and
-  ADM mass agree beyond ten and nine decimal places, respectively.
+For the neutral `ell=1`, `J=L=2` odd sector, the internal-state sum has zero
+density projection but nonzero axial vector and tensor projections,
 
-## Reproducibility record
+```text
+<X^A,S_A>   = -i/(2 sqrt(pi))
+<X^AB,Q_AB> =  i/sqrt(pi).
+```
 
-- Background implementation commit:
-  `600c3677290bb05e8ac0901b945f7f98806af98c`.
-- Annotated checkpoint tag: `background-v0.1-provisional` (placed on the
-  metadata-only commit that records the implementation hash).
-- Runtime: Python 3.14.3; NumPy 2.4.3; SciPy 1.17.1;
-  Matplotlib 3.10.8; pytest 9.1.0.
-- Sequence command:
-  `python -m background.ell_boson_star scan --ell 1 --a0-min 0.02 --a0-max 0.12 --count 21 --output data/ell1_sequence.csv`.
-- Radius-audit command:
-  `python -m background.radius_audit --a0 0.10 --output data/background_radius_audit.json`.
-- BVP settings: `r_max=80`, 800 initial mesh points, relative collocation
-  tolerance `1e-7`, and a maximum of 40,000 adaptive nodes.
-- Outer-domain comparison: `r_max=60, 80, 100`, with 800 initial points and
-  tolerance `1e-7` in each run.
-- Large profiles (`*.npz`) and sequences (`*.csv`) are regenerated and ignored
-  by Git. The small JSON radius-audit record is committed.
+The resulting six-state relativistic system has a counted stable branch across
+seven backgrounds. At the central model, two refined matching domains give
+`sigma = 0.0493977307850 - 5.9651933e-7 i`, with real- and imaginary-part
+domain spreads of `6.3e-13` and `2.7e-14`. A 41-point response scan selected
+without reading the pole result recovers the center to `1.1e-9` fractionally
+and the half-width to `4.5e-5`.
 
-## Unresolved published-radius discrepancy
+## Passed gates
 
-For the maximum-mass model, the literal radius satisfying `M(r)=0.99 M_T` is
-about `10.18`, whereas the background paper explicitly defines that quantity
-but quotes `R(99%)=12.75`. The latter is close to this implementation's
-`M(r)=0.999 M_T` radius. This is classified as an unresolved numerical or
-labeling discrepancy, not an alternative published convention and not yet a
-published error. Both `R99` and `R999` are stored, and the committed audit also
-records proper-energy, Noether-charge, finite-mass, and extrapolated-mass radii.
+- Regular `ell=1` equilibrium background and maximum-mass sequence.
+- Published radial ground mode, first overtone, eigenfunctions, and stability
+  crossing, independently reproduced by a global BVP and an equilibrated
+  Chebyshev pencil.
+- Exact axial angular projection, all five `M` values, and the ordinary
+  `ell=0` null control.
+- Closed axial Einstein--Klein--Gordon first-order system and flat/exterior
+  limits.
+- Declared root discovery, exterior-algebra Evans count, two-domain
+  refinement, and massive-channel sheet handling.
+- Third-order gravitational and Coulomb-corrected scalar asymptotics; the
+  `r_far=600` to `900` shift is below `6e-13` per frequency component.
+- Schwarzschild Regge--Wheeler/Leaver benchmark within `6.2e-9` in complex
+  frequency and with normalized continued-fraction residual below `8e-15`.
+- Predeclared targeted driven-resonance center and width recovery without loading the stored pole during fitting.
+- Seven-background axial continuation with one locally counted pole per star,
+  two matching domains, and adjacent profile overlaps above `0.9991`.
+- Two-sided stationary axial-response match across six domains.
 
-Gate A remains **in progress**, not passed, until an independent shooting solver
-reproduces representative profiles and this radius discrepancy is resolved.
+## Disclosed open boundaries
 
-## Not yet implemented
+- The independent unused-Einstein-equation monitor has an approximately
+  `2e-6` pointwise residual floor. This is much smaller than in the initial
+  implementation but is not called a closed continuum constraint proof.
+- The positive diagonal weight that balances the sampled scattering matrix is
+  an algebraic reciprocity metric. A canonical symplectic or stress-energy
+  flux derivation remains open, so the manuscript does not claim a physical
+  conversion probability.
+- The short `1+1` evolution reproduces the oscillation frequency to about
+  `2.6e-7` fractionally, but cannot independently determine the damping rate:
+  the predicted lifetime is about `1.68e6` in code units.
+- `B/(A M^5)=-122.47418` is an explicit exterior-basis normalization, not a
+  gauge-invariant magnetic Love number.
+- The literal `R99` discrepancy with one published table remains documented;
+  both `R99` and `R999` are retained.
 
-- Gate B remainder: ordinary ell=0 QNM benchmark. The radial ell=1 sector now
-  has independent BVP and generalized-eigenvalue certification.
-- Gate C: fully relativistic nonradial harmonic reduction.
-- Gates D-H: new QNMs, parameter campaign, physical conclusions, and paper.
+## Model boundary
 
-The next hard milestone is the ordinary-boson-star ell=0 QNM benchmark.
-
-## Radial pulsation progress after the background checkpoint
-
-- The Appendix system for `(delta varphi_11, delta L)` is implemented with
-  analytic background derivatives and `sigma2` as the eigenvalue.
-- The nonlinear global BVP directly imposes both physical outer
-  conditions. At `a_1^0=0.08`, it gives `sigma2=2.40091e-4` and
-  `center_c=-2.78360e-2` at `r_max=25`, with zero resolved interior nodes.
-- The BVP domain plateau at `r_max=25,30,40` spans about `0.02%`.
-- Diagnostics distinguish SciPy's interval RMS relative residual from a dense
-  pointwise relative ODE residual; direct endpoint residuals are also recorded.
-- The computed ground eigenvalue is positive at `a_1^0=0.050`, approximately
-  zero at `0.100`, and negative at `0.105`.
-- Detailed solver settings and results are versioned in
-  `data/radial_benchmarks.csv`.
-- The affine outward-basis solver is deprecated: subtracting exponentially
-  amplified basis states gives misleading normalized boundary residuals.
-- A Chebyshev generalized eigenproblem independently reproduces the ground mode,
-  one-node first overtone, and sign change across the stability boundary without
-  a nonlinear eigenvalue initial guess.
-- At `a_1^0=0.08` and `r_max=40`, the Hermite-background BVP gives
-  `sigma0^2=2.4004311e-4`; the 80-point spectral result differs by
-  `1.64e-9`. The first overtone is `sigma1^2~=8.227e-3`.
-- The v0.3.1 versioned uncertainty record uses the conservative deterministic
-  component sum, `7.70e-9` in absolute `sigma0^2`, as the headline ground-mode
-  uncertainty. The `4.80e-9` quadrature value is secondary only.
-- The default background representation is a Hermite reconstruction of the
-  regular field from stored `psi` and `psi'`; PCHIP is retained as an uncertainty
-  variation.
-
-The center-series coefficient called `a0` in the Appendix must equal the
-actual leading coefficient of the background variable used in the ODE. For the
-validated repository normalization this is `a_1^0/kappa = 0.08/3`, not `0.24`.
-Using `0.24` leaves a non-vanishing `O(1)` center-operator residual; the
-difference is exactly accounted for by the quadratic `6 kappa a0^2` term.
-
-The radial numerical milestone is independently certified by the BVP and
-spectral formulations. Gate A remains in progress, and full Gate B still
-requires the ordinary `ell=0` QNM benchmark. Do not use the deprecated affine
-formulation for nonradial QNMs.
-
-## v0.3.1 spectral hardening
-
-- The radial portion of Gate B is a pass, as confirmed by the v0.3 audit.
-- The generalized pencil is now row-and-column equilibrated and reports both
-  scaled and unscaled residuals plus a left/right conditioning diagnostic.
-- The spectral coefficient matrix and center coefficient are independently
-  transcribed rather than generated through the BVP `pulsation_rhs` and
-  `center_d`; matrix-operator identity tests guard the two implementations.
-- PCHIP backgrounds are rejected by the global spectral solver.
-- Interpolated/bracketed zero finding replaces the fixed `1e-4` threshold, and
-  normalized eigenfunction overlap supports mode continuation.
-- Ground-mode resolution coverage spans `N=50` through `160`. The first
-  overtone has BVP domain rows at `r_max=40,50,60` and its own conservative
-  uncertainty record. Its domain-converged BVP reference is
-  `sigma1=0.0907036982`, with a conservative `sigma1^2` systematic bound of
-  `6.44e-7`.
-- A smooth-background mapped multidomain architecture remains a pre-production
-  requirement for complex nonradial QNMs; increasing one dense domain is not
-  the intended production strategy.
+The paper solves the neutral, free massive-scalar theory. The charged EMKG
+equilibrium and coherent-state occupation calculations are supporting studies,
+not corrections applied to the neutral pole. A renormalized semiclassical
+backreaction calculation would require a specified state, field content, and
+renormalization prescription and is therefore outside the stated theory.

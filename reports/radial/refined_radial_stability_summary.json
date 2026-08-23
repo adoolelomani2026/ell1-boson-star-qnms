@@ -1,0 +1,12 @@
+{
+  "method": "linear interpolation across the unique fine-grid sign change",
+  "spectral_points": 100,
+  "r_max": 40.0,
+  "epsilon": 0.001,
+  "estimated_a0_at_sigma2_zero": 0.10028006328937672,
+  "bracket": [
+    0.10025,
+    0.1005
+  ],
+  "half_bracket_width_as_grid_bound": 0.0001250000000000001
+}

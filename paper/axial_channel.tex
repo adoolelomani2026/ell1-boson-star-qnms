@@ -1,0 +1,248 @@
+\section{Odd scalar channel and axial stress tensor}\label{sec:axial-channel}
+
+\subsection{Diagonal angular momentum and parity}
+
+The spherical metric does not imply that every scalar perturbation is polar.
+Spatial rotations act simultaneously on the orbital harmonics and on the
+internal multiplet. It is therefore convenient to make a unitary change of
+internal basis and couple an orbital representation $L$ to the background
+representation $\ell$. With $s=-\ell,\ldots,\ell$, define the normalized
+background angular vector and coupled perturbation harmonic
+\begin{align}
+B_s^{(\ell)}&=\frac{(-1)^\ell}{\sqrt{2\ell+1}}Y_{\ell s}^{*},
+\label{eq:background-angular-vector}\\
+P_s^{JML}&=\sum_{m_L=-L}^{L}
+\langle Lm_L,\ell s\vert JM\rangle Y_{Lm_L}.
+\label{eq:coupled-harmonic}
+\end{align}
+The radial field multiplying Eq.~\eqref{eq:background-angular-vector} is
+$F=\sqrt{2\ell+1}\,\psi_\ell$, so this normalized basis leaves the physical
+sum over fields unchanged. The allowed values satisfy
+$|J-\ell|\leq L\leq J+\ell$. For $\ell=1$, the $L=J-1,J+1$ channels are even
+and the $L=J$ channel is odd \cite{ChavezNambo2024}.
+
+The scalar density bilinear relevant at leading nonrelativistic order is
+\begin{equation}
+\mathcal D^{JML}=\sum_s B_s^{*}P_s^{JML}.
+\label{eq:density-bilinear}
+\end{equation}
+Its reduced coefficient is proportional to
+$\langle L0,\ell0\vert J0\rangle$. For $\ell=1$ and $J=L=2$, the sum
+$J+L+\ell=5$ is odd; hence
+\begin{equation}
+\mathcal D^{2M2}=0
+\qquad (M=-2,-1,0,1,2).
+\label{eq:density-null}
+\end{equation}
+This is the group-theoretic origin of the density-silent odd sector in the
+Schr\"odinger--Poisson limit. It does not imply that every component of the
+relativistic stress tensor vanishes.
+
+\subsection{Axial vector and tensor projections}
+
+Let $D_A$ and $\varepsilon_{AB}$ be the covariant derivative and volume form
+of the unit two-sphere. We use the normalized axial vector harmonic and its
+symmetrized derivative,
+\begin{equation}
+X_A^{JM}=-\frac{\varepsilon_A{}^{B}D_BY_{JM}}{\sqrt{J(J+1)}},
+\qquad
+X_{AB}^{JM}=D_{(A}X_{B)}^{JM}.
+\label{eq:axial-harmonics}
+\end{equation}
+Our normalization gives
+\begin{equation}
+\int X_A^{*}X^A\,\dd\Omega=1,
+\qquad
+\int X_{AB}^{*}X^{AB}\,\dd\Omega
+=\frac{(J-1)(J+2)}{2}.
+\label{eq:axial-norms}
+\end{equation}
+The angular structures entering the mixed and trace-free angular components
+of the scalar stress tensor are
+\begin{equation}
+S_A^{JML}=\sum_s B_s^{*}D_AP_s^{JML},
+\qquad
+Q_{AB}^{JML}=\sum_s D_{(A}B_s^{*}D_{B)}P_s^{JML}.
+\label{eq:axial-bilinears}
+\end{equation}
+Direct evaluation for $\ell=1$, $J=L=2$ yields the pointwise identities
+\begin{equation}
+S_A^{2M2}=-\frac{\ii}{2\sqrt{\pi}}X_A^{2M},
+\qquad
+Q_{AB}^{2M2}=\frac{\ii}{2\sqrt{\pi}}X_{AB}^{2M}.
+\label{eq:axial-pointwise}
+\end{equation}
+Consequently,
+\begin{equation}
+\int X^{A*}S_A\,\dd\Omega=-\frac{\ii}{2\sqrt{\pi}},
+\qquad
+\int X^{AB*}Q_{AB}\,\dd\Omega=\frac{\ii}{\sqrt{\pi}}.
+\label{eq:axial-projections}
+\end{equation}
+The factor of two between the second pointwise and integrated coefficients is
+the $J=2$ tensor-harmonic norm in Eq.~\eqref{eq:axial-norms}. Overall phases
+change if the tensor-harmonic basis is rephased, but vanishing, magnitudes,
+and $M$ degeneracy do not.
+
+\begin{table}[t]
+\centering
+\caption{Independent quadrature check of the $\ell=1$, $J=L=2$ angular
+identities. The exact values are
+$|\langle X,S\rangle|=1/(2\sqrt\pi)=0.2820947917738781$ and
+$|\langle X_{(2)},Q\rangle|=1/\sqrt\pi=0.5641895835477563$.}
+\label{tab:axial-projection}
+\small
+\begin{tabular}{@{}rccc@{}}
+\toprule
+$M$ & $\|\mathcal D\|_2$ & $\operatorname{Im}\langle X,S\rangle$
+& $\operatorname{Im}\langle X_{(2)},Q\rangle$ \\
+\midrule
+$-2$ & $2.83\times10^{-17}$ & $-0.2820947917738770$ & $0.5641895835477598$ \\
+$-1$ & $2.68\times10^{-17}$ & $-0.2820947917738799$ & $0.5641895835477542$ \\
+$0$  & $1.01\times10^{-17}$ & $-0.2820947917738773$ & $0.5641895835477541$ \\
+$1$  & $2.69\times10^{-17}$ & $-0.2820947917738799$ & $0.5641895835477542$ \\
+$2$  & $2.83\times10^{-17}$ & $-0.2820947917738770$ & $0.5641895835477598$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The $M=0$ result was also obtained symbolically from explicit low-order
+spherical harmonics, without numerical quadrature. The numerical calculation
+uses Gauss--Legendre integration in $\cos\theta$ and uniform Fourier nodes in
+$\phi$. Increasing the grid from $24\times32$ to $48\times64$ changes each
+projected coefficient by less than $2\times10^{-12}$; at the reported
+resolution the spread over $M$ is $2.9\times10^{-15}$ for the vector and
+$5.8\times10^{-15}$ for the tensor projection.
+
+\subsection{Linearized relativistic source}
+
+To expose the physical content, consider one frequency sideband in the same
+time convention as the background,
+\begin{equation}
+\Phi_s^{(0)}=e^{\ii\omega t}F(r)B_s,
+\qquad
+\delta\Phi_s^{(+)}=e^{\ii\omega t-\ii\sigma t}u(r)P_s^{2M2}.
+\label{eq:axial-sideband}
+\end{equation}
+The companion sideband required by the full complex perturbation contributes
+the conjugate angular structure with an independent radial amplitude. For the
+sideband in Eq.~\eqref{eq:axial-sideband}, Eq.~\eqref{eq:density-null} implies
+$\sum_sP_sD_AB_s^*=-S_A$. Substitution into the stress tensor
+\eqref{eq:stress} gives
+\begin{align}
+\delta T_{tA}^{(+,\mathrm{scalar})}
+&=-\frac{\ii}{2}F(2\omega-\sigma)uS_A,
+\label{eq:stress-ta-pre}\\
+\delta T_{rA}^{(+,\mathrm{scalar})}
+&=\frac{1}{2}(F'u-Fu')S_A,
+\label{eq:stress-ra-pre}\\
+\delta T_{AB}^{(+,\mathrm{scalar,odd})}
+&=FuQ_{AB}.
+\label{eq:stress-ab-pre}
+\end{align}
+Using Eq.~\eqref{eq:axial-pointwise}, the projected sources are therefore
+\begin{align}
+\delta T_{tA}^{(+,\mathrm{scalar})}
+&=-\frac{F(2\omega-\sigma)u}{4\sqrt\pi}X_A^{2M},
+\label{eq:stress-ta}\\
+\delta T_{rA}^{(+,\mathrm{scalar})}
+&=-\frac{\ii(F'u-Fu')}{4\sqrt\pi}X_A^{2M},
+\label{eq:stress-ra}\\
+\delta T_{AB}^{(+,\mathrm{scalar,odd})}
+&=\frac{\ii Fu}{2\sqrt\pi}X_{AB}^{2M}.
+\label{eq:stress-ab}
+\end{align}
+These equations demonstrate that the cancellation of the density channel does
+not remove the relativistic angular current or odd anisotropic stress.
+
+For completeness, write the odd metric perturbation as
+\begin{equation}
+h_{tA}=h_0X_A^{2M},\qquad h_{rA}=h_1X_A^{2M},\qquad
+h_{AB}=h_2X_{AB}^{2M}.
+\label{eq:axial-metric}
+\end{equation}
+If
+\begin{equation}
+\mathcal K_0=\sum_s\left(
+\nabla^c\Phi_s^{(0)*}\nabla_c\Phi_s^{(0)}
++\mu^2|\Phi_s^{(0)}|^2\right),
+\end{equation}
+then variation of the explicit metric in Eq.~\eqref{eq:stress} adds
+$-\mathcal K_0h_{ab}/2$. Terms proportional to the background
+$g_{AB}$ are pure angular trace and have zero axial-tensor projection. Thus
+the complete axial projections for this sideband are obtained from
+Eqs.~\eqref{eq:stress-ta}--\eqref{eq:stress-ab} by adding
+$-\mathcal K_0h_0X_A/2$, $-\mathcal K_0h_1X_A/2$, and
+$-\mathcal K_0h_2X_{AB}/2$, respectively. Regge--Wheeler gauge sets $h_2=0$
+for $J\geq2$. The angular system therefore closes on the usual axial metric
+harmonics, but with a genuine scalar source.
+
+\subsection{Null control and weak-field interpretation}
+
+For an ordinary $\ell=0$ background, $B=Y_{00}$ is constant. The vector
+bilinear is then proportional to $D_AY_{JM}$ and is purely polar, while
+$Q_{AB}=0$. Both axial projections vanish exactly. This control shows that
+Eq.~\eqref{eq:axial-pointwise} is not an artifact of projecting an arbitrary
+scalar gradient: it requires the internal orbital structure of the
+$\ell=1$ background.
+
+In the nonrelativistic limit the leading mass-density perturbation is
+proportional to Eq.~\eqref{eq:density-bilinear}, so the odd sector does not
+source the Schr\"odinger--Poisson potential, in agreement with
+Ref.~\cite{ChavezNambo2024}. The relativistic current and anisotropic-stress
+terms are nevertheless nonzero. Their metric response becomes
+post-Newtonianly suppressed as compactness decreases. The radial axial
+equations, massive-scalar sheets, and outgoing gravitational boundary
+conditions developed below quantify that response and resolve both the QNM
+frequency and its damping law.
+
+\subsection{Verified metric--scalar radial coupling}
+
+The first dynamical step beyond the angular proof is to vary the
+Klein--Gordon operator with respect to the odd metric.  In Regge--Wheeler
+gauge, let the positive sideband have radial amplitude $u_+(r)$ and total
+time dependence $e^{\ii(\omega-\sigma)t}$.  Direct coordinate variation of
+$\Box\Phi$, without using the Einstein equations or a published component
+formula, gives
+\begin{align}
+0={}&\frac{1}{\alpha\gamma r^2}\frac{\dd}{\dd r}
+\left(\frac{\alpha r^2}{\gamma}u_+'\right)
++\left[\frac{(\omega-\sigma)^2}{\alpha^2}-\mu^2-
+\frac{L(L+1)}{r^2}\right]u_+ \nonumber\\
+&+\frac{\kappa_V}{r^2}\left[
+\frac{\ii F(2\omega-\sigma)}{\alpha^2}h_0
+-\frac{1}{\gamma^2}\left\{Fh_1'
++\left(2F'+F\left(\frac{\alpha'}{\alpha}-
+\frac{\gamma'}{\gamma}\right)\right)h_1\right\}\right],
+\label{eq:kg-positive-sideband}
+\end{align}
+where $L=2$ and $\kappa_V=-\ii/(2\sqrt\pi)$ in the convention of
+Eq.~\eqref{eq:axial-pointwise}.  The companion amplitude $u_-$ obeys the
+same radial differential operator with $(\omega-\sigma)^2$ replaced by
+$(\omega+\sigma)^2$; its time-current coupling changes to
+$-\ii F(2\omega+\sigma)h_0/\alpha^2$, while the radial $h_1$ coupling is
+unchanged in this phase convention.
+
+Equation~\eqref{eq:kg-positive-sideband} has been checked by two algebraically
+independent calculations.  The first varies
+$g^{ab}(\partial_a\partial_b-\Gamma^c{}_{ab})\Phi$ in coordinates on a
+general spherical background.  The second expands the compact expression
+shown above.  Their symbolic difference simplifies identically to zero.
+Setting $h_0=h_1=0$ recovers the massive scalar sideband equation; setting
+$F=0$ removes the scalar--metric coupling.
+
+This calculation also corrects a useful bookkeeping misconception.  The two
+scalar sidebands obey second-order radial equations.  Therefore a local
+first-order formulation cannot close on only $(h_0,h_1,u_+,u_-)$.  Before
+Einstein constraints are used to eliminate variables, the minimal state is
+six-dimensional, for example
+\begin{equation}
+\bm{Y}=(h_0,h_1,u_+,u_+',u_-,u_-')^{T}.
+\label{eq:minimal-axial-state}
+\end{equation}
+The next section combines Eq.~\eqref{eq:kg-positive-sideband} and its
+companion with two axial Einstein equations, imposes regular central data and
+outgoing/decaying channel conditions, and performs a declared complex search.
+It also records which certification gates are closed and which remain open,
+so the reported frequency is interpreted as a strong candidate pole rather
+than a completed independent damping measurement.

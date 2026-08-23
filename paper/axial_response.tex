@@ -1,0 +1,209 @@
+\section{Scattering, conversion, and driven response}
+\label{sec:axial-response}
+
+The complex root establishes the free oscillation.  We now ask the reciprocal
+question: how does the same star respond when an axial wave is supplied from
+infinity?  This calculation is more than a visualization of the QNM.  It
+tests the incoming-wave phase convention and the interpretation of the narrow
+pole in a real-frequency experiment.  The present open-channel weighting is
+an internally consistent scattering normalization, not yet an independent
+derivation of canonical gravitational and scalar energy flux.
+
+\subsection{Incoming channels and a flat-space unit-modulus identity}
+
+At real $\sigma$, let $Y_g^{\rm out}$ denote the gravitational exterior
+solution used in the QNM calculation.  Complex conjugation alone does not
+produce its incoming partner in the first-order metric variables.  With
+$e^{-\ii\sigma t}$, the vacuum equation contains
+\begin{equation}
+h_1'=-\ii\sigma\frac{\gamma^2}{\alpha^2}h_0+
+\left(\frac{\gamma'}{\gamma}-\frac{\alpha'}{\alpha}\right)h_1 .
+\end{equation}
+Consequently radial reversal acts as
+\begin{equation}
+(h_0,h_1)_{\rm in}=(-h_0^*,h_1^*)_{\rm out}.
+\label{eq:metric-incoming-map}
+\end{equation}
+This sign is essential.  In exact flat vacuum, matching a regular center to
+the in/out Hankel pair then gives $|S_{gg}|=1$ to $2\times10^{-7}$ in the
+regression control; using plain conjugation violates the vacuum Wronskian.
+For an incident scalar wave the exterior scalar pair is real-coefficient at
+fixed real frequency, so ordinary complex conjugation reverses its direction.
+
+Below the first scalar threshold there is only one propagating channel.  Over
+$0.02\leq\sigma\leq0.145$, including frequencies within a few widths of the
+long-lived pole, the physical solution obeys
+\begin{equation}
+\bigl||S_{gg}|-1\bigr|<4\times10^{-6}.
+\label{eq:closed-channel-unitarity}
+\end{equation}
+The closed scalar amplitudes can become large near the pole, but carry no
+asymptotic radial flux.  Equation~\eqref{eq:closed-channel-unitarity} is thus
+an independent global check of the center data, exterior propagation, and
+six-dimensional matching solve.
+
+\subsection{Raw two-channel scattering and inferred weighting}
+
+For $\sigma>\mu-\omega$, the $u_-$ sideband opens and the exterior problem has
+two propagating channels.  Endpoint-normalized amplitudes are collected as
+\begin{equation}
+\begin{pmatrix}b_g^{\rm out}\\ b_s^{\rm out}\end{pmatrix}
+=S
+\begin{pmatrix}b_g^{\rm in}\\ b_s^{\rm in}\end{pmatrix},
+\qquad
+S=\begin{pmatrix}S_{gg}&S_{gs}\\S_{sg}&S_{ss}\end{pmatrix}.
+\label{eq:raw-scattering-matrix}
+\end{equation}
+The raw basis uses $h_1(r_e)=1$ for gravity and $u_-(r_e)=1$ for the scalar;
+these columns do not carry equal flux.  We write a positive diagonal weight
+$W={\rm diag}(w_g,w_s)$.  Reciprocity of the computed matrix supplies the
+ratio
+\begin{equation}
+\frac{w_s}{w_g}=-
+\frac{S_{gg}^*S_{gs}}{S_{sg}^*S_{ss}},
+\label{eq:flux-weight-ratio}
+\end{equation}
+and the imaginary fraction of the right-hand side is below $10^{-6}$ in every
+production run.  The two diagonal equations in $S^\dagger W S=W$ are not used
+to determine the ratio and provide algebraic consistency tests.  However,
+Eq.~\eqref{eq:flux-weight-ratio} infers $W$ from $S$; it does not derive energy
+currents from the quadratic action, covariant symplectic current, or
+asymptotic Isaacson and Klein--Gordon fluxes.  We therefore call the following
+quantities weighted conversion diagnostics, not canonical efficiencies.
+
+The weighted conversion diagnostics are
+\begin{align}
+\mathcal P_{g\to s}&=\frac{w_s}{w_g}|S_{sg}|^2,
+&\mathcal P_{g\to g}&=|S_{gg}|^2,\nonumber\\
+\mathcal P_{s\to g}&=\frac{w_g}{w_s}|S_{gs}|^2,
+&\mathcal P_{s\to s}&=|S_{ss}|^2.
+\label{eq:conversion-probabilities}
+\end{align}
+Table~\ref{tab:axial-conversion} shows that conversion is small but nonzero,
+reciprocal, and largest near $\sigma\simeq0.20$ for the benchmark scan.
+
+\begin{table}[!htbp]
+\centering
+\caption{Reciprocity-weighted axial conversion above the first scalar threshold.
+The last column is the spectral norm of $\widetilde S^\dagger\widetilde S-I$,
+where $\widetilde S=W^{1/2}SW^{-1/2}$.}
+\label{tab:axial-conversion}
+\small
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+$\sigma$ & $\mathcal P_{g\to s}$ & $\mathcal P_{s\to g}$ &
+$\mathcal P_{g\to g}+\mathcal P_{g\to s}$ & inferred-$W$ isometry defect\\
+\midrule
+0.16 & $3.7215\times10^{-6}$ & $3.7215\times10^{-6}$ & 1.000000022 & $2.21\times10^{-8}$\\
+0.18 & $7.4777\times10^{-6}$ & $7.4777\times10^{-6}$ & 0.999999993 & $7.10\times10^{-9}$\\
+0.20 & $1.02057\times10^{-5}$ & $1.02057\times10^{-5}$ & 1.000000009 & $8.59\times10^{-9}$\\
+0.25 & $9.9322\times10^{-6}$ & $9.9322\times10^{-6}$ & 0.999999956 & $4.44\times10^{-8}$\\
+0.30 & $5.7625\times10^{-6}$ & $5.7625\times10^{-6}$ & 0.999999976 & $2.44\times10^{-8}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At $\sigma=0.20$, the three domain pairs $(r_m,r_e)=(12,30),(14,35)$,
+and $(16,40)$ give $\mathcal P_{g\to s}=1.020999\times10^{-5}$,
+$1.020572\times10^{-5}$, and $1.020566\times10^{-5}$.  The corresponding
+linear matching residuals range from $7.6\times10^{-12}$ to
+$5.2\times10^{-10}$.  This domain audit separates the physical five-decimal
+weighted conversion diagnostic from the much smaller algebraic balance defect.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{figure_15_axial_response.pdf}
+\caption{Neutral axial response.  Top left: conversion balanced by the positive
+diagonal reciprocity metric inferred from the numerical scattering matrix.
+Top right: weighted-sum and inferred-metric isometry defects; these are
+algebraic checks, not a canonical energy-flux derivation. Bottom left: stored scalar norm in a unit-incident-gravity
+experiment across the long-lived pole.  Bottom right: the unwrapped reflection
+phase, whose rapid rotation gives the resonant delay.}
+\label{fig:axial-response}
+\end{figure}
+
+\subsection{The QNM as a driven resonance}
+
+We next drive the system with a unit incident gravitational wave on a fixed
+41-point grid, $0.0493945\leq\sigma\leq0.0494010$, evaluated without reading
+the stored complex pole. For each solution we integrate the scalar
+storage functional
+\begin{equation}
+\mathcal N_s(\sigma)=\int_0^{r_m}\alpha\gamma r^2
+\left(|u_+|^2+|u_-|^2\right)\dd r.
+\label{eq:stored-scalar-norm}
+\end{equation}
+A Lorentzian plus a quadratic local floor fits the numerical response with
+normalized RMS residual $9.38\times10^{-6}$. Repeating the fit with linear and
+quadratic backgrounds and three edge trims supplies the fit-window audit. The
+primary center and half-width are
+\begin{equation}
+\sigma_c^{\rm drive}=0.0493977308380,
+\qquad
+\Gamma_{1/2}^{\rm drive}=5.9649253\times10^{-7}.
+\end{equation}
+with covariance errors $3.7\times10^{-12}$ and $9.9\times10^{-12}$,
+respectively. The driven center differs from
+$\operatorname{Re}\sigma_{\rm QNM}$ by $1.1\times10^{-9}$ fractionally, while
+the half-width differs from $-\operatorname{Im}\sigma_{\rm QNM}$ by
+$4.5\times10^{-5}$. The reflection-phase slope agrees with the single-pole
+prediction $2/\Gamma_{1/2}$ to $2.46\%$. This is strong same-operator evidence
+for the long-lived pole; the short time evolution is not counted as a damping
+measurement.
+
+\section{Stationary axial response}
+\label{sec:axial-static}
+
+The zero-frequency odd-parity sector is the relativistic gravitomagnetic
+response channel.  Its interpretation follows the magnetic-type response
+defined for spherical compact bodies \cite{BinningtonPoisson2009,Pani2018};
+boson-star tidal observables are independently known to retain information
+that distinguishes horizonless scalar configurations from black holes and
+material stars \cite{Sennett2017}.
+
+The constraint-reduced dynamical equations contain $1/\sigma$ and cannot be
+continued by numerical substitution to $\sigma=0$.  We instead return to the
+$tA$ and $AB$ Einstein equations before division by frequency.  The regular
+stationary sector has
+\begin{equation}
+h_1=0,
+\qquad u_++u_-=0,
+\qquad d=u_+-u_- ,
+\end{equation}
+and closes on $(h_0,h_0',d,d')$.  The scalar difference satisfies
+\begin{equation}
+d''+\left(\frac2r+\frac{\alpha'}\alpha-
+\frac{\gamma'}\gamma\right)d'
++\gamma^2\left(\frac{\omega^2}{\alpha^2}-\mu^2-
+\frac6{r^2}\right)d
+=-\frac{4c_V\omega\gamma^2F}{\alpha^2r^2}h_0,
+\label{eq:static-scalar-difference}
+\end{equation}
+while the $tA$ equation supplies the second-order metric equation.  At the
+center the two regular solutions begin as $h_0\sim r^3$ and $d\sim r^2$.
+
+In the Schwarzschild exterior the metric equation is
+\begin{equation}
+h_0''-\frac{6r-4M}{r^2(r-2M)}h_0=0.
+\end{equation}
+We use the exact growing solution $g=r^2(r-2M)$ and the reduction-of-order
+decaying solution normalized as $d_g=r^{-2}[1+O(M/r)]$. The regular interior
+two-plane and the exterior tidal, response, and decaying-scalar three-plane are
+matched at an independently varied radius. The metric at the outer
+normalization radius is decomposed as
+\begin{equation}
+h_0=A\,r^2(r-2M)+B\,r^{-2}[1+O(M/r)].
+\end{equation}
+Our fixed-normalization response coefficient is the explicitly defined ratio
+\begin{equation}
+\Lambda_B=\frac{B}{A M^5}=-122.47418,
+\label{eq:static-axial-response}
+\end{equation}
+Varying $r_m=10,12,14,16$ at fixed outer normalization changes the coefficient
+by $8.4\times10^{-7}$; the complete six-domain spread, including outer radii
+$30,35,40$, is $3.15\times10^{-5}$, or $2.6\times10^{-7}$ fractionally. The
+two-sided matching residual is $3\times10^{-16}$--$3\times10^{-15}$ and the
+coefficient is real to machine precision. We call $\Lambda_B$ an explicitly
+normalized axial response coefficient rather than a gauge-invariant magnetic
+Love number; a separate gauge-invariant reconstruction is required before
+making that identification.

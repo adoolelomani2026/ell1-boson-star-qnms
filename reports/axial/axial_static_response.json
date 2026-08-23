@@ -1,0 +1,69 @@
+{
+  "calculation": "neutral ell=1 J=L=2 stationary axial response",
+  "definition": "h0=A r^2(r-2M)+B r^-2[1+O(M/r)]; response=B/(A M^5)",
+  "background_a1_0": 0.08,
+  "domains": [
+    {
+      "r_match": 10.0,
+      "r_end": 35.0,
+      "response_B_over_A": -269.98013724955285,
+      "response_imaginary_residual": 0.0,
+      "dimensionless_B_over_A_M5": -122.4741864479917,
+      "scalar_tail_over_tidal_A": 2.747058608510268e-05,
+      "normalized_matching_residual": 3.010089982431537e-16,
+      "normalized_minimum_singular_value": 0.0054362430048236
+    },
+    {
+      "r_match": 12.0,
+      "r_end": 35.0,
+      "response_B_over_A": -269.9801362530728,
+      "response_imaginary_residual": 0.0,
+      "dimensionless_B_over_A_M5": -122.47418599594704,
+      "scalar_tail_over_tidal_A": 2.7470586085161417e-05,
+      "normalized_matching_residual": 2.789195745340022e-16,
+      "normalized_minimum_singular_value": 0.0020471687309636063
+    },
+    {
+      "r_match": 14.0,
+      "r_end": 35.0,
+      "response_B_over_A": -269.9801360221025,
+      "response_imaginary_residual": 0.0,
+      "dimensionless_B_over_A_M5": -122.47418589116931,
+      "scalar_tail_over_tidal_A": 2.7470586084800178e-05,
+      "normalized_matching_residual": 1.246763471259871e-15,
+      "normalized_minimum_singular_value": 0.0024397833076725663
+    },
+    {
+      "r_match": 16.0,
+      "r_end": 35.0,
+      "response_B_over_A": -269.98013539750684,
+      "response_imaginary_residual": 0.0,
+      "dimensionless_B_over_A_M5": -122.47418560782683,
+      "scalar_tail_over_tidal_A": 2.7470586082153176e-05,
+      "normalized_matching_residual": 6.288254488204231e-16,
+      "normalized_minimum_singular_value": 0.011512826242561738
+    },
+    {
+      "r_match": 14.0,
+      "r_end": 30.0,
+      "response_B_over_A": -269.9800677636337,
+      "response_imaginary_residual": 0.0,
+      "dimensionless_B_over_A_M5": -122.47415492629717,
+      "scalar_tail_over_tidal_A": 0.0002773884616096038,
+      "normalized_matching_residual": 3.533076145380814e-16,
+      "normalized_minimum_singular_value": 0.026034339504620405
+    },
+    {
+      "r_match": 14.0,
+      "r_end": 40.0,
+      "response_B_over_A": -269.9801355872632,
+      "response_imaginary_residual": 0.0,
+      "dimensionless_B_over_A_M5": -122.47418569390817,
+      "scalar_tail_over_tidal_A": 2.6105871444018523e-06,
+      "normalized_matching_residual": 2.828773335308085e-15,
+      "normalized_minimum_singular_value": 0.0008936581072010555
+    }
+  ],
+  "mean_dimensionless_response": -122.47418076052337,
+  "domain_spread": 3.1521694523917176e-05
+}

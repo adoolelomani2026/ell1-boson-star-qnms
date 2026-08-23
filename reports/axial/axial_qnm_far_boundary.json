@@ -1,0 +1,86 @@
+{
+  "calculation": "curvature-corrected axial-QNM asymptotic convergence",
+  "boundary_model": "Regge-Wheeler O(r^-3) master series and massive-scalar Coulomb O(r^-3) series",
+  "matching": {
+    "r_match": 14.0,
+    "r_end": 35.0,
+    "rtol": 2e-07,
+    "atol": 2e-09
+  },
+  "asymptotic_order_rows": [
+    {
+      "asymptotic_order": 1,
+      "sigma_real": 0.049397724342986574,
+      "sigma_imag": -6.016426648226135e-07,
+      "relative_residual": 1.5097058364171124e-10,
+      "converged": true,
+      "evaluations": 9
+    },
+    {
+      "asymptotic_order": 2,
+      "sigma_real": 0.049397730394506,
+      "sigma_imag": -5.960502725577547e-07,
+      "relative_residual": 1.079572099440921e-11,
+      "converged": true,
+      "evaluations": 9
+    },
+    {
+      "asymptotic_order": 3,
+      "sigma_real": 0.04939773070407638,
+      "sigma_imag": -5.965238237742481e-07,
+      "relative_residual": 7.162845240271491e-11,
+      "converged": true,
+      "evaluations": 9
+    }
+  ],
+  "far_radius_rows": [
+    {
+      "r_far": 120.0,
+      "sigma_real": 0.04939773050302326,
+      "sigma_imag": -5.963794359576493e-07,
+      "relative_residual": 1.1486202982472243e-10,
+      "converged": true,
+      "evaluations": 9
+    },
+    {
+      "r_far": 200.0,
+      "sigma_real": 0.04939773068558179,
+      "sigma_imag": -5.965056730192461e-07,
+      "relative_residual": 3.7395179953608594e-11,
+      "converged": true,
+      "evaluations": 9
+    },
+    {
+      "r_far": 300.0,
+      "sigma_real": 0.04939773070407653,
+      "sigma_imag": -5.965238237742497e-07,
+      "relative_residual": 2.8429547407001663e-11,
+      "converged": true,
+      "evaluations": 9
+    },
+    {
+      "r_far": 600.0,
+      "sigma_real": 0.0493977306987648,
+      "sigma_imag": -5.965193337902074e-07,
+      "relative_residual": 1.2335425670036803e-11,
+      "converged": true,
+      "evaluations": 9
+    },
+    {
+      "r_far": 900.0,
+      "sigma_real": 0.04939773069929658,
+      "sigma_imag": -5.965189099616558e-07,
+      "relative_residual": 1.7327410930068946e-10,
+      "converged": true,
+      "evaluations": 6
+    }
+  ],
+  "order_2_to_3_shift": {
+    "real": 3.095703832167729e-10,
+    "imaginary": 4.735512164933832e-10
+  },
+  "rfar_600_to_900_shift": {
+    "real": 5.317829510076422e-13,
+    "imaginary": 4.2382855158750035e-13
+  }
+}

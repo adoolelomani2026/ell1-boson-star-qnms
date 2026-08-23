@@ -40,8 +40,8 @@ crossing.
 - Conservative sum of components: `6.80e-9` in absolute `sigma0^2`.
 - The complete automated suite passes: `13 passed`.
 
-See `data/radial_benchmarks.csv` for all 14 certification rows and
-`data/radial_uncertainty.json` for the machine-readable uncertainty and runtime
+See `reports/radial/radial_benchmarks.csv` for all 14 certification rows and
+`reports/radial/radial_uncertainty.json` for the machine-readable uncertainty and runtime
 provenance.
 
 ## Gate status

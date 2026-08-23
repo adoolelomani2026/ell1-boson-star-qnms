@@ -6,7 +6,7 @@ conditions because it subtracts exponentially amplified numerical solutions.
 
 ## Corrected
 
-- Added `radial/bvp.py`, a nonlinear global collocation eigenvalue problem that
+- Added `python/radial/bvp.py`, a nonlinear global collocation eigenvalue problem that
   imposes both published physical outer conditions directly.
 - Replaced independent PCHIP representations of `psi` and `psi'` with one
   interpolant of `u=psi/r^ell`; both quantities now come from that interpolant.
@@ -40,4 +40,3 @@ change between `a_1^0=0.100` and `0.105`.
 - Gate A still needs an independent background shooting implementation.
 - Therefore the radial numerical milestone remains provisional and work does
   not proceed to nonradial QNMs on the basis of this BVP alone.
-

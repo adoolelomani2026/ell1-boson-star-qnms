@@ -1,0 +1,8 @@
+delta_G_tA
+-I*sigma*Derivative(h1(r), r)/(2*gamma(r)**2) + I*sigma*h1(r)*Derivative(gamma(r), r)/(2*gamma(r)**3) + I*sigma*h1(r)*Derivative(alpha(r), r)/(2*alpha(r)*gamma(r)**2) - Derivative(h0(r), (r, 2))/(2*gamma(r)**2) + Derivative(gamma(r), r)*Derivative(h0(r), r)/(2*gamma(r)**3) + h0(r)*Derivative(alpha(r), (r, 2))/(alpha(r)*gamma(r)**2) + Derivative(alpha(r), r)*Derivative(h0(r), r)/(2*alpha(r)*gamma(r)**2) - h0(r)*Derivative(alpha(r), r)*Derivative(gamma(r), r)/(alpha(r)*gamma(r)**3) - I*sigma*h1(r)/(r*gamma(r)**2) - 2*h0(r)*Derivative(gamma(r), r)/(r*gamma(r)**3) + 2*h0(r)/r**2 + h0(r)/(r**2*gamma(r)**2)
+
+delta_G_rA
+-sigma**2*h1(r)/(2*alpha(r)**2) + I*sigma*Derivative(h0(r), r)/(2*alpha(r)**2) + h1(r)*Derivative(alpha(r), (r, 2))/(alpha(r)*gamma(r)**2) - h1(r)*Derivative(alpha(r), r)*Derivative(gamma(r), r)/(alpha(r)*gamma(r)**3) - I*sigma*h0(r)/(r*alpha(r)**2) - h1(r)*Derivative(gamma(r), r)/(r*gamma(r)**3) + h1(r)*Derivative(alpha(r), r)/(r*alpha(r)*gamma(r)**2) + 2*h1(r)/r**2
+
+delta_G_AB
+I*sigma*h0(r)/alpha(r)**2 + Derivative(h1(r), r)/gamma(r)**2 - h1(r)*Derivative(gamma(r), r)/gamma(r)**3 + h1(r)*Derivative(alpha(r), r)/(alpha(r)*gamma(r)**2)

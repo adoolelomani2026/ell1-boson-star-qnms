@@ -1,0 +1,65 @@
+{
+  "calculation": "current-operator 1+1 method-of-lines real-frequency convergence matrix",
+  "frequency_domain_reference": {
+    "sigma_real": 0.049397730785015435,
+    "sigma_imag": -5.9651932712628e-07,
+    "matching_min_singular_value": 1.6494748385686602e-13
+  },
+  "fixed_parameters": {
+    "r_min": 0.1,
+    "r_max": 200.0,
+    "t_end": 150.0,
+    "extraction_radius_approx": 6.0,
+    "sponge_start": 180.0,
+    "fit_window": [
+      20.0,
+      138.0
+    ],
+    "damping_time": 1676391.618051137,
+    "run_fraction_of_damping_time": 8.947789906894199e-05
+  },
+  "runs": [
+    {
+      "points": 1500,
+      "courant": 0.1,
+      "sigma_real_fit": 0.04939778435314099,
+      "relative_frequency_error": 1.0844248248272668e-06,
+      "log_amplitude_slope": -5.668957532622093e-07,
+      "phase_residual_rms": 2.3705295424401588e-06,
+      "samples": 8850
+    },
+    {
+      "points": 2000,
+      "courant": 0.1,
+      "sigma_real_fit": 0.04939774339698622,
+      "relative_frequency_error": 2.5531478039056727e-07,
+      "log_amplitude_slope": -5.98135938139002e-07,
+      "phase_residual_rms": 9.256072654081591e-07,
+      "samples": 5901
+    },
+    {
+      "points": 2500,
+      "courant": 0.1,
+      "sigma_real_fit": 0.049397736966515435,
+      "relative_frequency_error": 1.2513732718354668e-07,
+      "log_amplitude_slope": -6.031401823643783e-07,
+      "phase_residual_rms": 7.896528225175823e-07,
+      "samples": 4917
+    },
+    {
+      "points": 2000,
+      "courant": 0.08,
+      "sigma_real_fit": 0.04939774342510922,
+      "relative_frequency_error": 2.5588409797944863e-07,
+      "log_amplitude_slope": -5.981191065395054e-07,
+      "phase_residual_rms": 9.261095562769022e-07,
+      "samples": 4917
+    }
+  ],
+  "summary": {
+    "sigma_real_fit_spread": 4.738662555403561e-08,
+    "maximum_relative_frequency_error": 1.0844248248272668e-06,
+    "frequency_confirmation": true,
+    "damping_magnitude_measured_independently": false
+  }
+}

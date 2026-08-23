@@ -1,0 +1,407 @@
+\section{Closed neutral axial dynamics and first complex mode}
+\label{sec:axial-dynamics}
+
+This section gives the current frequency-domain calculation: the radial
+Einstein operator, both scalar sidebands, regular-center and radiative exterior
+data, a two-sided complex-frequency match, and its remaining certification
+limits.  The parity decomposition and
+vacuum exterior reduce to the Regge--Wheeler framework \cite{ReggeWheeler1957},
+while the coupled-channel boundary logic follows the direct matching approach
+used for relativistic stars with interacting fields \cite{Macedo2016}.
+
+\subsection{Directly linearized axial Einstein tensor}
+
+We set $h_2=0$ and use $e^{-\ii\sigma t}$.  A direct coordinate variation of
+the Einstein tensor on the general spherical metric of Eq.~\eqref{eq:metric}
+gives the following coefficients of $X_A$ and $X_{AB}$ for $J=2$:
+\begin{align}
+\delta G_{tA}/X_A={}&-\frac{\ii\sigma}{2\gamma^2}h_1'
++\frac{\ii\sigma}{2\gamma^2}
+\left(\frac{\gamma'}{\gamma}+\frac{\alpha'}{\alpha}\right)h_1
+-\frac{h_0''}{2\gamma^2}
++\frac{h_0'}{2\gamma^2}
+\left(\frac{\gamma'}{\gamma}+\frac{\alpha'}{\alpha}\right)
+\nonumber\\
+&+\frac{h_0}{\gamma^2}
+\left(\frac{\alpha''}{\alpha}-
+\frac{\alpha'\gamma'}{\alpha\gamma}\right)
+-\frac{\ii\sigma h_1}{r\gamma^2}
+-\frac{2\gamma'h_0}{r\gamma^3}
++\left(2+\frac{1}{\gamma^2}\right)\frac{h_0}{r^2},
+\label{eq:direct-GtA}\\
+\delta G_{rA}/X_A={}&-\frac{\sigma^2}{2\alpha^2}h_1
++\frac{\ii\sigma}{2\alpha^2}h_0'
+-\frac{\ii\sigma}{r\alpha^2}h_0
+\nonumber\\
+&+h_1\left[
+\frac{\alpha''}{\alpha\gamma^2}
+-\frac{\alpha'\gamma'}{\alpha\gamma^3}
+-\frac{\gamma'}{r\gamma^3}
++\frac{\alpha'}{r\alpha\gamma^2}
++\frac{2}{r^2}\right],
+\label{eq:direct-GrA}\\
+\delta G_{AB}/X_{AB}={}&
+\frac{\ii\sigma}{\alpha^2}h_0
++\frac{1}{\gamma^2}h_1'
++\frac{1}{\gamma^2}
+\left(\frac{\alpha'}{\alpha}-\frac{\gamma'}{\gamma}\right)h_1.
+\label{eq:direct-GAB}
+\end{align}
+These expressions were obtained by differentiating the exact Christoffel and
+Ricci formulas with respect to a metric bookkeeping parameter.  Their
+flat-vacuum reduction is a decisive sign check.  Equations
+\eqref{eq:direct-GrA} and \eqref{eq:direct-GAB} then give
+\begin{align}
+h_1'&=-\ii\sigma h_0,\nonumber\\
+h_0'&=\frac{2h_0}{r}+
+\frac{\sigma^2-4/r^2}{\ii\sigma}h_1.
+\label{eq:flat-axial-pair}
+\end{align}
+Eliminating $h_0$ and writing $h_1=r\Psi$ yields
+\begin{equation}
+\Psi''+\left(\sigma^2-\frac{6}{r^2}\right)\Psi=0,
+\label{eq:flat-rw-control}
+\end{equation}
+the $J=2$ Regge--Wheeler vacuum equation.  This test fixed the relative signs
+before matter was introduced.
+
+\subsection{Both sidebands and the complete axial stress}
+
+At the common Fourier frequency $\sigma$, let $u_+$ multiply the perturbation
+of $\Phi$ and $u_-$ the independent perturbation of $\Phi^*$.  With
+$c_V=1/(2\sqrt\pi)$, the direct scalar parts of the projected stress are
+\begin{align}
+\tau_t={}&\frac{c_VF}{2}
+\left[(2\omega+\sigma)u_--(2\omega-\sigma)u_+\right],
+\label{eq:tau-t-both}\\
+\tau_r={}&-\frac{\ii c_V}{2}
+\left[F'(u_++u_-)-F(u_+'+u_-')\right],
+\label{eq:tau-r-both}\\
+\tau_2={}&\ii c_VF(u_++u_-).
+\label{eq:tau-2-both}
+\end{align}
+The explicit metric variation in the stress tensor adds
+$-\mathcal K_0h_0/2$ to the $tA$ projection and
+$-\mathcal K_0h_1/2$ to the $rA$ projection, where for $\ell=1$
+\begin{equation}
+\mathcal K_0=\frac{1}{4\pi}\left[
+-\frac{\omega^2F^2}{\alpha^2}+
+\frac{F'^2}{\gamma^2}+\frac{2F^2}{r^2}+\mu^2F^2\right].
+\label{eq:K0-axial}
+\end{equation}
+There is no such term in the $AB$ equation in Regge--Wheeler gauge because
+$h_2=0$.  Equations \eqref{eq:direct-GrA}, \eqref{eq:direct-GAB}, and
+\eqref{eq:tau-r-both}--\eqref{eq:tau-2-both} are two first-order Einstein
+equations.  Equation \eqref{eq:direct-GtA} is retained as a dependent
+constraint monitor rather than used to overdetermine the integration.
+
+\subsection{Six-state first-order system}
+
+Define
+\begin{equation}
+\bm Y=(h_0,h_1,u_+,v_+,u_-,v_-)^T,
+\qquad v_\pm=u_\pm'.
+\end{equation}
+The tensor Einstein equation gives
+\begin{equation}
+h_1'=-\ii\sigma\frac{\gamma^2}{\alpha^2}h_0
++\left(\frac{\gamma'}{\gamma}-\frac{\alpha'}{\alpha}\right)h_1
++8\pi\ii c_V\gamma^2F(u_++u_-).
+\label{eq:closed-h1}
+\end{equation}
+For compactness, introduce
+\begin{equation}
+\mathcal B=\frac{\alpha''}{\alpha\gamma^2}
+-\frac{\alpha'\gamma'}{\alpha\gamma^3}
+-\frac{\gamma'}{r\gamma^3}
++\frac{\alpha'}{r\alpha\gamma^2}+\frac{2}{r^2},
+\quad
+\mathcal D=F'(u_++u_-)-F(v_++v_-).
+\end{equation}
+The $rA$ equation becomes
+\begin{equation}
+h_0'=\frac{2h_0}{r}+\frac{1}{\ii\sigma}\left[
+\sigma^2h_1-2\alpha^2\mathcal B h_1
+-8\pi\alpha^2\mathcal K_0h_1
+-8\pi\ii c_V\alpha^2\mathcal D\right].
+\label{eq:closed-h0}
+\end{equation}
+Finally, define
+\begin{equation}
+\mathcal R_h=Fh_1'+\left[2F'+F
+\left(\frac{\alpha'}{\alpha}-\frac{\gamma'}{\gamma}\right)\right]h_1,
+\qquad \kappa_V=-\ii c_V.
+\end{equation}
+The two Klein--Gordon equations are
+\begin{align}
+v_+'={}&-\left(\frac2r+\frac{\alpha'}\alpha-\frac{\gamma'}\gamma\right)v_+
+-\gamma^2\left[\frac{(\omega-\sigma)^2}{\alpha^2}-\mu^2-
+\frac{6}{r^2}\right]u_+
+-\frac{\ii\kappa_V\gamma^2F(2\omega-\sigma)}{\alpha^2r^2}h_0
++\frac{\kappa_V}{r^2}\mathcal R_h,
+\label{eq:closed-up}\\
+v_-'={}&-\left(\frac2r+\frac{\alpha'}\alpha-\frac{\gamma'}\gamma\right)v_-
+-\gamma^2\left[\frac{(\omega+\sigma)^2}{\alpha^2}-\mu^2-
+\frac{6}{r^2}\right]u_-
++\frac{\ii\kappa_V\gamma^2F(2\omega+\sigma)}{\alpha^2r^2}h_0
++\frac{\kappa_V}{r^2}\mathcal R_h.
+\label{eq:closed-um}
+\end{align}
+Together with $u_\pm'=v_\pm$, Eqs.~\eqref{eq:closed-h1}--
+\eqref{eq:closed-um} form the promised local system
+$\bm Y'=\bm A(r,\sigma)\bm Y$.  The apparent $1/\sigma$ in
+Eq.~\eqref{eq:closed-h0} reflects the chosen constraint reduction; a separate
+zero-frequency formulation is required for a stationary axial perturbation.
+
+\subsection{Center basis and channel sheets}
+
+Let $F=f_1r+O(r^3)$ and $\alpha=\alpha_c+O(r^2)$.  The three regular
+solutions have
+\begin{equation}
+h_0=Hr^3+O(r^5),\qquad
+h_1=Br^4+O(r^6),\qquad
+u_+=Pr^2+O(r^4),\qquad u_-=Nr^2+O(r^4),
+\end{equation}
+where
+\begin{equation}
+B=\frac14\left[-\frac{\ii\sigma}{\alpha_c^2}H
++8\pi\ii c_V f_1(P+N)\right].
+\label{eq:axial-frobenius-B}
+\end{equation}
+Thus $(H,P,N)$ generate a three-column interior fundamental matrix.  At
+infinity the gravitational channel is outgoing and the scalar wavenumbers are
+\begin{equation}
+k_\pm=\sqrt{(\omega\mp\sigma)^2-\mu^2},
+\label{eq:scalar-channel-k}
+\end{equation}
+with the sheet chosen so that $\operatorname{Im}k_\pm\geq0$.  An open channel
+is outgoing as $e^{+\ii k_\pm r_*}$; a closed channel decays on the same
+sheet.  For the low-frequency mode reported below both scalar channels are
+closed.
+
+Finite-radius plane-wave conditions are inadequate for the very weakly
+damped gravitational solution.  We therefore propagate $h_0/h_1$ and the two
+scalar logarithmic derivatives through the exact Schwarzschild exterior.
+The integration starts at $r=300$ with the exact stable logarithmic derivative
+of the $J=2$ spherical Hankel function.  Linear channel pairs are evolved in
+short inward segments and renormalized after every segment; this avoids both
+Riccati poles and exponential overflow in a closed scalar channel.
+
+\subsection{Two-sided matching and numerical controls}
+
+Two-sided matching avoids the exponential contamination that affects direct
+outward construction of weakly damped or massive-field modes; this is the same
+boundary-value issue underlying established QNM integration and continued-
+fraction methods \cite{Leaver1985,KokkotasSchmidt1999}.
+
+Let $Y_{\rm in}$ be the $6\times3$ matrix obtained by integrating the three
+regular center solutions outward and $Y_{\rm out}$ the corresponding matrix
+obtained by integrating the three physical exterior channels inward.  A mode
+exists when their column spaces intersect:
+\begin{equation}
+\det\left[Y_{\rm in}(r_m),-Y_{\rm out}(r_m)\right]=0.
+\label{eq:axial-match-determinant}
+\end{equation}
+The smallest singular value of a Euclidean row- and column-scaled matrix is
+used only as a conditioning diagnostic in the coarse search. Because those
+norms contain complex conjugation, the scaled determinant is not holomorphic.
+Local Newton refinement uses the unnormalized determinant in
+Eq.~\eqref{eq:axial-match-determinant}. For root counting, each three-plane is
+evolved in $\Lambda^3(\mathbb C^6)$: its twenty $3\times3$ minors obey the
+induced compound-matrix equation, and the exterior product of the two evolved
+three-forms is a holomorphic Evans function. This prevents column collapse
+without introducing QR phases or Euclidean normalizations.
+
+The production workflow searches
+$0.0488\leq\operatorname{Re}\sigma\leq0.0500$ and
+$-1.2\times10^{-6}\leq\operatorname{Im}\sigma\leq-10^{-7}$ on a $7\times5$
+grid; no stored pole is read.  On the smaller contour
+$0.04936\leq\operatorname{Re}\sigma\leq0.04944$ and
+$-1.1\times10^{-6}\leq\operatorname{Im}\sigma\leq-10^{-7}$, an
+eight-point-per-edge contour has winding one but a marginal maximum phase step
+of $2.8622$ rad. Adaptive bisection of only under-resolved segments produces
+38 boundary samples, preserves winding one, and reduces the maximum phase step
+to $1.55284<\pi/2$. A stricter production rerun with a $\pi/4$ acceptance
+threshold uses 46 samples and gives a maximum step $0.60974$, again with
+winding one. Expanding the local contour to
+$0.04930\leq\operatorname{Re}\sigma\leq0.04950$ and
+$-1.5\times10^{-6}\leq\operatorname{Im}\sigma\leq10^{-7}$ gives winding one
+with 43 samples and maximum phase step $0.78087<\pi/4$. These counts certify
+one zero only in the declared local region; they are not a complete spectrum
+or a global stability proof.
+
+Five controls are evaluated before interpreting a root.  First, $F=0$ must
+give Eq.~\eqref{eq:flat-rw-control}.  Second, the two scalar equations must
+decouple to the massive flat-space $L=2$ equations.  Third, the propagated
+flat exterior ratios must reproduce the exact spherical-Hankel logarithmic
+derivatives.  Fourth, the root must persist when both $r_m$ and the radius at
+which the stellar integration enters the Schwarzschild exterior are moved.
+The first four controls pass.  Fifth, the unused $tA$ Einstein equation is
+evaluated on the mode using $\alpha''$ reconstructed analytically from the
+equilibrium EKG equations. A refined equilibrium profile and the independent
+chain-rule evaluation $Y''=A'Y+A^2Y$ give a stable relative $L_2$ defect of
+$2.4\times10^{-7}$ and a pointwise maximum of $1.95\times10^{-6}$. Changing
+the derivative step by a factor of twenty leaves the largest residual near
+$2\times10^{-6}$. This is a two-order-of-magnitude improvement, but it is a
+resolved operator-level floor; we therefore do not mark the constraint gate
+closed.
+
+\subsection{First frequency-domain axial mode}
+
+For the validated $a_1^0=0.08$ background,
+\begin{equation}
+\omega=0.8518974044,\qquad M=1.1712711606,\qquad C_{99}=0.1048865408.
+\end{equation}
+Two independently refined matching setups give Table~\ref{tab:first-axial-qnm}.
+\begin{table}[t]
+\centering
+\caption{Refined neutral $J=L=2$ axial frequency-domain pole.  The last
+column is the minimum singular value of the conditioned match matrix.}
+\label{tab:first-axial-qnm}
+\small
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+$r_m$ & $r_e$ & $\operatorname{Re}\sigma$ & $\operatorname{Im}\sigma$
+& $s_{\min}$\\
+\midrule
+14 & 35 & 0.0493977307853 & $-5.96519340\times10^{-7}$ & $7.91\times10^{-15}$\\
+12 & 30 & 0.0493977307847 & $-5.96519314\times10^{-7}$ & $2.02\times10^{-14}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+At fixed $r_{\rm far}=600$, their mean and full spread are
+\begin{equation}
+\sigma=0.0493977307850-5.96519327\times10^{-7}\ii,
+\quad
+\Delta\sigma_R=6.30\times10^{-13},
+\quad
+\Delta\sigma_I=2.65\times10^{-14}.
+\label{eq:first-axial-qnm}
+\end{equation}
+The corresponding quality factor is
+\begin{equation}
+Q=\frac{\sigma_R}{-2\sigma_I}=4.1405\times10^4.
+\end{equation}
+The exterior start now uses the Schwarzschild Regge--Wheeler master expansion
+and the massive-scalar Coulomb expansion through $O(r^{-3})$. For
+$r_{\rm far}=120,200,300,600,900$, the imaginary parts are
+$-5.9637944$, $-5.9650567$, $-5.9652382$, $-5.9651933$, and $-5.9651891$,
+in units of $10^{-7}$; the 600--900 shift is $4.24\times10^{-13}$. At
+$r_{\rm far}=300$, increasing the asymptotic order from two to three shifts
+$(\sigma_R,\sigma_I)$ by $(3.10,4.74)\times10^{-10}$. Treating that order
+shift conservatively, we quote
+\begin{equation}
+\sigma=0.0493977307(4)-\ii(5.9652\pm0.0048)\times10^{-7},
+\qquad Q\simeq4.1405\times10^4,
+\end{equation}
+where the displayed uncertainty is set by asymptotic order rather than the
+much smaller matching-domain spread.
+The first scalar threshold is
+$\sigma_{\rm th}=\mu-\omega=0.1481025957$, well above the mode.  Its scalar
+tails are therefore evanescent and the negative imaginary part represents
+gravitational leakage.  This is the expected signature of a long-lived,
+matter-supported axial oscillation that is density-silent in the Newtonian
+projection but radiatively visible in general relativity.
+
+Equation~\eqref{eq:first-axial-qnm} is regenerated from the declared search
+and establishes a counted discrete pole of the released neutral operator. The
+remaining qualification is the resolved unused-Einstein residual and the
+absence of a genuinely independent damping calculation.
+
+\subsection{Seven-background stable-branch continuation}
+
+To test whether the pole is an isolated numerical feature, we continue it
+through seven independently solved stable backgrounds spanning
+$0.065\leq a_1^0\leq0.095$ and $0.0953\leq C_{99}\leq0.1131$. At every point,
+two matching domains are refined separately and a local exterior-algebra
+contour is adaptively resolved with maximum phase increment below $\pi/3$.
+All seven contours have winding one, all modes remain below the first scalar
+threshold, and adjacent normalized six-state profiles have overlaps above
+$0.9991$. Table~\ref{tab:axial-branch} and Fig.~\ref{fig:axial-branch} therefore
+establish a continuously tracked mode branch rather than one isolated root.
+
+\begin{table}[!htbp]
+\centering
+\caption{Counted stable-branch continuation. The damping column is displayed
+in units of $10^{-7}$; ${\cal O}_{-}$ is the overlap with the preceding
+normalized six-state profile.}
+\label{tab:axial-branch}
+\small
+\begin{tabular}{@{}rrrrrr@{}}
+\toprule
+$a_1^0$ & $C_{99}$ & $\operatorname{Re}\sigma$ & $-10^7\operatorname{Im}\sigma$ & $Q$ & ${\cal O}_{-}$\\
+\midrule
+0.065 & 0.095286 & 0.0432529917 & 3.72185 & 58107 & ---\\
+0.070 & 0.098665 & 0.0453566970 & 4.41231 & 51400 & 0.999187\\
+0.075 & 0.101859 & 0.0474032891 & 5.16048 & 45929 & 0.999272\\
+0.080 & 0.104886 & 0.0493977307 & 5.96519 & 41405 & 0.999344\\
+0.085 & 0.107760 & 0.0513442785 & 6.82511 & 37614 & 0.999406\\
+0.090 & 0.110493 & 0.0532466187 & 7.73884 & 34402 & 0.999459\\
+0.095 & 0.113098 & 0.0551079718 & 8.70499 & 31653 & 0.999505\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{figure_17_axial_branch.pdf}
+\caption{Counted axial-mode branch across seven stable backgrounds. The real
+frequency and gravitational damping magnitude increase smoothly with
+compactness, while the quality factor decreases. Adjacent profile overlaps
+near unity independently preserve mode identity.}
+\label{fig:axial-branch}
+\end{figure}
+
+The largest two-domain shifts over the campaign are $4.96\times10^{-12}$ in
+the real part and $8.52\times10^{-14}$ in the imaginary part. These are far
+below the single-background asymptotic-order systematic. The present interval
+does not reach the dilute Newtonian limit, so it establishes a relativistic
+stable branch but does not yet justify a weak-field damping exponent.
+
+\subsection{Time-domain real-frequency consistency check}
+
+We independently rewrite the same covariant perturbation equations as a
+first-order-in-time, second-order-in-space system for
+\begin{equation}
+(h_0,h_1,k,p,\pi,q,\chi),\qquad
+k=\partial_t h_1,\quad \pi=\partial_t p,\quad \chi=\partial_t q.
+\end{equation}
+The $AB$ Einstein equation determines $\partial_t h_0$, the $rA$ equation
+evolves $k$, and the two Klein--Gordon equations evolve $\pi$ and $\chi$.
+Fourth-order finite differences, fourth-order Runge--Kutta integration, and a
+sixth-derivative Kreiss--Oliger filter are used.  The stellar background is
+continued by exact Schwarzschild vacuum, and the outer boundary is placed at
+$r=200$, more than one gravitational wavelength from the star.  Data are
+fitted only before a boundary signal can return to the extraction radius.
+
+As an operator identity, substitution of $e^{-\ii\sigma t}$ into the
+time-domain equations reproduces Eqs.~\eqref{eq:closed-h1}--
+\eqref{eq:closed-um}.  With analytic radial derivatives the difference is at
+machine precision.  The numerical evolution is initialized with the matched
+eigenfunction but does not evaluate the shooting determinant.  Table
+\ref{tab:axial-time-domain} gives the resolution and Courant study.
+\begin{table}[!htbp]
+\centering
+\caption{Time-domain extraction at $r\simeq6$ over
+$20\leq t\leq138$.  All runs use $r_{\max}=200$.}
+\label{tab:axial-time-domain}
+\small
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+$N_r$ & CFL & $\sigma_R^{\rm TD}$ & $\dd\ln|p|/\dd t$ & phase RMS \\
+\midrule
+@@TIME_DOMAIN_ROWS@@
+\bottomrule
+\end{tabular}
+\end{table}
+The regenerated time-domain matrix uses the current frequency-domain pole and
+the current evolution operator at every resolution and Courant factor. The
+four fitted frequencies span $4.74\times10^{-8}$; the maximum fractional error
+relative to the frequency-domain value is $1.09\times10^{-6}$ and decreases to
+$1.25\times10^{-7}$ on the finest grid. The phase RMS lies between
+$7.90\times10^{-7}$ and $2.37\times10^{-6}$ rad. Because the initial data
+are the frequency-domain eigenfunction and the run length is only
+$9\times10^{-5}$ of the $1/|\sigma_I|\simeq1.68\times10^6$ damping time, the
+amplitude slopes cannot measure the leakage rate or certify its sign
+independently.  This experiment checks only that the time-domain operator
+preserves the real oscillation frequency over the simulated window.

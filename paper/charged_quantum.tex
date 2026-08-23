@@ -1,0 +1,156 @@
+\subsection{Separate charged-equilibrium study}
+\label{sec:charged-extension}
+
+Electromagnetism is introduced by the standard charged-boson-star EMKG action
+\cite{JetzerVanDerBij1989,Pugliese2013,LopezAlcubierre2023},
+\begin{equation}
+S_{\rm EMKG}=\int\dd^4x\sqrt{-g}\left[
+\frac{R}{16\pi G}-\frac14F_{\mu\nu}F^{\mu\nu}
+-\frac12\sum_m\left(D_\mu\Phi_m^*D^\mu\Phi_m+
+\mu^2|\Phi_m|^2\right)\right],
+\qquad D_\mu=\nabla_\mu-\ii qA_\mu .
+\label{eq:solved-emkg-action}
+\end{equation}
+For $A=A_t(r)\dd t$, define the gauge-invariant local frequency
+$\Omega=\omega-qA_t$ and the radial electric-flux variable
+\begin{equation}
+Q_E=-\frac{r^2A_t'}{\alpha\gamma}.
+\end{equation}
+The Maxwell equations and the electrostatic contribution to the Einstein
+equations give
+\begin{align}
+Q_E'&=\frac{q\kappa_\ell}{4\pi}\frac{\gamma}{\alpha}
+r^2\Omega\psi^2,
+&A_t'&=-\frac{\alpha\gamma Q_E}{r^2},\label{eq:charged-maxwell-pair}\\
+M'&=\frac{\kappa_\ell r^2}{2}\left[
+\frac{\psi'^2}{\gamma^2}+\left(\frac{\Omega^2}{\alpha^2}+
+1+\frac{\ell(\ell+1)}{r^2}\right)\psi^2\right]
++\frac{2\pi Q_E^2}{r^2},\label{eq:charged-mass}\\
+\frac{\alpha'}\alpha&=\gamma^2\left\{\frac Mr^2+
+\frac{\kappa_\ell r}{2}\left[
+\frac{\psi'^2}{\gamma^2}+\left(\frac{\Omega^2}{\alpha^2}-
+1-\frac{\ell(\ell+1)}{r^2}\right)\psi^2\right]
+-\frac{2\pi Q_E^2}{r^3}\right\}.
+\label{eq:charged-lapse}
+\end{align}
+The Klein--Gordon equation is Eq.~\eqref{eq:kg} with $\omega$ replaced by
+$\Omega(r)$.  Regularity imposes $Q_E(0)=0$.  The gauge is fixed by
+$A_t(\infty)=0$, and the finite outer boundary is matched to
+\begin{equation}
+A_t=\frac{Q_E}{r},\qquad
+\alpha^2=1-\frac{2M_{\rm ADM}}r+\frac{4\pi Q_E^2}{r^2},\qquad
+M_{\rm ADM}=M(r)+\frac{2\pi Q_E^2}{r}.
+\label{eq:rn-tail-convention}
+\end{equation}
+This normalization gives the physical Gauss charge
+$Q_{\rm electric}=4\pi Q_E(\infty)=qQ_N$.
+
+We solve the six-field nonlinear boundary-value problem and continue the
+$a_1^0=0.08$ star through eleven charges up to $q=3.52$.  The Newtonian
+balance value in this convention is $q_{\rm crit}=\sqrt{4\pi}=3.54491$.
+Selected results appear in Table~\ref{tab:charged-sequence}.
+
+\begin{table}[H]
+\centering
+\caption{Charged $\ell=1$ EMKG continuation at fixed $a_1^0=0.08$.  The
+electric fraction is the integrated Maxwell-field energy divided by the ADM
+mass.}
+\label{tab:charged-sequence}
+\small
+\begin{tabular}{@{}ccccccc@{}}
+\toprule
+$q$ & $q/q_{\rm crit}$ & $\omega$ & $M_{\rm ADM}$ & $Q_{\rm electric}$ &
+$C_{99}$ & $E_{\rm EM}/M$\\
+\midrule
+0.00 & 0.000 & 0.8518974 & 1.171271 & 0.0000 & 0.10488 & 0.000\\
+1.00 & 0.282 & 0.8573647 & 1.235666 & 1.2771 & 0.10977 & 0.008\\
+2.00 & 0.564 & 0.8760066 & 1.488137 & 3.0549 & 0.12868 & 0.038\\
+3.00 & 0.846 & 0.9204041 & 2.366461 & 7.1672 & 0.19266 & 0.123\\
+3.40 & 0.959 & 0.9602038 & 3.682903 & 12.4558 & 0.28644 & 0.225\\
+3.52 & 0.993 & 0.9813001 & 4.725859 & 16.4221 & 0.35836 & 0.296\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At $q=3.52$, $\Omega(r)$ remains positive and reaches a minimum 0.34668 at
+the center.  The Gauss identity closes with relative error
+$5.94\times10^{-6}$, and the outer RN lapse and Coulomb-potential residuals
+are $4.4\times10^{-16}$ and zero at stored precision.  At $q=3$, repeating
+the solve with $r_{\max}=80,100,120$ produces full spreads
+$3.30\times10^{-11}$ in $\omega$, $4.68\times10^{-10}$ in ADM mass,
+$2.01\times10^{-9}$ in electric charge, and $2.46\times10^{-4}$ in $R_{99}$.
+The exact $q=0$ solve reproduces the neutral mass to $2.1\times10^{-8}$ and
+the neutral frequency to $6.5\times10^{-9}$.  Thus the electromagnetic
+extension here is a solved backreacting equilibrium problem rather than the
+force-balance estimate used only for physical-unit orientation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.96\textwidth]{figure_16_charged_quantum.pdf}
+\caption{Controlled extensions.  Top panels: charged EMKG continuation in
+$q/q_{\rm crit}$, showing the ADM mass, electric charge, compactness, and
+Maxwell energy fraction.  Bottom panels: coherent-state axial-QNM dispersion
+and mean bias across the boson-mass scaling.  The charged effect is nonlinear
+and macroscopic near critical coupling; the specified coherent-state quantum
+effect remains extremely small throughout the displayed range.}
+\label{fig:charged-quantum}
+\end{figure}
+
+\subsection{Coherent-state occupation-noise toy estimate}
+\label{sec:quantum-extension}
+
+We define a restricted noise model rather than attaching an unspecified correction
+to the classical eigenvalue.  The three $\ell=1$ magnetic modes are placed in
+a product of equal-mean-occupation coherent states.  The stress tensor is
+normal ordered relative to the asymptotic Minkowski vacuum.  Under this
+renormalization prescription its leading expectation value is exactly the
+classical multiplet stress used above, while the total occupation has Poisson
+variance $\operatorname{Var}N=N$, the defining number-statistics property of a
+coherent state \cite{Glauber1963}. The result therefore applies specifically
+to this asymptotic-vacuum, normal-ordered coherent-state prescription;
+vacuum-polarization models based on a different quantum state or subtraction
+prescription define a different physical problem.
+
+In the adiabatic one-mode approximation, occupation is proportional to the
+computed Noether charge, $N\propto Q(a_1^0)$.  The local sequence gives
+$Q/Q'=1.84320$ at $a_1^0=0.08$; this replaces the incorrect
+$a_1^0/2=0.04$ coefficient implied by $a_1^0\propto\sqrt N$.  To propagate
+the resulting fluctuations through the actual
+axial spectrum, we solve two additional complex QNMs:
+\begin{align}
+\sigma(0.075)&=0.04740320289-6.11222\times10^{-7}\ii,\\
+\sigma(0.085)&=0.05134426662-6.83394\times10^{-7}\ii.
+\end{align}
+Their normalized matching determinants are $4.08\times10^{-10}$ and
+$5.23\times10^{-12}$.  Together with Eq.~\eqref{eq:first-axial-qnm}, centered
+finite differences give
+\begin{align}
+\frac{\dd\sigma}{\dd a_1^0}&=0.39410637-7.21715\times10^{-6}\ii,\\
+\frac{\dd^2\sigma}{\dd(a_1^0)^2}&=-1.9202877-4.41864\times10^{-4}\ii.
+\label{eq:qnm-amplitude-sensitivity}
+\end{align}
+For Poisson occupation noise, expansion through $O(1/N)$ yields
+\begin{align}
+\Delta\sigma_{\rm rms}
+&=\left|\frac{\dd\sigma}{\dd a_1^0}\right|
+\left|\frac{Q}{Q'}\right|\frac{1}{\sqrt N},\label{eq:coherent-qnm-rms}\\
+\langle\delta\sigma\rangle
+&=\frac{1}{2N}\left[\sigma''\left(\frac{Q}{Q'}\right)^2
+-\sigma'\frac{Q^2Q''}{(Q')^3}\right].
+\label{eq:coherent-qnm-bias}
+\end{align}
+Across $10^{-22}\leq\mu/{\rm eV}\leq10^9$, the largest fractional RMS
+dispersion is $1.09\times10^{-18}$ and the largest fractional mean bias is
+$4.39\times10^{-36}$, both attained at the heaviest mass because it has the
+smallest occupation.  At the stellar scaling $\mu=10^{-10}\,$eV they are
+smaller by many additional orders.  This toy estimate gives a sharp answer
+only for the stated occupation fluctuation: it does not measurably blur the
+QNM in the displayed mass range.
+
+This is not a calculation of $\langle T_{\mu\nu}\rangle_{\rm ren}$, loop
+corrections, particle production, or quantum backreaction.  The conclusion is
+deliberately model-specific.  A different quantum state,
+a non-normal-ordered vacuum polarization, extra field species, or a chosen
+higher-curvature effective action defines a different semiclassical theory
+and is not numerically represented by Eqs.~\eqref{eq:coherent-qnm-rms}--
+\eqref{eq:coherent-qnm-bias}.
