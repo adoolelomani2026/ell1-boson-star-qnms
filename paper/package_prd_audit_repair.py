@@ -94,7 +94,7 @@ def main() -> None:
     commit = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, check=False, capture_output=True, text=True
     ).stdout.strip()
-    bundle = supplement / "ell1-boson-star-qnms-v0.4.1.bundle"
+    bundle = supplement / "ell1-boson-star-qnms-v0.4.2.bundle"
     subprocess.run(
         ["git", "bundle", "create", str(bundle), "--all"], cwd=ROOT, check=True
     )
@@ -122,7 +122,7 @@ short time evolution does not independently measure the extremely long damping
 time. These limits are stated in the manuscript.
 
 Repository base commit: {commit}
-Release tag: v0.4.1
+Release tag: v0.4.2
 Public repository: https://github.com/adoolelomani2026/ell1-boson-star-qnms
 The included Git bundle preserves the full repository history and release tag.
 SHA256SUMS.txt fixes the exact contents of every distributed file.
