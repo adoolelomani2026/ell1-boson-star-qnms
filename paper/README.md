@@ -16,5 +16,5 @@ The manuscript reports the exact odd-parity axial matter-source projection,
 the certified radial substrate, the counted coupled axial pole, a predeclared targeted driven
 response, a Schwarzschild QNM control, far-boundary tests, a short time-domain
 frequency check, scattering amplitudes, and the stationary axial response.
-The remaining pointwise constraint floor and the absence of a canonical
-conversion-flux current are stated explicitly.
+The finite-difference plateau of the unused-equation monitor and the absence
+of a canonical conversion-flux current are stated explicitly.

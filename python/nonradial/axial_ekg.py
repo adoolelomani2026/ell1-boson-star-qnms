@@ -245,19 +245,26 @@ def axial_ta_constraint_profile_chain_rule(
     background: RadialBackground,
     *,
     derivative_step_multiplier: float = 1.0,
+    derivative_method: str = "fourth_order",
 ) -> tuple[np.ndarray, np.ndarray]:
     """Evaluate the dependent constraint using ``Y''=A'Y+A^2Y``.
 
     The production first-order system is linear, ``Y'=A(r,sigma)Y``.  A
     centered fourth-order derivative of ``A`` therefore supplies ``h0''``
     without differentiating sampled mode data and without substituting the
-    dependent Einstein equation being tested.
+    dependent Einstein equation being tested.  ``derivative_method='richardson'``
+    combines step sizes ``h`` and ``h/2`` as ``(16 D4(h/2)-D4(h))/15`` to
+    cancel the leading fourth-order truncation term.  A documented step scan
+    is still required because background-interpolation noise grows as ``h``
+    becomes too small.
     """
 
     sample = np.asarray(radii, dtype=float)
     values = np.asarray(states, dtype=complex)
     if derivative_step_multiplier <= 0.0:
         raise ValueError("derivative_step_multiplier must be positive")
+    if derivative_method not in {"fourth_order", "richardson"}:
+        raise ValueError("derivative_method must be 'fourth_order' or 'richardson'")
     if values.shape != (6, len(sample)):
         raise ValueError("states must have shape (6,n)")
     identity = np.eye(6, dtype=complex)
@@ -270,12 +277,18 @@ def axial_ta_constraint_profile_chain_rule(
         )
         if radius - 2.0 * step <= background.r_min:
             step = (radius - background.r_min) / 3.0
-        generator_prime = (
-            -axial_rhs(radius + 2.0 * step, identity, sigma, background)
-            + 8.0 * axial_rhs(radius + step, identity, sigma, background)
-            - 8.0 * axial_rhs(radius - step, identity, sigma, background)
-            + axial_rhs(radius - 2.0 * step, identity, sigma, background)
-        ) / (12.0 * step)
+        def fourth_order_generator_derivative(local_step: float) -> np.ndarray:
+            return (
+                -axial_rhs(radius + 2.0 * local_step, identity, sigma, background)
+                + 8.0 * axial_rhs(radius + local_step, identity, sigma, background)
+                - 8.0 * axial_rhs(radius - local_step, identity, sigma, background)
+                + axial_rhs(radius - 2.0 * local_step, identity, sigma, background)
+            ) / (12.0 * local_step)
+
+        generator_prime = fourth_order_generator_derivative(step)
+        if derivative_method == "richardson":
+            fine = fourth_order_generator_derivative(0.5 * step)
+            generator_prime = (16.0 * fine - generator_prime) / 15.0
         state = values[:, index]
         state_prime = generator @ state
         h0_second = (generator_prime @ state + generator @ state_prime)[0]

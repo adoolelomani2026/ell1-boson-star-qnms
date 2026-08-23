@@ -50,7 +50,12 @@ def main() -> None:
             radii, sigma, background, coefficients, rtol=2e-9, atol=2e-11
         )
         residual, scale = axial_ta_constraint_profile_chain_rule(
-            radii, states, sigma, background
+            radii,
+            states,
+            sigma,
+            background,
+            derivative_step_multiplier=112.0,
+            derivative_method="richardson",
         )
         relative = np.abs(residual[3:-3]) / scale[3:-3]
         rows.append(
@@ -70,13 +75,14 @@ def main() -> None:
             production_scale = scale
     assert production_radii is not None and production_states is not None
     derivative_step_rows = []
-    for multiplier in (0.25, 0.5, 1.0, 2.0, 4.0):
+    for multiplier in (0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 48.0, 64.0, 80.0, 96.0, 112.0, 128.0, 160.0, 192.0, 256.0):
         residual, scale = axial_ta_constraint_profile_chain_rule(
             production_radii,
             production_states,
             sigma,
             background,
             derivative_step_multiplier=multiplier,
+            derivative_method="fourth_order",
         )
         relative = np.abs(residual[3:-3]) / scale[3:-3]
         derivative_step_rows.append(
@@ -85,6 +91,30 @@ def main() -> None:
                 "relative_l2": float(
                     np.linalg.norm(residual[3:-3]) / np.linalg.norm(scale[3:-3])
                 ),
+                "relative_median": float(np.median(relative)),
+                "relative_p95": float(np.quantile(relative, 0.95)),
+                "relative_linf": float(np.max(relative)),
+            }
+        )
+    richardson_step_rows = []
+    for multiplier in (32.0, 48.0, 64.0, 80.0, 96.0, 112.0, 128.0):
+        residual, scale = axial_ta_constraint_profile_chain_rule(
+            production_radii,
+            production_states,
+            sigma,
+            background,
+            derivative_step_multiplier=multiplier,
+            derivative_method="richardson",
+        )
+        relative = np.abs(residual[3:-3]) / scale[3:-3]
+        richardson_step_rows.append(
+            {
+                "derivative_step_multiplier": multiplier,
+                "relative_l2": float(
+                    np.linalg.norm(residual[3:-3]) / np.linalg.norm(scale[3:-3])
+                ),
+                "relative_median": float(np.median(relative)),
+                "relative_p95": float(np.quantile(relative, 0.95)),
                 "relative_linf": float(np.max(relative)),
             }
         )
@@ -103,13 +133,16 @@ def main() -> None:
     ]
     result = {
         "calculation": "dependent tA Einstein-constraint evaluation on the axial mode",
-        "derivative_representation": "EKG alpha second derivative and independent chain-rule derivative Y''=A'Y+A^2Y",
+        "derivative_representation": "EKG alpha second derivative and independent chain-rule derivative Y''=A'Y+A^2Y; production A' uses sixth-order Richardson extrapolation of a fourth-order centered stencil",
+        "production_derivative_method": "richardson",
+        "production_derivative_step_multiplier": 112.0,
         "sigma": {"real": sigma.real, "imaginary": sigma.imag},
         "matching_minimum_singular_value": singular,
         "radial_interval": [0.02, 14.0],
         "edge_points_excluded": 3,
         "resolution_rows": rows,
         "derivative_step_rows": derivative_step_rows,
+        "richardson_step_rows": richardson_step_rows,
         "residual_profile_500_point_run": residual_profile,
     }
     target = ROOT / "reports" / "axial" / "axial_constraint_checkpoint.json"

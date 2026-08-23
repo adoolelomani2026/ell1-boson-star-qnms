@@ -40,9 +40,10 @@ and the half-width to `4.5e-5`.
 
 ## Disclosed open boundaries
 
-- The independent unused-Einstein-equation monitor has an approximately
-  `2e-6` pointwise residual floor. This is much smaller than in the initial
-  implementation but is not called a closed continuum constraint proof.
+- The Richardson-extrapolated unused-Einstein-equation monitor has relative
+  `L2=2.8e-8`--`3.6e-8` and a `1.5e-7`--`2.2e-7` pointwise plateau across
+  250--1000 samples. It is controlled numerically but is not called an exact
+  continuum identity until an analytic matrix derivative is implemented.
 - The positive diagonal weight that balances the sampled scattering matrix is
   an algebraic reciprocity metric. A canonical symplectic or stress-energy
   flux derivation remains open, so the manuscript does not claim a physical

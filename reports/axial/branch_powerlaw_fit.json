@@ -1,0 +1,14 @@
+{
+  "model": "-Im(sigma) = A * C99^p",
+  "fit_space": "unweighted least squares in log(-Im(sigma)) versus log(C99)",
+  "sample_size": 7,
+  "compactness_interval": [
+    0.09528593840777963,
+    0.11309803395551621
+  ],
+  "A": 0.04279825996339716,
+  "p": 4.957702714258912,
+  "maximum_absolute_fractional_residual": 0.0023702222422685715,
+  "rms_fractional_residual": 0.0016314394478455345,
+  "warning": "Empirical fit over a narrow relativistic compactness interval; not a demonstrated weak-field or post-Newtonian law."
+}

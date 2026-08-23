@@ -22,8 +22,8 @@ The central result is
 sigma = 0.0493977307850 - 5.9651933e-7 i.
 ```
 
-Current limitations are explicit: the unused Einstein equation has a sampled
-pointwise floor near `2e-6`, the ordinary `ell=0` matter-filled stellar QNM has
+Current limitations are explicit: the Richardson-extrapolated unused Einstein
+monitor has a `1.5e-7`--`2.2e-7` pointwise finite-difference plateau, the ordinary `ell=0` matter-filled stellar QNM has
 not been reproduced with this same pipeline, the scattering reciprocity weight
 is not a canonical energy flux, and the short time evolution does not measure
 the damping rate independently.

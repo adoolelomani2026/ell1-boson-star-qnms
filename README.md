@@ -11,7 +11,7 @@ sigma = 0.0493977307850 - 5.9651933e-7 i
 Q     = 4.1405e4
 ```
 
-The pole is continued through seven independently solved stable backgrounds.
+The pole is continued through seven separately solved stable backgrounds.
 Every declared local Evans contour has winding number one, and adjacent
 normalized six-state profiles overlap above `0.9991`.
 
@@ -25,8 +25,8 @@ stationary response.
 
 The remaining scientific limits are stated rather than hidden:
 
-- the unused axial Einstein equation has a sampled pointwise residual floor near
-  `2e-6`;
+- the Richardson-extrapolated unused axial Einstein monitor has a documented
+  finite-difference plateau at `1.5e-7`--`2.2e-7` in relative pointwise norm;
 - the ordinary `ell=0` matter-filled stellar QNM has not yet been reproduced with
   the same nonradial pipeline;
 - the inferred scattering reciprocity weight is not a canonically derived energy

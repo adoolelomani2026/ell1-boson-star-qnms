@@ -1,5 +1,5 @@
 {
-  "calculation": "blind fixed-grid unit-incident-gravity driven axial resonance",
+  "calculation": "predeclared targeted fixed-grid unit-incident-gravity driven axial resonance; fitting does not load the stored pole",
   "background_a1_0": 0.08,
   "qnm_prediction": {
     "sigma_real": 0.049397730785015435,

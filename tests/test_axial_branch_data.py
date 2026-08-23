@@ -61,3 +61,26 @@ def test_determinant_residual_names_are_unambiguous():
     for row in checkpoint["matching_setups"]:
         assert "exterior_algebra_evans_residual_relative_to_fixed_frequency_offset" in row
         assert "conditioned_matching_determinant_residual_relative_to_local_offset" in row
+
+
+def test_constraint_monitor_has_resolved_step_scan_and_richardson_production():
+    record = load("axial_constraint_checkpoint.json")
+    assert record["production_derivative_method"] == "richardson"
+    assert record["production_derivative_step_multiplier"] == 112.0
+    fourth_order = record["derivative_step_rows"]
+    richardson = record["richardson_step_rows"]
+    assert len(fourth_order) == 17
+    assert len(richardson) == 7
+    assert min(row["relative_l2"] for row in fourth_order) < 7e-9
+    assert min(row["relative_linf"] for row in fourth_order) < 9e-8
+    assert min(row["relative_linf"] for row in richardson) < 1.3e-7
+    assert max(row["relative_linf"] for row in record["resolution_rows"]) < 3e-7
+
+
+def test_branch_powerlaw_fit_is_reproducible_and_narrowly_scoped():
+    fit = load("branch_powerlaw_fit.json")
+    assert fit["sample_size"] == 7
+    assert np.isclose(fit["p"], 4.957702714258897, atol=1e-12)
+    assert np.isclose(fit["A"], 0.04279825996339585, rtol=1e-12)
+    assert fit["maximum_absolute_fractional_residual"] < 0.0024
+    assert "not a demonstrated weak-field" in fit["warning"]

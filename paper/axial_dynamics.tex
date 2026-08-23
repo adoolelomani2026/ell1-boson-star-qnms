@@ -236,15 +236,20 @@ decouple to the massive flat-space $L=2$ equations.  Third, the propagated
 flat exterior ratios must reproduce the exact spherical-Hankel logarithmic
 derivatives.  Fourth, the root must persist when both $r_m$ and the radius at
 which the stellar integration enters the Schwarzschild exterior are moved.
-The first four controls pass.  Fifth, the unused $tA$ Einstein equation is
+The first four controls pass. Fifth, the unused $tA$ Einstein equation is
 evaluated on the mode using $\alpha''$ reconstructed analytically from the
-equilibrium EKG equations. A refined equilibrium profile and the independent
-chain-rule evaluation $Y''=A'Y+A^2Y$ give a stable relative $L_2$ defect of
-$2.4\times10^{-7}$ and a pointwise maximum of $1.95\times10^{-6}$. Changing
-the derivative step by a factor of twenty leaves the largest residual near
-$2\times10^{-6}$. This is a two-order-of-magnitude improvement, but it is a
-resolved operator-level floor; we therefore do not mark the constraint gate
-closed.
+equilibrium EKG equations and the chain-rule identity $Y''=A'Y+A^2Y$.
+A declared fourth-order derivative-step scan lowers the relative $L_2$
+defect from $2.38\times10^{-7}$ at the nominal step to
+$6.85\times10^{-9}$ at multiplier 80; the smallest scanned pointwise defect
+is $8.79\times10^{-8}$ at multiplier 112. The production monitor uses
+Richardson extrapolation at multiplier 112. On 250, 500, and 1000 evaluation
+points it gives relative $L_2=(2.82,3.21,3.56)\times10^{-8}$ and
+$L_\infty=(1.55,1.67,2.19)\times10^{-7}$. The weak resolution dependence is
+a documented finite-difference plateau. It controls the dependent-equation
+check at the $10^{-7}$ pointwise level, although an analytic evaluation of
+$A'$ would be needed to promote this numerical monitor to an exact continuum
+identity.
 
 \subsection{First frequency-domain axial mode}
 
@@ -305,13 +310,13 @@ projection but radiatively visible in general relativity.
 
 Equation~\eqref{eq:first-axial-qnm} is regenerated from the declared search
 and establishes a counted discrete pole of the released neutral operator. The
-remaining qualification is the resolved unused-Einstein residual and the
+remaining qualification is the finite-difference unused-Einstein monitor and the
 absence of a genuinely independent damping calculation.
 
 \subsection{Seven-background stable-branch continuation}
 
 To test whether the pole is an isolated numerical feature, we continue it
-through seven independently solved stable backgrounds spanning
+through seven separately solved stable backgrounds spanning
 $0.065\leq a_1^0\leq0.095$ and $0.0953\leq C_{99}\leq0.1131$. At every point,
 two matching domains are refined separately and a local exterior-algebra
 contour is adaptively resolved with maximum phase increment below $\pi/3$.
@@ -354,9 +359,16 @@ near unity independently preserve mode identity.}
 
 The largest two-domain shifts over the campaign are $4.96\times10^{-12}$ in
 the real part and $8.52\times10^{-14}$ in the imaginary part. These are far
-below the single-background asymptotic-order systematic. The present interval
-does not reach the dilute Newtonian limit, so it establishes a relativistic
-stable branch but does not yet justify a weak-field damping exponent.
+below the single-background asymptotic-order systematic. Over this interval,
+an unweighted log--log fit gives the empirical relation
+\begin{equation}
+-\operatorname{Im}\sigma = 0.0427983\,C_{99}^{4.95770}.
+\end{equation}
+Its maximum and root-mean-square fractional residuals are $0.237\%$ and
+$0.163\%$, respectively. This compact summary is reproducible from all seven
+tabulated points, but the interval is narrow and relativistic. It is therefore
+not evidence for a weak-field or post-Newtonian damping law; establishing such
+a law requires continuing the branch toward the dilute limit.
 
 \subsection{Time-domain real-frequency consistency check}
 
