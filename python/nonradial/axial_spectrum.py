@@ -13,6 +13,7 @@ from nonradial.axial_ekg import (
     matching_singular_value,
 )
 from radial.coefficients import RadialBackground
+from nonradial.riemann_sheet import SidebandSheet
 
 
 @dataclass(frozen=True)
@@ -32,6 +33,282 @@ class ComplexRootRefinement:
     converged: bool
     iterations: int
     evaluations: int
+
+
+@dataclass(frozen=True)
+class SpectrumCell:
+    """One rectangular cell in a declared complex-frequency census."""
+
+    real_bounds: tuple[float, float]
+    imaginary_bounds: tuple[float, float]
+    depth: int = 0
+
+    @property
+    def center(self) -> complex:
+        return complex(
+            0.5 * sum(self.real_bounds), 0.5 * sum(self.imaginary_bounds)
+        )
+
+    def contains(self, point: complex, padding: float = 0.0) -> bool:
+        return (
+            self.real_bounds[0] - padding <= point.real <= self.real_bounds[1] + padding
+            and self.imaginary_bounds[0] - padding <= point.imag <= self.imaginary_bounds[1] + padding
+        )
+
+    def split(self) -> tuple["SpectrumCell", ...]:
+        xm = 0.5 * sum(self.real_bounds)
+        ym = 0.5 * sum(self.imaginary_bounds)
+        x0, x1 = self.real_bounds
+        y0, y1 = self.imaginary_bounds
+        depth = self.depth + 1
+        return (
+            SpectrumCell((x0, xm), (y0, ym), depth),
+            SpectrumCell((xm, x1), (y0, ym), depth),
+            SpectrumCell((xm, x1), (ym, y1), depth),
+            SpectrumCell((x0, xm), (ym, y1), depth),
+        )
+
+
+@dataclass(frozen=True)
+class CensusLeaf:
+    cell: SpectrumCell
+    winding_number: int
+    maximum_phase_increment: float
+    minimum_boundary_determinant: float
+    pole: complex | None
+    relative_residual: float | None
+    status: str
+
+
+@dataclass(frozen=True)
+class QuadtreeCensus:
+    sheet_name: str
+    leaves: tuple[CensusLeaf, ...]
+    excluded_cut_cells: tuple[SpectrumCell, ...]
+    determinant_evaluations: int
+
+    @property
+    def counted_zeros(self) -> int:
+        return sum(leaf.winding_number for leaf in self.leaves)
+
+    @property
+    def assigned_poles(self) -> tuple[complex, ...]:
+        return tuple(leaf.pole for leaf in self.leaves if leaf.pole is not None)
+
+    @property
+    def complete(self) -> bool:
+        return not self.excluded_cut_cells and all(
+            leaf.status in {"empty", "assigned"} for leaf in self.leaves
+        )
+
+
+class CachedDeterminant:
+    """Shared determinant cache for neighboring quadtree contours."""
+
+    def __init__(self, determinant: Callable[[complex], complex]):
+        self.determinant = determinant
+        self.cache: dict[complex, complex] = {}
+
+    def __call__(self, point: complex) -> complex:
+        key = complex(point)
+        if key not in self.cache:
+            value = complex(self.determinant(key))
+            if not np.isfinite(value.real) or not np.isfinite(value.imag):
+                raise ValueError(f"invalid determinant sample at {key!r}")
+            self.cache[key] = value
+        return self.cache[key]
+
+    @property
+    def evaluations(self) -> int:
+        return len(self.cache)
+
+
+def _count_cached_cell(
+    evaluator: CachedDeterminant,
+    cell: SpectrumCell,
+    *,
+    initial_points_per_edge: int,
+    maximum_phase_step: float,
+    maximum_refinements: int,
+) -> tuple[int, float, float, bool]:
+    """Adaptively count one cell while sharing samples with all other cells."""
+
+    points = list(
+        rectangular_contour(
+            cell.real_bounds, cell.imaginary_bounds, initial_points_per_edge
+        )
+    )
+    for refinement in range(maximum_refinements + 1):
+        values = np.asarray([evaluator(point) for point in points])
+        if np.any(values == 0.0):
+            raise ValueError("a determinant zero lies on a census boundary")
+        increments = np.angle(np.roll(values, -1) / values)
+        violating = np.flatnonzero(np.abs(increments) >= maximum_phase_step)
+        if len(violating) == 0:
+            break
+        if refinement == maximum_refinements:
+            return (
+                int(np.rint(np.sum(increments) / (2.0 * np.pi))),
+                float(np.max(np.abs(increments))),
+                float(np.min(np.abs(values))),
+                False,
+            )
+        insert_after = set(int(index) for index in violating)
+        refined: list[complex] = []
+        for index, point in enumerate(points):
+            refined.append(point)
+            if index in insert_after:
+                refined.append(0.5 * (point + points[(index + 1) % len(points)]))
+        points = refined
+    winding = int(np.rint(np.sum(increments) / (2.0 * np.pi)))
+    return (
+        winding,
+        float(np.max(np.abs(increments))),
+        float(np.min(np.abs(values))),
+        True,
+    )
+
+
+def _refine_cached_cell_zero(
+    evaluator: CachedDeterminant,
+    cell: SpectrumCell,
+    boundary_scale: float,
+    *,
+    maximum_iterations: int = 16,
+    relative_tolerance: float = 1.0e-7,
+) -> tuple[complex | None, float | None]:
+    """Assign a winding-one cell to a converged simple determinant zero."""
+
+    x0, x1 = cell.real_bounds
+    y0, y1 = cell.imaginary_bounds
+    width = x1 - x0
+    height = y1 - y0
+    derivative_step = max(min(width, height) * 1.0e-5, 1.0e-10)
+    diagonal = abs(complex(width, height))
+    seeds = (
+        cell.center,
+        complex(x0 + 0.25 * width, y0 + 0.25 * height),
+        complex(x0 + 0.75 * width, y0 + 0.25 * height),
+        complex(x0 + 0.75 * width, y0 + 0.75 * height),
+        complex(x0 + 0.25 * width, y0 + 0.75 * height),
+    )
+    best: tuple[complex, float] | None = None
+    for seed in seeds:
+        pole = seed
+        for _ in range(maximum_iterations):
+            value = evaluator(pole)
+            derivative = (
+                evaluator(pole + derivative_step)
+                - evaluator(pole - derivative_step)
+            ) / (2.0 * derivative_step)
+            if derivative == 0.0 or not np.isfinite(abs(derivative)):
+                break
+            step = value / derivative
+            if abs(step) > 0.75 * diagonal:
+                step *= 0.75 * diagonal / abs(step)
+            pole -= step
+            if abs(step) < 1.0e-11 * max(1.0, abs(pole)):
+                break
+        residual = abs(evaluator(pole)) / max(boundary_scale, 1.0e-300)
+        if cell.contains(pole, padding=1.0e-10 * diagonal):
+            if best is None or residual < best[1]:
+                best = (complex(pole), float(residual))
+    if best is None or best[1] >= relative_tolerance:
+        return None, None if best is None else best[1]
+    return best
+
+
+def quadtree_census(
+    background: RadialBackground,
+    *,
+    real_bounds: tuple[float, float],
+    imaginary_bounds: tuple[float, float],
+    sheet: SidebandSheet,
+    matching_options: dict[str, object] | None = None,
+    determinant: Callable[..., complex] = matching_evans_determinant,
+    initial_points_per_edge: int = 4,
+    maximum_phase_step: float = 0.25 * np.pi,
+    maximum_contour_refinements: int = 10,
+    maximum_depth: int = 8,
+) -> QuadtreeCensus:
+    """Recursively census a cut-free rectangle until every pole is assigned.
+
+    Cells intersecting a declared sideband cut are explicitly excluded and
+    make the result incomplete.  A later keyhole contour can replace those
+    exclusions without changing the sheet or census data model.
+    """
+
+    options = dict(matching_options or {})
+    options["sheet"] = sheet
+    evaluator = CachedDeterminant(
+        lambda sigma: determinant(sigma, background, **options)
+    )
+    pending = [SpectrumCell(real_bounds, imaginary_bounds)]
+    leaves: list[CensusLeaf] = []
+    excluded: list[SpectrumCell] = []
+    while pending:
+        cell = pending.pop()
+        if sheet.cell_intersects_cut(
+            cell.real_bounds, cell.imaginary_bounds, background.omega
+        ):
+            excluded.append(cell)
+            continue
+        winding, phase_step, boundary_minimum, resolved = _count_cached_cell(
+            evaluator,
+            cell,
+            initial_points_per_edge=initial_points_per_edge,
+            maximum_phase_step=maximum_phase_step,
+            maximum_refinements=maximum_contour_refinements,
+        )
+        if not resolved:
+            leaves.append(
+                CensusLeaf(
+                    cell, winding, phase_step, boundary_minimum, None, None,
+                    "unresolved-phase",
+                )
+            )
+        elif winding == 0:
+            leaves.append(
+                CensusLeaf(
+                    cell, winding, phase_step, boundary_minimum, None, None,
+                    "empty",
+                )
+            )
+        elif winding == 1:
+            pole, residual = _refine_cached_cell_zero(
+                evaluator, cell, boundary_minimum
+            )
+            if pole is not None:
+                leaves.append(
+                    CensusLeaf(
+                        cell, winding, phase_step, boundary_minimum, pole,
+                        residual, "assigned",
+                    )
+                )
+            elif cell.depth < maximum_depth:
+                pending.extend(reversed(cell.split()))
+            else:
+                leaves.append(
+                    CensusLeaf(
+                        cell, winding, phase_step, boundary_minimum, None,
+                        residual, "unassigned",
+                    )
+                )
+        elif cell.depth < maximum_depth:
+            pending.extend(reversed(cell.split()))
+        else:
+            leaves.append(
+                CensusLeaf(
+                    cell, winding, phase_step, boundary_minimum, None, None,
+                    "multiple-or-meromorphic",
+                )
+            )
+    return QuadtreeCensus(
+        sheet_name=sheet.name,
+        leaves=tuple(leaves),
+        excluded_cut_cells=tuple(excluded),
+        determinant_evaluations=evaluator.evaluations,
+    )
 
 
 def refine_analytic_root(

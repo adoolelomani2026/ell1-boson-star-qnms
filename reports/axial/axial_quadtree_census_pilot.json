@@ -1,0 +1,77 @@
+{
+  "calculation": "pilot cached-quadtree Evans census",
+  "gate_scope": "local machinery validation; not a complete-spectrum claim",
+  "background": {
+    "a1_0": 0.08,
+    "omega": 0.8518974043710469,
+    "adm_mass": 1.1712711606475235
+  },
+  "sheet": {
+    "name": "physical-lower",
+    "plus_sign": 1,
+    "minus_sign": -1,
+    "branch_points": {
+      "plus": [
+        -0.14810259562895312,
+        1.851897404371047
+      ],
+      "minus": [
+        -1.851897404371047,
+        0.14810259562895312
+      ]
+    },
+    "cut_convention": "finite real segments joining each branch-point pair"
+  },
+  "bounds": {
+    "real": [
+      0.0493,
+      0.0495
+    ],
+    "imaginary": [
+      -1.5e-06,
+      -1e-07
+    ]
+  },
+  "matching": {
+    "r_match": 14.0,
+    "r_end": 35.0,
+    "r_far": 300.0,
+    "asymptotic_order": 3,
+    "rtol": 2e-07,
+    "atol": 2e-09
+  },
+  "counted_zeros": 1,
+  "assigned_poles": [
+    {
+      "real": 0.0493977309924571,
+      "imaginary": -5.965252640430952e-07
+    }
+  ],
+  "complete_inside_declared_cut_free_window": true,
+  "determinant_evaluations": 90,
+  "excluded_cut_cells": [],
+  "leaves": [
+    {
+      "cell": {
+        "real_bounds": [
+          0.0493,
+          0.0495
+        ],
+        "imaginary_bounds": [
+          -1.5e-06,
+          -1e-07
+        ],
+        "depth": 0
+      },
+      "winding_number": 1,
+      "maximum_phase_increment": 0.733531828052289,
+      "minimum_boundary_determinant": 390900629351.3089,
+      "pole": {
+        "real": 0.0493977309924571,
+        "imaginary": -5.965252640430952e-07
+      },
+      "relative_residual": 3.49253801785051e-10,
+      "status": "assigned"
+    }
+  ]
+}

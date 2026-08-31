@@ -11,6 +11,7 @@ from nonradial.axial_ekg import (
     scattering_amplitudes,
     scattering_matrix,
 )
+from nonradial.riemann_sheet import SidebandSheet
 
 
 def test_third_compound_generator_matches_minor_derivative():
@@ -107,6 +108,16 @@ def test_closed_scalar_channels_choose_decaying_sheet():
 
     assert k_plus.imag >= 0
     assert k_minus.imag >= 0
+
+
+def test_declared_lower_physical_sheet_matches_legacy_damped_wavenumbers():
+    sigma = 0.049397730785 - 5.96519327e-7j
+    omega = 0.8518974043710469
+    legacy = exterior_channel_wavenumbers(sigma, omega)
+    declared = exterior_channel_wavenumbers(
+        sigma, omega, SidebandSheet.physical_lower_half_plane()
+    )
+    np.testing.assert_allclose(declared, legacy, rtol=2e-15, atol=2e-15)
 
 
 def test_flat_exterior_riccati_matches_spherical_hankel_solution():

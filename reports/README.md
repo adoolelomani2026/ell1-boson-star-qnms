@@ -14,10 +14,12 @@ Prefix | Contents
 `radial_*`, `report_radial_stability.csv`, `refined_radial_*` | BVP/spectral benchmarks, stability scans, and deterministic uncertainty budgets
 `axial_projection_*` | Exact and numerical angular-reduction controls
 `axial_qnm_*` | Declared search, refined pole, far-boundary campaign, and seven-star continuation
+`axial_quadtree_census_pilot.json` | Explicit-sheet adaptive Evans census in one declared cut-free validation window
 `axial_constraint_*` | Independent unused-Einstein-equation monitor
 `axial_scattering_*`, `axial_resonant_*`, `axial_static_*` | Open-channel, driven, and zero-frequency responses
 `axial_time_domain_*` | Time-evolution checkpoint and current resolution/Courant matrix
 `schwarzschild_qnm_benchmark.json` | Independent Regge--Wheeler/Leaver control
+`ordinary_ell0/*` | Ordinary mini-boson-star turning-point scan and normalization benchmark
 `charged_*`, `semiclassical_*`, `physics_extension_*` | Supporting studies not applied to the neutral pole
 
 JSON files store conventions, parameters, residual definitions, acceptance
@@ -33,7 +35,9 @@ root:
 ```powershell
 python -m experiments.axial_projection_checkpoint
 python -m experiments.schwarzschild_qnm_benchmark
+python -m experiments.ordinary_ell0_background_benchmark
 python -m experiments.axial_qnm_discovery
+python -m experiments.axial_quadtree_census
 python -m experiments.axial_qnm_checkpoint
 python -m experiments.axial_qnm_far_boundary
 python -m experiments.axial_qnm_branch

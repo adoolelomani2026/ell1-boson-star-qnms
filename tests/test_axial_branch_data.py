@@ -108,3 +108,23 @@ def test_matching_determinants_are_locally_holomorphic_at_resolved_steps():
     assert summary["resolved_step_minimum"] == 5e-7
     assert summary["raw_maximum_resolved_mismatch"] < 2e-7
     assert summary["exterior_algebra_maximum_resolved_mismatch"] < 1.1e-7
+
+
+def test_quadtree_pilot_assigns_the_local_axial_pole():
+    result = load("axial_quadtree_census_pilot.json")
+    assert result["complete_inside_declared_cut_free_window"]
+    assert result["counted_zeros"] == 1
+    assert len(result["assigned_poles"]) == 1
+    assert result["leaves"][0]["maximum_phase_increment"] < np.pi / 4
+    assert result["leaves"][0]["relative_residual"] < 1e-8
+
+
+def test_ordinary_ell0_background_matches_published_turning_point():
+    result = json.loads(
+        (ROOT / "reports" / "ordinary_ell0" / "background_benchmark.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert all(result["acceptance"].values())
+    assert result["absolute_errors"]["maximum_mass"] < 5e-4
+    assert result["absolute_errors"]["critical_phi_c"] < 5e-4

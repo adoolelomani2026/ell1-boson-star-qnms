@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from background.ell_boson_star import solve_by_continuation
+from background.ell_boson_star import solve_background, solve_by_continuation
 from background.radius_audit import audit_radii
 
 
@@ -27,6 +27,17 @@ def test_background_is_regular_and_horizonless(literature_model):
 def test_saved_diagnostics_are_small(literature_model):
     assert literature_model.max_ode_residual < 2e-3
     assert literature_model.tail_residual < 2e-5
+
+
+def test_ordinary_ell0_background_uses_nodeless_family_seed():
+    solution = solve_background(
+        0, 0.08, r_max=40.0, points=400, tolerance=1.0e-5
+    )
+    assert solution.ell == 0
+    assert solution.solver_status == 0
+    assert 0.94 < solution.omega < 0.96
+    assert 0.48 < solution.adm_mass < 0.52
+    assert np.count_nonzero(np.diff(np.signbit(solution.psi))) == 0
 
 
 def test_published_radius_tracks_999_percent_mass():

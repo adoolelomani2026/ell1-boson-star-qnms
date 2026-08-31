@@ -14,6 +14,7 @@ from scipy.integrate import solve_ivp
 from types import SimpleNamespace
 
 from radial.coefficients import RadialBackground
+from nonradial.riemann_sheet import SidebandSheet
 
 
 J = 2
@@ -303,8 +304,16 @@ def axial_ta_constraint_profile_chain_rule(
     return residuals, scales
 
 
-def exterior_channel_wavenumbers(sigma: complex, omega: float):
+def exterior_channel_wavenumbers(
+    sigma: complex,
+    omega: float,
+    sheet: SidebandSheet | None = None,
+):
     """Outgoing/decaying asymptotic wavenumbers on the physical sheets."""
+
+    if sheet is not None:
+        k_plus, k_minus = sheet.wavenumbers(sigma, omega, MU)
+        return sigma, k_plus, k_minus
 
     def physical_sqrt(value: complex) -> complex:
         root = np.sqrt(complex(value))
@@ -441,6 +450,7 @@ def exterior_basis(
     *,
     riccati_radius: float = 300.0,
     asymptotic_order: int = 3,
+    sheet: SidebandSheet | None = None,
 ) -> np.ndarray:
     """Outgoing/decaying basis propagated through the vacuum exterior."""
 
@@ -452,6 +462,7 @@ def exterior_basis(
         background.adm_mass,
         r_far=riccati_radius,
         asymptotic_order=asymptotic_order,
+        sheet=sheet,
     )
     basis = np.zeros((6, 3), dtype=complex)
     basis[1, 0] = 1.0
@@ -471,6 +482,7 @@ def exterior_log_derivatives(
     *,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    sheet: SidebandSheet | None = None,
 ) -> tuple[complex, complex, complex]:
     """Propagate vacuum-channel ratios from large Schwarzschild radius.
 
@@ -484,7 +496,7 @@ def exterior_log_derivatives(
         raise ValueError("r_far must exceed the exterior matching radius")
     if asymptotic_order not in (1, 2, 3):
         raise ValueError("asymptotic_order must be 1, 2, or 3")
-    _, k_plus, k_minus = exterior_channel_wavenumbers(sigma, omega)
+    _, k_plus, k_minus = exterior_channel_wavenumbers(sigma, omega, sheet)
 
     def geometry(r):
         f = 1.0 - 2.0 * mass / r
@@ -636,6 +648,7 @@ def integrate_outgoing_basis(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    sheet: SidebandSheet | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
 ) -> np.ndarray:
@@ -647,6 +660,7 @@ def integrate_outgoing_basis(
         background,
         riccati_radius=r_far,
         asymptotic_order=asymptotic_order,
+        sheet=sheet,
     ).reshape(-1, order="F")
 
     def rhs(radius, flattened):
@@ -675,6 +689,7 @@ def matching_matrix(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    sheet: SidebandSheet | None = None,
     r_start: float | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
@@ -696,6 +711,7 @@ def matching_matrix(
         r_end=r_end,
         r_far=r_far,
         asymptotic_order=asymptotic_order,
+        sheet=sheet,
         rtol=rtol,
         atol=atol,
     )
@@ -798,6 +814,7 @@ def matching_evans_determinant(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    sheet: SidebandSheet | None = None,
     r_start: float | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
@@ -828,6 +845,7 @@ def matching_evans_determinant(
             background,
             riccati_radius=r_far,
             asymptotic_order=asymptotic_order,
+            sheet=sheet,
         ),
         (r_end, r_match),
         sigma,
@@ -853,6 +871,7 @@ def matching_determinant(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    sheet: SidebandSheet | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
 ) -> complex:
@@ -869,6 +888,7 @@ def matching_determinant(
         r_end=r_end,
         r_far=r_far,
         asymptotic_order=asymptotic_order,
+        sheet=sheet,
         rtol=rtol,
         atol=atol,
     )
@@ -890,6 +910,7 @@ def matching_singular_value(
     r_end: float = 26.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    sheet: SidebandSheet | None = None,
     rtol: float = 2e-6,
     atol: float = 2e-8,
 ) -> float:
@@ -905,6 +926,7 @@ def matching_singular_value(
         r_end=r_end,
         r_far=r_far,
         asymptotic_order=asymptotic_order,
+        sheet=sheet,
         rtol=rtol,
         atol=atol,
     )

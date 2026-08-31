@@ -1,0 +1,36 @@
+{
+  "calculation": "ordinary ell=0 mini-boson-star background benchmark",
+  "scope": "background and turning-point normalization; not a QNM result",
+  "normalization_conversion": "phi_c(Macedo)=a0(repository)/sqrt(2)",
+  "quadratic_fit_indices": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "turning_point": {
+    "a0_repository": 0.2710845619375639,
+    "phi_c_macedo_normalization": 0.1916857320210361,
+    "adm_mass": 0.6330008683065984
+  },
+  "published_targets": {
+    "kaup_maximum_mass": 0.633,
+    "macedo_critical_phi_c": 0.1916
+  },
+  "absolute_errors": {
+    "maximum_mass": 8.683065984005367e-07,
+    "critical_phi_c": 8.573202103609456e-05
+  },
+  "acceptance": {
+    "all_nodeless": true,
+    "all_solvers_converged": true,
+    "maximum_mass_within_5e-4": true,
+    "critical_phi_c_within_5e-4": true
+  },
+  "sources": {
+    "polar_qnm_and_critical_density": "https://arxiv.org/abs/1603.02095",
+    "background_and_polar_equations": "https://arxiv.org/abs/1307.4812"
+  }
+}

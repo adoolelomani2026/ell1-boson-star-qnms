@@ -189,7 +189,14 @@ def solve_background(
     kappa = 2 * ell + 1
     leading = a0 / kappa
     if omega_guess is None:
-        omega_guess = float(np.clip(1.0 - 0.8 * a0 ** (2.0 / 3.0), 0.72, 0.995))
+        if ell == 0:
+            # The ordinary mini-boson-star branch is more weakly bound than
+            # the ell=1 anchor at the same raw center amplitude.  Reusing the
+            # ell=1 seed can make the collocation Jacobian singular or attract
+            # an excited radial profile.
+            omega_guess = float(np.clip(1.0 - 0.65 * a0, 0.72, 0.995))
+        else:
+            omega_guess = float(np.clip(1.0 - 0.8 * a0 ** (2.0 / 3.0), 0.72, 0.995))
 
     if seed is None:
         y_guess = _initial_guess(r, ell, a0, omega_guess)
@@ -209,12 +216,24 @@ def solve_background(
 
     def bc(left: np.ndarray, right: np.ndarray, p: np.ndarray) -> np.ndarray:
         omega = _omega_from_parameter(float(p[0]))
+        if ell == 0:
+            # For ell=0 the center density, rather than the angular gradient,
+            # supplies the leading O(r^3) mass.
+            center_mass_bc = (
+                kappa
+                * leading**2
+                * (omega**2 / left[1] ** 2 + 1.0)
+                * r0**3
+                / 6.0
+            )
+        else:
+            center_mass_bc = center_mass
         decay = np.sqrt(max(1.0 - omega**2, 1e-14))
         exterior_lapse = np.sqrt(max(1.0 - 2.0 * right[0] / r_max, 1e-14))
         power = 1.0 + right[0] * (1.0 - 2.0 * omega**2) / decay
         return np.array(
             [
-                left[0] - center_mass,
+                left[0] - center_mass_bc,
                 left[2] - leading * r0**ell,
                 left[3] - ell * leading * r0 ** (ell - 1),
                 right[1] - exterior_lapse,

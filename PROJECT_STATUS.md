@@ -41,6 +41,20 @@ and the half-width to `4.5e-5`.
   holomorphic matching determinants.
 - Two-sided stationary axial-response match across six domains.
 
+## v0.6 research-program prerequisites
+
+- An explicit analytic `physical-lower` sideband sheet replaces the legacy
+  pointwise square-root choice in the new census path.  The finite cuts and all
+  four branch points are represented as data.
+- A cached adaptive-quadtree contour with a strict `pi/4` phase-increment bound
+  counts and independently assigns one pole in the declared cut-free pilot
+  window.  This validates the machinery locally; it is not a global-spectrum
+  result.
+- The ordinary `ell=0` mini-boson-star family now reaches its nodeless
+  maximum-mass turning point.  In the published normalization it gives
+  `phi_c=0.191686` and `M=0.6330009`, providing the background prerequisite for
+  the polar benchmark.
+
 ## Disclosed open boundaries
 
 - The Richardson-extrapolated unused-Einstein-equation monitor has relative
@@ -58,6 +72,10 @@ and the half-width to `4.5e-5`.
   gauge-invariant magnetic Love number.
 - The literal `R99` discrepancy with one published table remains documented;
   both `R99` and `R999` are retained.
+- All seven claims in `Hidden_Axial_Matter_v1_RESEARCH_PROGRAM.md` remain open.
+  In particular, the quadtree pilot covers only a narrow lower-half-plane
+  window, and the ordinary-star result currently certifies only the equilibrium
+  background, not any polar QNM.
 
 ## Model boundary
 

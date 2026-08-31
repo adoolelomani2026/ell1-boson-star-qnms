@@ -17,17 +17,18 @@ normalized six-state profiles overlap above `0.9991`.
 
 ## Project status
 
-The repository contains the complete neutral free-field calculation reported in
-the manuscript: equilibrium backgrounds, relativistic radial certification,
-the closed axial system, complex-frequency searches, local pole counts,
-far-boundary studies, time-domain checks, scattering, driven response, and
-stationary response.
+The immutable `v0.5.1` release contains the complete neutral free-field
+calculation reported in the current manuscript.  The `v0.6-development` branch
+is a new research campaign: it adds explicit analytic sideband sheets, a cached
+adaptive-quadtree Evans census, and an ordinary mini-boson-star benchmark before
+attempting the broader spectrum, stability, radiation, and tidal claims.
 
 The remaining scientific limits are stated rather than hidden:
 
 - the Richardson-extrapolated unused axial Einstein monitor has a documented
   finite-difference plateau at `1.5e-7`--`2.2e-7` in relative pointwise norm;
-- the ordinary `ell=0` matter-filled stellar QNM has not yet been reproduced with
+- the ordinary `ell=0` background turning point is independently reproduced,
+  but its published polar gravito-scalar QNMs have not yet been reproduced with
   the same nonradial pipeline;
 - the inferred scattering reciprocity weight is not a canonically derived energy
   flux;
@@ -127,8 +128,10 @@ Regenerate the principal axial records in dependency order:
 
 ```powershell
 python -m experiments.schwarzschild_qnm_benchmark
+python -m experiments.ordinary_ell0_background_benchmark
 python -m experiments.axial_qnm_discovery
 python -m experiments.axial_qnm_checkpoint
+python -m experiments.axial_quadtree_census
 python -m experiments.axial_qnm_far_boundary
 python -m experiments.axial_qnm_branch
 python -m experiments.axial_constraint_checkpoint

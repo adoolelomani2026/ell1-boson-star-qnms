@@ -1,6 +1,14 @@
+from types import SimpleNamespace
+
 import numpy as np
 
-from nonradial.axial_spectrum import count_modes_adaptive, rectangular_contour, winding_number
+from nonradial.axial_spectrum import (
+    count_modes_adaptive,
+    quadtree_census,
+    rectangular_contour,
+    winding_number,
+)
+from nonradial.riemann_sheet import SidebandSheet
 
 
 def test_rectangular_contour_is_counter_clockwise_and_has_no_duplicate_corners():
@@ -44,3 +52,46 @@ def test_adaptive_count_resolves_a_near_boundary_linear_zero():
     assert result["winding_number"] == 1
     assert result["phase_resolution_pass"]
     assert result["final_contour_points"] > 16
+
+
+def test_sideband_sheet_declares_branch_points_and_cut_intersection():
+    sheet = SidebandSheet.physical_lower_half_plane()
+    points = sheet.branch_points(0.8)
+    np.testing.assert_allclose(points["plus"], (-0.2, 1.8))
+    np.testing.assert_allclose(points["minus"], (-1.8, 0.2))
+    assert sheet.cell_intersects_cut((-0.1, 0.1), (-0.2, 0.2), 0.8)
+    assert not sheet.cell_intersects_cut((-0.1, 0.1), (-0.2, -0.01), 0.8)
+
+
+def test_quadtree_census_assigns_every_polynomial_zero():
+    roots = (-0.63 - 0.42j, 0.31 - 0.67j, 0.72 - 0.22j)
+
+    def determinant(sigma, _background, **_options):
+        return np.prod([sigma - root for root in roots])
+
+    census = quadtree_census(
+        SimpleNamespace(omega=0.8),
+        real_bounds=(-1.0, 1.0),
+        imaginary_bounds=(-1.0, -0.01),
+        sheet=SidebandSheet.physical_lower_half_plane(),
+        determinant=determinant,
+        maximum_depth=6,
+    )
+    assert census.complete
+    assert census.counted_zeros == len(roots)
+    assert len(census.assigned_poles) == len(roots)
+    for expected in roots:
+        assert min(abs(observed - expected) for observed in census.assigned_poles) < 1e-9
+
+
+def test_quadtree_census_explicitly_excludes_cut_cells():
+    census = quadtree_census(
+        SimpleNamespace(omega=0.8),
+        real_bounds=(-0.1, 0.1),
+        imaginary_bounds=(-0.1, 0.1),
+        sheet=SidebandSheet.physical_lower_half_plane(),
+        determinant=lambda sigma, _background, **_options: sigma - (2.0 + 0.0j),
+    )
+    assert not census.complete
+    assert len(census.excluded_cut_cells) == 1
+    assert not census.leaves
