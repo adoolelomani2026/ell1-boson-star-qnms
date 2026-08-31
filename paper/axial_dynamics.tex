@@ -301,6 +301,18 @@ shift conservatively, we quote
 \end{equation}
 where the displayed uncertainty is set by asymptotic order rather than the
 much smaller matching-domain spread.
+Three further sensitivity experiments test assumptions that are especially
+important for the small imaginary part. Nine refinements spanning
+$5\times10^{-5}\leq r_{\rm start}\leq2\times10^{-3}$ give full spans
+$8.86\times10^{-12}$ in $\operatorname{Re}\sigma$ and
+$2.90\times10^{-15}$ in $\operatorname{Im}\sigma$. Five refinements over
+$5\times10^{-9}\leq\texttt{rtol}\leq10^{-7}$ give corresponding spans
+$4.49\times10^{-11}$ and $3.91\times10^{-15}$. Finally, centered derivatives
+along the real and imaginary frequency directions agree at resolved complex
+steps to within $1.92\times10^{-7}$ for the raw determinant and
+$9.92\times10^{-8}$ for the exterior-algebra Evans determinant. This local
+Cauchy--Riemann check supports the holomorphic determinant assumption on the
+fixed physical sheet; smaller finite-difference steps expose ODE-solver noise.
 The first scalar threshold is
 $\sigma_{\rm th}=\mu-\omega=0.1481025957$, well above the mode.  Its scalar
 tails are therefore evanescent and the negative imaginary part represents

@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import hashlib
+import re
 import shutil
 import subprocess
+import sys
 import zipfile
 from pathlib import Path
 
@@ -45,6 +47,20 @@ def hashes(root: Path) -> str:
     return "\n".join(lines) + "\n"
 
 
+def collected_test_count() -> int:
+    completed = subprocess.run(
+        [sys.executable, "-m", "pytest", "--collect-only", "-q"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    match = re.search(r"(\d+) tests? collected", completed.stdout)
+    if match is None:
+        raise RuntimeError("Could not determine collected pytest count")
+    return int(match.group(1))
+
+
 def main() -> None:
     if DEST.exists() or ARCHIVE.exists():
         raise SystemExit(f"Refusing to overwrite existing release: {DEST}")
@@ -61,13 +77,12 @@ def main() -> None:
     audit_record = DEST / "Audit_Record"
     audit_record.mkdir(parents=True)
     for name in (
-        "Hidden_Axial_Matter_v3_AUDIT_contact.png",
-        "branch_summary.csv",
-        "constraint_step_scan.csv",
-        "gate_matrix.csv",
-        "branch_powerlaw_fit.json",
-        "Hidden_Axial_Matter_v3_AUDIT.md",
-        "Hidden_Axial_Matter_v3_AUDIT.pdf",
+        "Hidden_Axial_Matter_v4_FINAL_AUDIT_contact.png",
+        "Hidden_Axial_Matter_v4_center_start_scan.csv",
+        "Hidden_Axial_Matter_v4_gate_matrix.csv",
+        "Hidden_Axial_Matter_v4_FINAL_AUDIT_SHA256.txt",
+        "Hidden_Axial_Matter_v4_FINAL_AUDIT.md",
+        "Hidden_Axial_Matter_v4_FINAL_AUDIT.pdf",
     ):
         source = DOWNLOADS / name
         if not source.exists():
@@ -87,18 +102,20 @@ def main() -> None:
     for directory in ("tests", "environment", "symbolic"):
         copy_tree(ROOT / directory, deposit / directory)
     copy_tree(ROOT / "reports", deposit / "reports")
-    for name in ("README.md", "PROJECT_STATUS.md", "CONVENTIONS.md", "pyproject.toml"):
+    for name in ("README.md", "PROJECT_STATUS.md", "CONVENTIONS.md", "LICENSE", "pyproject.toml"):
         shutil.copy2(ROOT / name, deposit / name)
     copy_tree(ROOT / "paper", deposit / "paper")
+    shutil.copy2(ROOT / "LICENSE", DEST / "LICENSE")
 
     commit = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, check=False, capture_output=True, text=True
     ).stdout.strip()
-    bundle = supplement / "ell1-boson-star-qnms-v0.4.2.bundle"
+    bundle = supplement / "ell1-boson-star-qnms-v0.5.0.bundle"
     subprocess.run(
         ["git", "bundle", "create", str(bundle), "--all"], cwd=ROOT, check=True
     )
     page_count = len(PdfReader(PDF).pages)
+    test_count = collected_test_count()
     write(
         DEST / "README_FIRST.txt",
         f"""
@@ -107,7 +124,7 @@ PRD AUDIT-REPAIRED PRESENTATION PACKAGE
 Title: Hidden axial matter in relativistic ell=1 boson stars:
        A long-lived gravito-scalar mode branch and resonant response
 Author: Adel H. Al-Yoorby
-Prepared: 2026-08-24
+Prepared: 2026-08-31
 
 Main_Manuscript/PRD_Manuscript.pdf is the visually inspected {page_count}-page REVTeX
 author manuscript. Main_Manuscript contains the complete compile source and
@@ -122,7 +139,7 @@ short time evolution does not independently measure the extremely long damping
 time. These limits are stated in the manuscript.
 
 Repository base commit: {commit}
-Release tag: v0.4.2
+Release tag: v0.5.0
 Public repository: https://github.com/adoolelomani2026/ell1-boson-star-qnms
 The included Git bundle preserves the full repository history and release tag.
 SHA256SUMS.txt fixes the exact contents of every distributed file.
@@ -133,7 +150,7 @@ SHA256SUMS.txt fixes the exact contents of every distributed file.
         f"""
 AUDIT REPAIR VALIDATION
 
-- Automated regression: 75 tests passed.
+- Automated regression: {test_count} tests passed.
 - Bibliography: 36/36 entries cited; no missing or orphaned entries; numbered
   bibliography is in first-appearance order.
 - Schwarzschild control: M omega = 0.37367168441804177
@@ -150,6 +167,12 @@ AUDIT REPAIR VALIDATION
   phase step is 0.60975 < pi/4.
 - Far boundary: r_far=600 to 900 shifts are 5.3e-13 (real) and 4.2e-13
   (imaginary); third-order exterior series used.
+- Center start: nine converged refinements over a factor of 40; full frequency
+  spans 8.86e-12 (real) and 2.90e-15 (imaginary).
+- ODE tolerance: five converged refinements over a factor of 20; full frequency
+  spans 4.49e-11 (real) and 3.91e-15 (imaginary).
+- Numerical holomorphy: maximum resolved Cauchy--Riemann derivative mismatch
+  1.92e-7 (raw determinant) and 9.92e-8 (exterior-algebra determinant).
 - Predeclared targeted response (fit does not load the stored pole): center error 1.07e-9 fractionally; half-width error 4.49e-5;
   fit covariance uncertainties are recorded in the data file.
 - Static response: six two-sided domains; B/(A M^5) = -122.47418 with
@@ -213,7 +236,7 @@ Adel H. Al-Yoorby
     write(
         supplement / "README.txt",
         """
-The deposit contains the Python source, tests, manuscript build source,
+The deposit contains the BSD-3-Clause-licensed Python source, tests, manuscript build source,
 machine-readable result tables, and equilibrium profiles used in the paper.
 Run `pytest -q` for the regression suite and `python paper/build_preprint.py`
 to rebuild the manuscript. See the root README.md and PROJECT_STATUS.md for

@@ -675,13 +675,19 @@ def matching_matrix(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    r_start: float | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
 ) -> np.ndarray:
     """Return the unnormalized two-sided six-dimensional matching matrix."""
 
     interior = integrate_regular_basis(
-        sigma, background, r_end=r_match, rtol=rtol, atol=atol
+        sigma,
+        background,
+        r_start=r_start,
+        r_end=r_match,
+        rtol=rtol,
+        atol=atol,
     )
     exterior = integrate_outgoing_basis(
         sigma,
@@ -792,6 +798,7 @@ def matching_evans_determinant(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    r_start: float | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
 ) -> complex:
@@ -803,7 +810,9 @@ def matching_evans_determinant(
     intersections of the regular-center and outgoing exterior three-planes.
     """
 
-    left = max(background.r_min, 2e-4)
+    left = max(background.r_min, 2e-4) if r_start is None else r_start
+    if not background.r_min <= left < r_match:
+        raise ValueError("r_start must lie inside the interior integration domain")
     interior = _integrate_wedge(
         center_basis(left, sigma, background),
         (left, r_match),

@@ -74,7 +74,7 @@ Directory | Purpose
 `python/nonradial/` | Angular projections, six-state axial dynamics, Evans determinants, Schwarzschild control, scattering, static response, and time evolution
 `python/experiments/` | Executable runs that regenerate the records under `reports/`
 `symbolic/` | Human-readable SymPy reductions for the axial metric and Klein--Gordon operators
-`tests/` | Seventy-three automated checks spanning local algebra, global solvers, stored reports, and physics controls
+`tests/` | Automated checks spanning local algebra, global solvers, stored reports, and physics controls
 
 ## Numerical reports
 
@@ -132,6 +132,7 @@ python -m experiments.axial_qnm_checkpoint
 python -m experiments.axial_qnm_far_boundary
 python -m experiments.axial_qnm_branch
 python -m experiments.axial_constraint_checkpoint
+python -m experiments.axial_numerical_robustness
 python -m experiments.axial_time_domain_checkpoint
 python -m experiments.axial_resonant_response
 ```
@@ -152,6 +153,8 @@ manuscript under `pdfs/axial_matter_channel_ell1_preprint.pdf`.
 - a Schwarzschild Regge--Wheeler/Leaver QNM benchmark;
 - base, strict `pi/4`, and expanded local exterior-algebra Evans contours;
 - two matching domains and a three-point far-boundary campaign;
+- center-start and ODE-tolerance sensitivity scans;
+- local numerical-holomorphy checks of the raw and exterior-algebra determinants;
 - a seven-background branch with normalized profile overlaps;
 - a predeclared driven scan fitted without loading the stored pole;
 - regenerated time-domain resolution and Courant-factor comparisons;
@@ -168,6 +171,4 @@ and include the repository URL:
 
 ## License
 
-No source-code license has been selected yet. The author should add an explicit
-license before making the repository public; absence of a license does not grant
-reuse rights.
+The source code is released under the BSD 3-Clause License. See `LICENSE`.

@@ -84,3 +84,27 @@ def test_branch_powerlaw_fit_is_reproducible_and_narrowly_scoped():
     assert np.isclose(fit["A"], 0.04279825996339585, rtol=1e-12)
     assert fit["maximum_absolute_fractional_residual"] < 0.0024
     assert "not a demonstrated weak-field" in fit["warning"]
+
+
+def test_center_start_scan_does_not_control_the_tiny_damping():
+    summary = load("axial_numerical_robustness.json")["center_start_summary"]
+    assert summary["sample_count"] == 9
+    assert summary["all_converged"]
+    assert summary["sigma_real_span"] < 1e-11
+    assert summary["sigma_imag_span"] < 5e-15
+    assert summary["fractional_damping_span"] < 5e-9
+
+
+def test_ode_tolerance_scan_is_stable_over_factor_twenty():
+    summary = load("axial_numerical_robustness.json")["ode_tolerance_summary"]
+    assert summary["sample_count"] == 5
+    assert summary["all_converged"]
+    assert summary["sigma_real_span"] < 5e-11
+    assert summary["sigma_imag_span"] < 5e-15
+
+
+def test_matching_determinants_are_locally_holomorphic_at_resolved_steps():
+    summary = load("axial_numerical_robustness.json")["holomorphy_summary"]
+    assert summary["resolved_step_minimum"] == 5e-7
+    assert summary["raw_maximum_resolved_mismatch"] < 2e-7
+    assert summary["exterior_algebra_maximum_resolved_mismatch"] < 1.1e-7

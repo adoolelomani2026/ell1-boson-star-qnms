@@ -35,6 +35,7 @@ python -m experiments.axial_qnm_discovery
 python -m experiments.axial_qnm_checkpoint
 python -m experiments.axial_qnm_branch
 python -m experiments.axial_constraint_checkpoint
+python -m experiments.axial_numerical_robustness
 python -m experiments.axial_time_domain_checkpoint
 pytest -q
 ```

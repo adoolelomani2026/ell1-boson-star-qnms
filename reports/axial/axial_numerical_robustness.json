@@ -1,0 +1,259 @@
+{
+  "calculation": "axial QNM center-start, ODE-tolerance, and local numerical-holomorphy audit",
+  "background_a1_0": 0.08,
+  "matching_options": {
+    "r_match": 14.0,
+    "r_end": 35.0,
+    "r_far": 600.0,
+    "asymptotic_order": 3,
+    "rtol": 2e-08,
+    "atol": 2e-10
+  },
+  "center_start_rows": [
+    {
+      "r_start": 5e-05,
+      "sigma_real": 0.04939773078954368,
+      "sigma_imag": -5.965193392835699e-07,
+      "quality_factor": 41404.97007931982,
+      "relative_residual": 1.8871096657435655e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.478158700017957,
+      "delta_real_vs_2e-4": 4.213296378452469e-12,
+      "delta_imag_vs_2e-4": 1.1127956754442047e-15,
+      "fractional_damping_shift_vs_2e-4": -1.8654813014189817e-09
+    },
+    {
+      "r_start": 0.0001,
+      "sigma_real": 0.0493977307874146,
+      "sigma_imag": -5.965193390821806e-07,
+      "quality_factor": 41404.97009151385,
+      "relative_residual": 9.404346934715287e-09,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.3036468999926,
+      "delta_real_vs_2e-4": 2.0842147452349025e-12,
+      "delta_imag_vs_2e-4": 1.3141849584339662e-15,
+      "fractional_damping_shift_vs_2e-4": -2.203088599877982e-09
+    },
+    {
+      "r_start": 0.00015,
+      "sigma_real": 0.04939773078435128,
+      "sigma_imag": -5.965193387102404e-07,
+      "quality_factor": 41404.97011476292,
+      "relative_residual": 1.9551114392496047e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.597775999980513,
+      "delta_real_vs_2e-4": -9.791056854169256e-13,
+      "delta_imag_vs_2e-4": 1.6861251723863284e-15,
+      "fractional_damping_shift_vs_2e-4": -2.8266060430931866e-09
+    },
+    {
+      "r_start": 0.0002,
+      "sigma_real": 0.049397730785330385,
+      "sigma_imag": -5.965193403963656e-07,
+      "quality_factor": 41404.969998548055,
+      "relative_residual": 4.1416514301266e-09,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.185803400003351,
+      "delta_real_vs_2e-4": 0.0,
+      "delta_imag_vs_2e-4": 0.0,
+      "fractional_damping_shift_vs_2e-4": -0.0
+    },
+    {
+      "r_start": 0.0003,
+      "sigma_real": 0.04939773078421134,
+      "sigma_imag": -5.965193416109581e-07,
+      "quality_factor": 41404.96991330407,
+      "relative_residual": 4.702550859892076e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.201456100010546,
+      "delta_real_vs_2e-4": -1.1190423587770226e-12,
+      "delta_imag_vs_2e-4": -1.2145925185617001e-15,
+      "fractional_damping_shift_vs_2e-4": 2.0361326721689314e-09
+    },
+    {
+      "r_start": 0.0008,
+      "sigma_real": 0.04939773079307046,
+      "sigma_imag": -5.965193387241202e-07,
+      "quality_factor": 41404.97012110788,
+      "relative_residual": 3.6534590852418394e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.091430500004208,
+      "delta_real_vs_2e-4": 7.740072471840165e-12,
+      "delta_imag_vs_2e-4": 1.6722453728752642e-15,
+      "fractional_damping_shift_vs_2e-4": -2.8033380640502245e-09
+    },
+    {
+      "r_start": 0.001,
+      "sigma_real": 0.04939773078587222,
+      "sigma_imag": -5.965193389961709e-07,
+      "quality_factor": 41404.97009619106,
+      "relative_residual": 2.097398955676689e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 6.835242399974959,
+      "delta_real_vs_2e-4": 5.418374082744037e-13,
+      "delta_imag_vs_2e-4": 1.4001946956014176e-15,
+      "fractional_damping_shift_vs_2e-4": -2.347274599128737e-09
+    },
+    {
+      "r_start": 0.0015,
+      "sigma_real": 0.049397730785786645,
+      "sigma_imag": -5.9651933998054e-07,
+      "quality_factor": 41404.97002779334,
+      "relative_residual": 5.600748762301067e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.107201000006171,
+      "delta_real_vs_2e-4": 4.562600297575159e-13,
+      "delta_imag_vs_2e-4": 4.1582552034519953e-16,
+      "fractional_damping_shift_vs_2e-4": -6.970864013711584e-10
+    },
+    {
+      "r_start": 0.002,
+      "sigma_real": 0.04939773078488565,
+      "sigma_imag": -5.965193400306898e-07,
+      "quality_factor": 41404.97002355718,
+      "relative_residual": 1.651482764323761e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.035910300008254,
+      "delta_real_vs_2e-4": -4.44734526983126e-13,
+      "delta_imag_vs_2e-4": 3.656757700327062e-16,
+      "fractional_damping_shift_vs_2e-4": -6.130157821701604e-10
+    }
+  ],
+  "center_start_summary": {
+    "sample_count": 9,
+    "all_converged": true,
+    "sigma_real_span": 8.859114830617187e-12,
+    "sigma_imag_span": 2.9007176909480285e-15,
+    "fractional_damping_span": 4.862738715262118e-09
+  },
+  "ode_tolerance_rows": [
+    {
+      "rtol": 1e-07,
+      "atol": 1e-09,
+      "sigma_real": 0.0493977307816074,
+      "sigma_imag": -5.965193391263185e-07,
+      "relative_residual": 1.587153353133952e-10,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 4.953319399995962,
+      "delta_real_vs_2e-8": -3.7229871963084804e-12,
+      "delta_imag_vs_2e-8": 1.2700470244646103e-15
+    },
+    {
+      "rtol": 5e-08,
+      "atol": 5e-10,
+      "sigma_real": 0.04939773075164218,
+      "sigma_imag": -5.965193373684101e-07,
+      "relative_residual": 3.298049387735437e-08,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 5.436574599996675,
+      "delta_real_vs_2e-8": -3.3688205003379323e-11,
+      "delta_imag_vs_2e-8": 3.027955486273662e-15
+    },
+    {
+      "rtol": 2e-08,
+      "atol": 2e-10,
+      "sigma_real": 0.049397730785330385,
+      "sigma_imag": -5.965193403963656e-07,
+      "relative_residual": 4.1416514301266e-09,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 7.4082975999917835,
+      "delta_real_vs_2e-8": 0.0,
+      "delta_imag_vs_2e-8": 0.0
+    },
+    {
+      "rtol": 1e-08,
+      "atol": 1e-10,
+      "sigma_real": 0.04939773079114646,
+      "sigma_imag": -5.96519341276664e-07,
+      "relative_residual": 5.807626795907751e-09,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 9.37600139999995,
+      "delta_real_vs_2e-8": 5.81607678684648e-12,
+      "delta_imag_vs_2e-8": -8.802984721918185e-16
+    },
+    {
+      "rtol": 5e-09,
+      "atol": 5e-11,
+      "sigma_real": 0.04939773079658374,
+      "sigma_imag": -5.965193397505772e-07,
+      "relative_residual": 7.867570091341383e-09,
+      "converged": true,
+      "iterations": 3,
+      "evaluations": 12,
+      "elapsed_seconds": 12.897120400011772,
+      "delta_real_vs_2e-8": 1.1253352416584761e-11,
+      "delta_imag_vs_2e-8": 6.4578840101940085e-16
+    }
+  ],
+  "ode_tolerance_summary": {
+    "sample_count": 5,
+    "all_converged": true,
+    "sigma_real_span": 4.4941557419964084e-11,
+    "sigma_imag_span": 3.9082539584654806e-15
+  },
+  "holomorphy_rows": [
+    {
+      "step": 2e-06,
+      "raw_relative_derivative_mismatch": 1.6071530190715728e-07,
+      "exterior_algebra_relative_derivative_mismatch": 9.919337294280121e-08
+    },
+    {
+      "step": 1e-06,
+      "raw_relative_derivative_mismatch": 1.913409002344998e-07,
+      "exterior_algebra_relative_derivative_mismatch": 9.687426714995396e-08
+    },
+    {
+      "step": 5e-07,
+      "raw_relative_derivative_mismatch": 1.6153049496953142e-07,
+      "exterior_algebra_relative_derivative_mismatch": 7.080796676952625e-08
+    },
+    {
+      "step": 2e-07,
+      "raw_relative_derivative_mismatch": 5.165569143752262e-07,
+      "exterior_algebra_relative_derivative_mismatch": 4.175804024030165e-07
+    },
+    {
+      "step": 1e-07,
+      "raw_relative_derivative_mismatch": 7.810378655947732e-07,
+      "exterior_algebra_relative_derivative_mismatch": 1.9053096066335283e-07
+    },
+    {
+      "step": 5e-08,
+      "raw_relative_derivative_mismatch": 1.0311445276088107e-06,
+      "exterior_algebra_relative_derivative_mismatch": 3.3684540451981523e-07
+    }
+  ],
+  "holomorphy_summary": {
+    "resolved_step_minimum": 5e-07,
+    "resolved_step_maximum": 2e-06,
+    "raw_maximum_resolved_mismatch": 1.913409002344998e-07,
+    "exterior_algebra_maximum_resolved_mismatch": 9.919337294280121e-08,
+    "interpretation": "Local finite-difference Cauchy--Riemann consistency on a fixed physical sheet; smaller steps expose ODE-solver noise."
+  }
+}

@@ -36,6 +36,9 @@ and the half-width to `4.5e-5`.
 - Predeclared targeted driven-resonance center and width recovery without loading the stored pole during fitting.
 - Seven-background axial continuation with one locally counted pole per star,
   two matching domains, and adjacent profile overlaps above `0.9991`.
+- Nine center-start refinements spanning a factor of 40, five ODE-tolerance
+  refinements spanning a factor of 20, and local Cauchy--Riemann checks of both
+  holomorphic matching determinants.
 - Two-sided stationary axial-response match across six domains.
 
 ## Disclosed open boundaries

@@ -1,4 +1,4 @@
-"""Evolve the matched axial mode with the independent time-domain system."""
+"""Run a seeded time-domain real-frequency consistency check."""
 
 from __future__ import annotations
 

@@ -1089,7 +1089,7 @@ This procedure matters near $\sigmatwo=0$. Sorting solely by the numerical value
 
 The BVP endpoint residuals show that the finite-radius boundary equations were imposed. The interval RMS and dense pointwise residuals show that the collocation solution satisfies the discretized differential equations at the claimed tolerance. The generalized residuals show that the matrix eigenpairs solve the equilibrated and original pencils. None of these alone is a continuum error bar. The continuum claim rests on the combined domain, resolution, representation, method, and eigenfunction evidence.
 
-The spectral condition diagnostic increases strongly with mode number, resolution, and domain size. A low residual can therefore coexist with a sensitive eigenvalue. This is precisely why the axial calculation uses smooth background reconstruction, two-sided subspace matching, exact exterior propagation, independent time evolution, and scattering-matrix consistency tests rather than interpreting an isolated determinant minimum.
+The spectral condition diagnostic increases strongly with mode number, resolution, and domain size. A low residual can therefore coexist with a sensitive eigenvalue. This is precisely why the axial calculation uses smooth background reconstruction, two-sided subspace matching, exact exterior propagation, a seeded time-domain consistency check, and scattering-matrix consistency tests rather than interpreting an isolated determinant minimum.
 
 \subsection{Certification boundaries}
 
@@ -1099,7 +1099,7 @@ The two radial discretizations share the same physical background interface but 
 
 This manuscript reports the $J=L=2$ axial mode and checks its massive-scalar
 sheets, outgoing gravitational asymptotics, flat limits, matching-domain
-stability, independent time evolution, algebraic reciprocity balance, driven
+stability, a seeded time-domain consistency check, algebraic reciprocity balance, driven
 pole response, and stationary limit.  The observable defined here is the
 $J=L=2$ axial matter channel; the special $J=0$ and $J=1$ harmonic systems
 define different observables. Separate supporting studies evaluate a
@@ -1206,9 +1206,9 @@ $2.6\times10^{-7}$ fractional domain spread.
 
 \noindent\textbf{Competing interests.} None declared.
 
-\noindent\textbf{Data availability.} Machine-readable axial projection, QNM matching, time evolution, scattering, driven response, stationary response, background, and radial-certification data are archived with the public source release at \url{https://github.com/adoolelomani2026/ell1-boson-star-qnms/releases/tag/v0.4.2}. Separate charged-equilibrium and coherent-state records are supporting studies and are not used in the neutral spectral claim.
+\noindent\textbf{Data availability.} Machine-readable axial projection, QNM matching, center-start and tolerance scans, numerical-holomorphy checks, time evolution, scattering, driven response, stationary response, background, and radial-certification data are archived with the public source release at \url{https://github.com/adoolelomani2026/ell1-boson-star-qnms/releases/tag/v0.5.0}. Separate charged-equilibrium and coherent-state records are supporting studies and are not used in the neutral spectral claim.
 
-\noindent\textbf{Code availability.} The numerical source, verification tests, environment record, integrity manifest, and a self-contained Git bundle are available in release \code{v0.4.2} at the public repository above.
+\noindent\textbf{Code availability.} The numerical source, verification tests, environment record, integrity manifest, BSD-3-Clause license, and a self-contained Git bundle are available in release \code{v0.5.0} at the public repository above.
 
 \noindent\textbf{Author contribution.} Adel H. Al-Yoorby: conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, and writing.
 
@@ -1476,7 +1476,7 @@ Global BVP ground and first overtone & Reproduced \\
 Independent equilibrated spectral low modes & Reproduced \\
 Independent spectral coefficient transcription & Direct operator tests pass \\
 Conservative ground and overtone uncertainty & Recorded separately \\
-Closed $J=L=2$ axial QNM & Two-domain frequency solve and independent time evolution \\
+Closed $J=L=2$ axial QNM & Two-domain frequency solve and seeded time-domain frequency check \\
 Two-channel scattering & Raw amplitudes and algebraic reciprocity balance; canonical flux open \\
 Driven and stationary response & Lorentzian/phase pole tests and zero-frequency match \\
 \bottomrule
