@@ -128,3 +128,19 @@ def test_ordinary_ell0_background_matches_published_turning_point():
     assert all(result["acceptance"].values())
     assert result["absolute_errors"]["maximum_mass"] < 5e-4
     assert result["absolute_errors"]["critical_phi_c"] < 5e-4
+
+
+def test_v07_wide_count_records_unresolved_threshold_gate():
+    report = json.loads(
+        (ROOT / "reports" / "axial" / "axial_wide_count_v07.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    raw = report["raw_determinant"]
+    evans = report["exterior_algebra_evans_determinant"]
+    assert raw["winding_number"] == evans["winding_number"] == 12
+    assert raw["count_stability_pass"] and evans["count_stability_pass"]
+    assert not raw["phase_resolution_pass"]
+    assert not evans["phase_resolution_pass"]
+    assert not report["cross_determinant_count_pass"]
+    assert not report["v07_complete_spectrum_gate"]

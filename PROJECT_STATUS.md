@@ -55,6 +55,21 @@ and the half-width to `4.5e-5`.
   `phi_c=0.191686` and `M=0.6330009`, providing the background prerequisite for
   the polar benchmark.
 
+## v0.7 development finding
+
+- A wide physical-lower-sheet rectangle,
+  `0.005 <= Re(sigma) <= 0.8` and `-0.2 <= Im(sigma) <= -1e-5`, was counted
+  with both the raw six-column determinant and the independent third-compound
+  Evans determinant. After mandatory uniform refinement, both histories end
+  at a provisional winding of 12.
+- The result does **not** pass: both determinants retain a maximum boundary
+  phase increment near `3.01`, well above `pi/4`, at the declared refinement
+  cap. Earlier endpoint-triggered counts of seven were underresolved and have
+  been superseded.
+- The unresolved phase is localized near the massive-sideband threshold. The
+  next census must use threshold keyhole contours and bounded uniform
+  convergence rather than promoting the provisional integer.
+
 ## Disclosed open boundaries
 
 - The Richardson-extrapolated unused-Einstein-equation monitor has relative

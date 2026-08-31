@@ -494,14 +494,19 @@ def count_modes_adaptive(
     initial_points_per_edge: int = 8,
     maximum_phase_step: float = 0.5 * np.pi,
     maximum_refinements: int = 8,
+    minimum_uniform_refinements: int = 1,
+    required_stable_refinements: int = 1,
     matching_options: dict[str, float] | None = None,
     determinant: Callable[..., complex] = matching_evans_determinant,
 ) -> dict[str, float | int | bool]:
     """Adaptively resolve a determinant contour before counting its zeros.
 
-    Only segments whose principal phase increment violates the declared limit
-    are bisected.  This is substantially cheaper than uniformly oversampling a
-    contour whose rapid phase turn is localized near one boundary point.
+    Exactly ``minimum_uniform_refinements`` initial levels bisect every segment.
+    Thereafter only segments violating the phase bound are bisected.  The
+    uniform checks prevent an entire 2-pi turn between two endpoints from
+    masquerading as a small principal increment, while the fixed number of
+    global levels bounds the cost near thresholds.  If the requested count
+    stability is not reached, the result explicitly fails acceptance.
     """
 
     points = list(
@@ -522,13 +527,21 @@ def count_modes_adaptive(
         np.rint(np.sum(initial_increments) / (2.0 * np.pi))
     )
     initial_maximum_increment = float(np.max(np.abs(initial_increments)))
+    if minimum_uniform_refinements < 0 or required_stable_refinements < 1:
+        raise ValueError("invalid refinement-stability requirements")
+    if minimum_uniform_refinements > maximum_refinements:
+        raise ValueError("uniform refinements cannot exceed maximum refinements")
     refinements = 0
+    winding_history = [initial_winding]
     for _ in range(maximum_refinements + 1):
         insert_after: dict[int, complex] = {}
         for index, left in enumerate(points):
             right = points[(index + 1) % len(points)]
             increment = abs(np.angle(value(right) / value(left)))
-            if increment >= maximum_phase_step:
+            if (
+                refinements < minimum_uniform_refinements
+                or increment >= maximum_phase_step
+            ):
                 insert_after[index] = 0.5 * (left + right)
         if not insert_after:
             break
@@ -541,6 +554,11 @@ def count_modes_adaptive(
                 refined.append(insert_after[index])
         points = refined
         refinements += 1
+        level_values = np.asarray([value(point) for point in points])
+        level_increments = np.angle(np.roll(level_values, -1) / level_values)
+        winding_history.append(
+            int(np.rint(np.sum(level_increments) / (2.0 * np.pi)))
+        )
 
     values = np.asarray([value(point) for point in points])
     ratios = np.roll(values, -1) / values
@@ -554,6 +572,11 @@ def count_modes_adaptive(
         "initial_maximum_phase_increment": initial_maximum_increment,
         "final_contour_points": len(points),
         "refinement_levels": refinements,
+        "winding_history": winding_history,
+        "count_stability_pass": bool(
+            len(winding_history) > required_stable_refinements
+            and len(set(winding_history[-(required_stable_refinements + 1) :])) == 1
+        ),
         "minimum_boundary_determinant": float(np.min(np.abs(values))),
         "maximum_phase_increment": maximum_increment,
         "phase_resolution_pass": bool(maximum_increment < maximum_phase_step),

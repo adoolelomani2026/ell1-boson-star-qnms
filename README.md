@@ -132,6 +132,7 @@ python -m experiments.ordinary_ell0_background_benchmark
 python -m experiments.axial_qnm_discovery
 python -m experiments.axial_qnm_checkpoint
 python -m experiments.axial_quadtree_census
+python -m experiments.axial_wide_count_v07
 python -m experiments.axial_qnm_far_boundary
 python -m experiments.axial_qnm_branch
 python -m experiments.axial_constraint_checkpoint

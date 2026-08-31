@@ -51,7 +51,20 @@ def test_adaptive_count_resolves_a_near_boundary_linear_zero():
     )
     assert result["winding_number"] == 1
     assert result["phase_resolution_pass"]
+    assert result["count_stability_pass"]
+    assert len(result["winding_history"]) >= 2
     assert result["final_contour_points"] > 16
+
+
+def test_adaptive_count_rejects_invalid_stability_requirements():
+    with np.testing.assert_raises(ValueError):
+        count_modes_adaptive(
+            object(),
+            real_bounds=(-1.0, 1.0),
+            imaginary_bounds=(-1.0, 1.0),
+            determinant=lambda sigma, _background: sigma,
+            required_stable_refinements=0,
+        )
 
 
 def test_sideband_sheet_declares_branch_points_and_cut_intersection():
