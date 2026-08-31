@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ell1-qnms"
-version = "0.5.0"
+version = "0.5.1"
 description = "Relativistic ell-boson-star backgrounds and QNM research code"
 requires-python = ">=3.11"
 dependencies = ["numpy>=2.0", "scipy>=1.14", "matplotlib>=3.9", "sympy>=1.14"]

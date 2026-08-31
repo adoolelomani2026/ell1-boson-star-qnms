@@ -77,17 +77,36 @@ def main() -> None:
     audit_record = DEST / "Audit_Record"
     audit_record.mkdir(parents=True)
     for name in (
-        "Hidden_Axial_Matter_v4_FINAL_AUDIT_contact.png",
-        "Hidden_Axial_Matter_v4_center_start_scan.csv",
-        "Hidden_Axial_Matter_v4_gate_matrix.csv",
-        "Hidden_Axial_Matter_v4_FINAL_AUDIT_SHA256.txt",
-        "Hidden_Axial_Matter_v4_FINAL_AUDIT.md",
-        "Hidden_Axial_Matter_v4_FINAL_AUDIT.pdf",
+        "Hidden_Axial_Matter_v5_RELEASE_AUDIT_contact.png",
+        "Hidden_Axial_Matter_v5_gate_matrix.csv",
+        "Hidden_Axial_Matter_v5_fresh_checks.json",
+        "Hidden_Axial_Matter_v5_RELEASE_AUDIT_SHA256.txt",
+        "Hidden_Axial_Matter_v5_RELEASE_AUDIT_ARTIFACTS.zip",
+        "Hidden_Axial_Matter_v5_RELEASE_AUDIT.md",
+        "Hidden_Axial_Matter_v5_RELEASE_AUDIT.pdf",
     ):
         source = DOWNLOADS / name
         if not source.exists():
             raise SystemExit(f"Missing audit input: {source}")
         shutil.copy2(source, audit_record / name)
+    write(
+        audit_record / "IMPLEMENTATION_NOTE_v0.5.1.txt",
+        """
+AUDIT IMPLEMENTATION NOTE
+
+The enclosed v5 release audit certifies the exact v0.5.0 release identified by
+its recorded ZIP/PDF hashes. Release v0.5.1 preserves the audited scientific
+code, data, numerical results, and manuscript claims while applying the audit's
+two requested editorial changes: "independent IVP propagation checks" becomes
+"separate IVP propagation checks," and the funding statement now reads "No
+external funding was received for this work."
+
+The author-confirmed OpenAI Codex GPT 5.6 Sol disclosure is retained verbatim.
+Versioned repository URLs, package metadata, and the embedded Git bundle were
+advanced to v0.5.1. The previously omitted v5 gate-matrix CSV and audit-artifact
+ZIP are included, and their integrity is fixed by the v5 SHA-256 manifest.
+""",
+    )
 
     shutil.copy2(PDF, manuscript / "PRD_Manuscript.pdf")
     for name in ("manuscript.tex", "axial_channel.tex", "axial_dynamics.tex", "axial_response.tex"):
@@ -110,7 +129,7 @@ def main() -> None:
     commit = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, check=False, capture_output=True, text=True
     ).stdout.strip()
-    bundle = supplement / "ell1-boson-star-qnms-v0.5.0.bundle"
+    bundle = supplement / "ell1-boson-star-qnms-v0.5.1.bundle"
     subprocess.run(
         ["git", "bundle", "create", str(bundle), "--all"], cwd=ROOT, check=True
     )
@@ -139,7 +158,7 @@ short time evolution does not independently measure the extremely long damping
 time. These limits are stated in the manuscript.
 
 Repository base commit: {commit}
-Release tag: v0.5.0
+Release tag: v0.5.1
 Public repository: https://github.com/adoolelomani2026/ell1-boson-star-qnms
 The included Git bundle preserves the full repository history and release tag.
 SHA256SUMS.txt fixes the exact contents of every distributed file.
@@ -179,6 +198,9 @@ AUDIT REPAIR VALIDATION
   3.15e-5 full domain spread; no Love-number claim.
 - PDF: {page_count} pages, US letter, embedded fonts, no Type 3 fonts, no undefined
   references, no overfull boxes; all pages rendered and visually inspected.
+- The v5 audit micro-edits are applied: the equilibrium IVP checks are called
+  separate rather than independent, and the funding declaration states that
+  no external funding was received for this work.
 
 OPEN BUT DISCLOSED
 
