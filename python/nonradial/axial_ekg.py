@@ -450,12 +450,27 @@ def exterior_basis(
     *,
     riccati_radius: float = 300.0,
     asymptotic_order: int = 3,
+    exterior_method: str | None = None,
     sheet: SidebandSheet | None = None,
 ) -> np.ndarray:
     """Outgoing/decaying basis propagated through the vacuum exterior."""
 
-    point = background.point(radius)
-    x_gravity, q_plus, q_minus = exterior_log_derivatives(
+    method = exterior_method
+    if method is None:
+        method = "complex_scaled" if asymptotic_order > 3 else "real_axis"
+    if method not in {"real_axis", "complex_scaled"}:
+        raise ValueError("exterior_method must be 'real_axis' or 'complex_scaled'")
+    if method == "complex_scaled":
+        return exterior_complex_scaled_basis(
+            radius,
+            sigma,
+            background.omega,
+            background.adm_mass,
+            order=asymptotic_order,
+            sheet=sheet,
+            ray_length=max(80.0, riccati_radius - radius),
+        )
+    gravity, plus, minus = exterior_log_derivatives(
         radius,
         sigma,
         background.omega,
@@ -463,14 +478,165 @@ def exterior_basis(
         r_far=riccati_radius,
         asymptotic_order=asymptotic_order,
         sheet=sheet,
+        return_states=True,
     )
     basis = np.zeros((6, 3), dtype=complex)
-    basis[1, 0] = 1.0
-    basis[0, 0] = x_gravity
-    basis[2, 1] = 1.0
-    basis[3, 1] = q_plus
-    basis[4, 2] = 1.0
-    basis[5, 2] = q_minus
+    basis[0:2, 0] = gravity
+    basis[2:4, 1] = plus
+    basis[4:6, 2] = minus
+    return basis
+
+
+def exterior_complex_scaled_basis(
+    radius: float,
+    sigma: complex,
+    omega: float,
+    mass: float,
+    *,
+    order: int = 12,
+    sheet: SidebandSheet | None = None,
+    ray_length: float = 286.0,
+) -> np.ndarray:
+    """Pole-free outgoing basis from exterior complex scaling.
+
+    Each channel starts from its analytic leading Coulomb/tortoise Jost pair
+    on a fixed complex ray.  The ray is integrated directly to the real match
+    point.  No component division or rational high-order recurrence is used,
+    avoiding both real-axis shooting contamination and basis-chart poles.
+    ``order`` is retained only for compatibility with the legacy public
+    boundary selector; convergence is controlled by ``ray_length`` (passed
+    through ``r_far``).
+    """
+
+    _, k_plus, k_minus = exterior_channel_wavenumbers(sigma, omega, sheet)
+    if order < 1:
+        raise ValueError("asymptotic order must be positive")
+    if ray_length < 80.0:
+        raise ValueError("complex-scaled ray length must be at least 80")
+
+    def complex_ray_state(
+        wavenumber: complex,
+        exponent: complex,
+        initial_pair: tuple[complex, complex],
+        rhs,
+        *,
+        direction: complex,
+        length: float,
+    ) -> np.ndarray:
+        if wavenumber == 0.0:
+            raise ValueError("complex scaling cannot start at a channel threshold")
+        far_radius = radius + length * direction
+        value, derivative = initial_pair(far_radius)
+        state = np.asarray((value, derivative), dtype=complex)
+
+        def scaled_rhs(distance: float, channel_state: np.ndarray) -> np.ndarray:
+            complex_radius = radius + distance * direction
+            return direction * rhs(complex_radius, channel_state)
+
+        right = length
+        while right > 0.0:
+            left = max(0.0, right - 20.0)
+            result = solve_ivp(
+                scaled_rhs,
+                (right, left),
+                state,
+                method="DOP853",
+                rtol=2.0e-9,
+                atol=2.0e-11,
+            )
+            if not result.success:
+                raise RuntimeError(
+                    f"complex-scaled exterior integration failed: {result.message}"
+                )
+            state = result.y[:, -1]
+            # Remove the exact, analytic, nonzero plane-wave growth acquired
+            # on this inward ray segment.  This is a change of Evans
+            # normalization only; it prevents a harmless exponential phase
+            # from dominating contour resolution.
+            right_radius = radius + right * direction
+            left_radius = radius + left * direction
+            growth = np.exp(
+                1j * wavenumber * (left_radius - right_radius)
+                + exponent * (np.log(left_radius) - np.log(right_radius))
+            )
+            state /= growth
+            state /= max(abs(state[0]), abs(state[1]), 1.0e-300)
+            right = left
+        return state
+
+    def scalar_pair(
+        frequency: complex, wavenumber: complex, *, direction: complex
+    ) -> np.ndarray:
+        exponent = 2j * mass * wavenumber + 1j * mass * MU**2 / wavenumber - 1.0
+        def initial_pair(complex_radius: complex) -> tuple[complex, complex]:
+            return 1.0 + 0.0j, 1j * wavenumber + exponent / complex_radius
+
+        def scalar_rhs(complex_radius: complex, state: np.ndarray) -> np.ndarray:
+            lapse_squared = 1.0 - 2.0 * mass / complex_radius
+            first_derivative = (
+                2.0 / complex_radius
+                + 2.0 * mass / (complex_radius**2 * lapse_squared)
+            )
+            potential = (
+                frequency**2 / lapse_squared**2
+                - MU**2 / lapse_squared
+                - L * (L + 1.0) / (complex_radius**2 * lapse_squared)
+            )
+            return np.asarray(
+                (state[1], -first_derivative * state[1] - potential * state[0]),
+                dtype=complex,
+            )
+
+        return complex_ray_state(
+            wavenumber,
+            exponent,
+            initial_pair,
+            scalar_rhs,
+            direction=direction,
+            length=ray_length,
+        )
+
+    rw_exponent = 2j * mass * sigma
+    def rw_initial(complex_radius: complex) -> tuple[complex, complex]:
+        return 1.0 + 0.0j, 1j * sigma + rw_exponent / complex_radius
+
+    def rw_rhs(complex_radius: complex, state: np.ndarray) -> np.ndarray:
+        lapse_squared = 1.0 - 2.0 * mass / complex_radius
+        lapse_derivative = 2.0 * mass / complex_radius**2
+        potential = lapse_squared * (
+            L * (L + 1.0) / complex_radius**2
+            - 6.0 * mass / complex_radius**3
+        )
+        return np.asarray(
+            (
+                state[1],
+                -lapse_derivative / lapse_squared * state[1]
+                - (sigma**2 - potential) / lapse_squared**2 * state[0],
+            ),
+            dtype=complex,
+        )
+
+    master, master_derivative = complex_ray_state(
+        sigma,
+        rw_exponent,
+        rw_initial,
+        rw_rhs,
+        direction=np.exp(2j * np.pi / 3.0),
+        length=ray_length,
+    )
+    lapse_squared = 1.0 - 2.0 * mass / radius
+    gravity_h1 = master
+    gravity_h0 = lapse_squared**2 * (
+        master / radius + master_derivative
+    ) / (-1j * sigma)
+    plus = scalar_pair(omega - sigma, k_plus, direction=1.0 + 0.0j)
+    minus = scalar_pair(
+        omega + sigma, k_minus, direction=np.exp(-1j * np.pi / 3.0)
+    )
+    basis = np.zeros((6, 3), dtype=complex)
+    basis[0:2, 0] = (gravity_h0, gravity_h1)
+    basis[2:4, 1] = plus
+    basis[4:6, 2] = minus
     return basis
 
 
@@ -483,7 +649,8 @@ def exterior_log_derivatives(
     r_far: float = 300.0,
     asymptotic_order: int = 3,
     sheet: SidebandSheet | None = None,
-) -> tuple[complex, complex, complex]:
+    return_states: bool = False,
+) -> tuple[complex, complex, complex] | tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Propagate vacuum-channel ratios from large Schwarzschild radius.
 
     Six decoupled linear variables are integrated in short inward segments
@@ -635,6 +802,12 @@ def exterior_log_derivatives(
             scale = max(abs(state[start]), abs(state[start + 1]), 1e-300)
             state[start : start + 2] /= scale
         right = left
+    if return_states:
+        # Every segment was divided only by a positive real magnitude.  The
+        # returned homogeneous vectors therefore retain the analytic
+        # solution's contour phase without introducing poles at zeros of an
+        # arbitrarily selected amplitude component.
+        return state[0:2].copy(), state[2:4].copy(), state[4:6].copy()
     return complex(state[0] / state[1]), complex(state[3] / state[2]), complex(
         state[5] / state[4]
     )
@@ -648,20 +821,25 @@ def integrate_outgoing_basis(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    exterior_method: str | None = None,
     sheet: SidebandSheet | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
 ) -> np.ndarray:
     """Integrate the three physical exterior channel solutions inward."""
 
-    initial = exterior_basis(
+    initial_matrix = exterior_basis(
         r_end,
         sigma,
         background,
         riccati_radius=r_far,
         asymptotic_order=asymptotic_order,
+        exterior_method=exterior_method,
         sheet=sheet,
-    ).reshape(-1, order="F")
+    )
+    if r_end == r_match:
+        return initial_matrix
+    initial = initial_matrix.reshape(-1, order="F")
 
     def rhs(radius, flattened):
         matrix = flattened.reshape((6, 3), order="F")
@@ -689,6 +867,7 @@ def matching_matrix(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    exterior_method: str | None = None,
     sheet: SidebandSheet | None = None,
     r_start: float | None = None,
     rtol: float = 2e-8,
@@ -711,6 +890,7 @@ def matching_matrix(
         r_end=r_end,
         r_far=r_far,
         asymptotic_order=asymptotic_order,
+        exterior_method=exterior_method,
         sheet=sheet,
         rtol=rtol,
         atol=atol,
@@ -723,12 +903,11 @@ def matching_raw_determinant(
     background: RadialBackground,
     **kwargs,
 ) -> complex:
-    """Holomorphic local Evans determinant without Euclidean normalization.
+    """Direct matching determinant without row or column conditioning.
 
-    Center amplitudes and exterior channel amplitudes fix the six column
-    normalizations.  On a fixed physical sheet the resulting determinant is
-    analytic in ``sigma``.  This is the determinant used for contour winding;
-    the normalized determinant remains only a conditioning diagnostic.
+    Positive real integration rescalings preserve its zeros and phase but do
+    not preserve holomorphy.  It is useful as an independent local root check;
+    the exterior-algebra determinant is preferred for contour winding.
     """
 
     return complex(np.linalg.det(matching_matrix(sigma, background, **kwargs)))
@@ -814,17 +993,20 @@ def matching_evans_determinant(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    exterior_method: str | None = None,
     sheet: SidebandSheet | None = None,
     r_start: float | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
 ) -> complex:
-    """Holomorphic Evans determinant from third exterior powers.
+    """Phase-preserving Evans determinant from third exterior powers.
 
     This is the production determinant for root refinement and contour counts.
-    No Euclidean norm, singular value, QR phase convention, or stored root is
-    used.  The returned normalization is arbitrary but its zeros are the
-    intersections of the regular-center and outgoing exterior three-planes.
+    No singular value, QR phase convention, or stored root is used.  Positive
+    real segment rescalings prevent overflow while preserving contour phase
+    and zeros.  The normalization is therefore not assumed holomorphic; its
+    zeros are intersections of the regular-center and outgoing exterior
+    three-planes.
     """
 
     left = max(background.r_min, 2e-4) if r_start is None else r_start
@@ -838,21 +1020,26 @@ def matching_evans_determinant(
         rtol=rtol,
         atol=atol,
     )
-    exterior = _integrate_wedge(
-        exterior_basis(
-            r_end,
-            sigma,
-            background,
-            riccati_radius=r_far,
-            asymptotic_order=asymptotic_order,
-            sheet=sheet,
-        ),
-        (r_end, r_match),
+    exterior_initial = exterior_basis(
+        r_end,
         sigma,
         background,
-        rtol=rtol,
-        atol=atol,
+        riccati_radius=r_far,
+        asymptotic_order=asymptotic_order,
+        exterior_method=exterior_method,
+        sheet=sheet,
     )
+    if r_end == r_match:
+        exterior = _plucker_coordinates(exterior_initial)
+    else:
+        exterior = _integrate_wedge(
+            exterior_initial,
+            (r_end, r_match),
+            sigma,
+            background,
+            rtol=rtol,
+            atol=atol,
+        )
     value = 0.0j
     all_rows = set(range(6))
     for indices, left_minor in zip(_WEDGE_TRIPLES, interior):
@@ -871,6 +1058,7 @@ def matching_determinant(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    exterior_method: str | None = None,
     sheet: SidebandSheet | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
@@ -888,6 +1076,7 @@ def matching_determinant(
         r_end=r_end,
         r_far=r_far,
         asymptotic_order=asymptotic_order,
+        exterior_method=exterior_method,
         sheet=sheet,
         rtol=rtol,
         atol=atol,
@@ -910,6 +1099,7 @@ def matching_singular_value(
     r_end: float = 26.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    exterior_method: str | None = None,
     sheet: SidebandSheet | None = None,
     rtol: float = 2e-6,
     atol: float = 2e-8,
@@ -926,6 +1116,7 @@ def matching_singular_value(
         r_end=r_end,
         r_far=r_far,
         asymptotic_order=asymptotic_order,
+        exterior_method=exterior_method,
         sheet=sheet,
         rtol=rtol,
         atol=atol,
@@ -946,6 +1137,7 @@ def matching_mode_coefficients(
     r_end: float = 35.0,
     r_far: float = 300.0,
     asymptotic_order: int = 3,
+    exterior_method: str | None = None,
     rtol: float = 2e-8,
     atol: float = 2e-10,
 ) -> tuple[np.ndarray, np.ndarray, float]:
@@ -961,6 +1153,7 @@ def matching_mode_coefficients(
         r_end=r_end,
         r_far=r_far,
         asymptotic_order=asymptotic_order,
+        exterior_method=exterior_method,
         rtol=rtol,
         atol=atol,
     )

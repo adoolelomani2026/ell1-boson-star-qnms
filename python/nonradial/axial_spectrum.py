@@ -130,7 +130,8 @@ def _count_cached_cell(
     initial_points_per_edge: int,
     maximum_phase_step: float,
     maximum_refinements: int,
-) -> tuple[int, float, float, bool]:
+    minimum_uniform_refinements: int,
+) -> tuple[int, float, float, bool, complex | None]:
     """Adaptively count one cell while sharing samples with all other cells."""
 
     points = list(
@@ -143,7 +144,10 @@ def _count_cached_cell(
         if np.any(values == 0.0):
             raise ValueError("a determinant zero lies on a census boundary")
         increments = np.angle(np.roll(values, -1) / values)
-        violating = np.flatnonzero(np.abs(increments) >= maximum_phase_step)
+        if refinement < minimum_uniform_refinements:
+            violating = np.arange(len(points))
+        else:
+            violating = np.flatnonzero(np.abs(increments) >= maximum_phase_step)
         if len(violating) == 0:
             break
         if refinement == maximum_refinements:
@@ -152,6 +156,7 @@ def _count_cached_cell(
                 float(np.max(np.abs(increments))),
                 float(np.min(np.abs(values))),
                 False,
+                None,
             )
         insert_after = set(int(index) for index in violating)
         refined: list[complex] = []
@@ -161,11 +166,21 @@ def _count_cached_cell(
                 refined.append(0.5 * (point + points[(index + 1) % len(points)]))
         points = refined
     winding = int(np.rint(np.sum(increments) / (2.0 * np.pi)))
+    moment_seed = None
+    if winding != 0:
+        contour = np.asarray(points, dtype=complex)
+        ratios = np.roll(values, -1) / values
+        log_increments = np.log(np.abs(ratios)) + 1.0j * np.angle(ratios)
+        midpoints = 0.5 * (contour + np.roll(contour, -1))
+        moment_seed = complex(
+            np.sum(midpoints * log_increments) / (2.0j * np.pi * winding)
+        )
     return (
         winding,
         float(np.max(np.abs(increments))),
         float(np.min(np.abs(values))),
         True,
+        moment_seed,
     )
 
 
@@ -173,6 +188,7 @@ def _refine_cached_cell_zero(
     evaluator: CachedDeterminant,
     cell: SpectrumCell,
     boundary_scale: float,
+    moment_seed: complex | None = None,
     *,
     maximum_iterations: int = 16,
     relative_tolerance: float = 1.0e-7,
@@ -183,9 +199,10 @@ def _refine_cached_cell_zero(
     y0, y1 = cell.imaginary_bounds
     width = x1 - x0
     height = y1 - y0
-    derivative_step = max(min(width, height) * 1.0e-5, 1.0e-10)
+    derivative_step = max(min(width, height) * 1.0e-3, 1.0e-7)
     diagonal = abs(complex(width, height))
     seeds = (
+        *(tuple() if moment_seed is None else (moment_seed,)),
         cell.center,
         complex(x0 + 0.25 * width, y0 + 0.25 * height),
         complex(x0 + 0.75 * width, y0 + 0.25 * height),
@@ -197,13 +214,26 @@ def _refine_cached_cell_zero(
         pole = seed
         for _ in range(maximum_iterations):
             value = evaluator(pole)
-            derivative = (
+            derivative_x = (
                 evaluator(pole + derivative_step)
                 - evaluator(pole - derivative_step)
             ) / (2.0 * derivative_step)
-            if derivative == 0.0 or not np.isfinite(abs(derivative)):
+            derivative_y = (
+                evaluator(pole + 1j * derivative_step)
+                - evaluator(pole - 1j * derivative_step)
+            ) / (2.0 * derivative_step)
+            jacobian = np.asarray(
+                (
+                    (derivative_x.real, derivative_y.real),
+                    (derivative_x.imag, derivative_y.imag),
+                )
+            )
+            if not np.all(np.isfinite(jacobian)) or abs(np.linalg.det(jacobian)) < 1e-30:
                 break
-            step = value / derivative
+            step_vector = np.linalg.solve(
+                jacobian, np.asarray((value.real, value.imag))
+            )
+            step = complex(step_vector[0], step_vector[1])
             if abs(step) > 0.75 * diagonal:
                 step *= 0.75 * diagonal / abs(step)
             pole -= step
@@ -229,6 +259,7 @@ def quadtree_census(
     initial_points_per_edge: int = 4,
     maximum_phase_step: float = 0.25 * np.pi,
     maximum_contour_refinements: int = 10,
+    minimum_uniform_refinements: int = 1,
     maximum_depth: int = 8,
 ) -> QuadtreeCensus:
     """Recursively census a cut-free rectangle until every pole is assigned.
@@ -239,6 +270,10 @@ def quadtree_census(
     """
 
     options = dict(matching_options or {})
+    if minimum_uniform_refinements < 0:
+        raise ValueError("minimum_uniform_refinements must be nonnegative")
+    if minimum_uniform_refinements > maximum_contour_refinements:
+        raise ValueError("uniform refinements exceed contour refinement cap")
     options["sheet"] = sheet
     evaluator = CachedDeterminant(
         lambda sigma: determinant(sigma, background, **options)
@@ -253,12 +288,13 @@ def quadtree_census(
         ):
             excluded.append(cell)
             continue
-        winding, phase_step, boundary_minimum, resolved = _count_cached_cell(
+        winding, phase_step, boundary_minimum, resolved, moment_seed = _count_cached_cell(
             evaluator,
             cell,
             initial_points_per_edge=initial_points_per_edge,
             maximum_phase_step=maximum_phase_step,
             maximum_refinements=maximum_contour_refinements,
+            minimum_uniform_refinements=minimum_uniform_refinements,
         )
         if not resolved:
             leaves.append(
@@ -276,7 +312,7 @@ def quadtree_census(
             )
         elif winding == 1:
             pole, residual = _refine_cached_cell_zero(
-                evaluator, cell, boundary_minimum
+                evaluator, cell, boundary_minimum, moment_seed
             )
             if pole is not None:
                 leaves.append(
@@ -311,21 +347,23 @@ def quadtree_census(
     )
 
 
-def refine_analytic_root(
+def refine_scaled_root(
     seed: complex,
     background: RadialBackground,
     *,
-    matching_options: dict[str, float] | None = None,
+    matching_options: dict[str, object] | None = None,
     determinant: Callable[..., complex] = matching_raw_determinant,
     derivative_step: float = 2.0e-7,
     step_tolerance: float = 2.0e-12,
     residual_tolerance: float = 2.0e-5,
     maximum_iterations: int = 6,
 ) -> ComplexRootRefinement:
-    """Refine a simple zero by complex Newton iteration.
+    """Refine a simple zero as two real equations in ``(Re sigma, Im sigma)``.
 
-    A centered derivative on the real-frequency direction is valid because the
-    production determinant is holomorphic on the fixed physical sheet.
+    Exterior integrations are rescaled by positive real magnitudes to avoid
+    overflow.  Those factors preserve zeros and contour phase but need not be
+    holomorphic, so a two-dimensional finite-difference Jacobian is used
+    instead of assuming the Cauchy--Riemann equations.
     """
 
     options = dict(matching_options or {})
@@ -339,22 +377,35 @@ def refine_analytic_root(
     )
     pole = complex(seed)
     evaluations = 2
-    step = complex(np.inf)
+    step = np.asarray((np.inf, np.inf), dtype=float)
     for iteration in range(1, maximum_iterations + 1):
         value = determinant(pole, background, **options)
-        plus = determinant(pole + derivative_step, background, **options)
-        minus = determinant(pole - derivative_step, background, **options)
-        evaluations += 3
-        derivative = (plus - minus) / (2.0 * derivative_step)
-        if derivative == 0.0 or not np.isfinite(abs(derivative)):
+        x_plus = determinant(pole + derivative_step, background, **options)
+        x_minus = determinant(pole - derivative_step, background, **options)
+        y_plus = determinant(pole + 1j * derivative_step, background, **options)
+        y_minus = determinant(pole - 1j * derivative_step, background, **options)
+        evaluations += 5
+        derivative_x = (x_plus - x_minus) / (2.0 * derivative_step)
+        derivative_y = (y_plus - y_minus) / (2.0 * derivative_step)
+        jacobian = np.asarray(
+            (
+                (derivative_x.real, derivative_y.real),
+                (derivative_x.imag, derivative_y.imag),
+            ),
+            dtype=float,
+        )
+        if not np.all(np.isfinite(jacobian)) or abs(np.linalg.det(jacobian)) < 1.0e-30:
             break
-        step = value / derivative
-        pole -= step
-        if abs(step) < step_tolerance:
+        step = np.linalg.solve(jacobian, np.asarray((value.real, value.imag)))
+        maximum_step = 0.1 * max(1.0, abs(pole))
+        if np.linalg.norm(step) > maximum_step:
+            step *= maximum_step / np.linalg.norm(step)
+        pole -= complex(step[0], step[1])
+        if np.linalg.norm(step) < step_tolerance:
             break
     residual = abs(determinant(pole, background, **options)) / reference
     evaluations += 1
-    converged = bool(abs(step) < step_tolerance and residual < residual_tolerance)
+    converged = bool(np.linalg.norm(step) < step_tolerance and residual < residual_tolerance)
     return ComplexRootRefinement(
         pole=pole,
         relative_residual=float(residual),
@@ -362,6 +413,15 @@ def refine_analytic_root(
         iterations=iteration,
         evaluations=evaluations,
     )
+
+
+def refine_analytic_root(*args, **kwargs) -> ComplexRootRefinement:
+    """Backward-compatible name for :func:`refine_scaled_root`.
+
+    The implementation deliberately makes no analyticity assumption.
+    """
+
+    return refine_scaled_root(*args, **kwargs)
 
 
 def rectangular_contour(
@@ -407,13 +467,13 @@ def discover_mode(
     real_bounds: tuple[float, float],
     imaginary_bounds: tuple[float, float],
     scan_shape: tuple[int, int] = (7, 5),
-    matching_options: dict[str, float] | None = None,
+    matching_options: dict[str, object] | None = None,
 ) -> tuple[AxialModeSearch, list[dict[str, float]]]:
     """Discover a pole from a declared grid, then refine the raw determinant.
 
     No stored frequency is read.  The least normalized singular value chooses
-    the initial seed; the unnormalized, locally holomorphic matching
-    determinant supplies the two real equations for refinement.
+    the initial seed; the phase-preserving matching determinant supplies the
+    two real equations for refinement.
     """
 
     options = dict(matching_options or {})
@@ -439,7 +499,7 @@ def discover_mode(
             )
     best = min(rows, key=lambda row: row["singular_value"])
     seed = complex(best["sigma_real"], best["sigma_imag"])
-    refinement = refine_analytic_root(
+    refinement = refine_scaled_root(
         seed,
         background,
         matching_options=options,
@@ -465,7 +525,7 @@ def count_modes(
     real_bounds: tuple[float, float],
     imaginary_bounds: tuple[float, float],
     points_per_edge: int = 12,
-    matching_options: dict[str, float] | None = None,
+    matching_options: dict[str, object] | None = None,
     determinant: Callable[..., complex] = matching_evans_determinant,
 ) -> dict[str, float | int]:
     """Count zeros inside a contour from the raw determinant phase."""
@@ -496,7 +556,7 @@ def count_modes_adaptive(
     maximum_refinements: int = 8,
     minimum_uniform_refinements: int = 1,
     required_stable_refinements: int = 1,
-    matching_options: dict[str, float] | None = None,
+    matching_options: dict[str, object] | None = None,
     determinant: Callable[..., complex] = matching_evans_determinant,
 ) -> dict[str, float | int | bool]:
     """Adaptively resolve a determinant contour before counting its zeros.

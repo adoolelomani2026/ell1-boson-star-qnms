@@ -141,6 +141,80 @@ def test_flat_exterior_riccati_matches_spherical_hankel_solution():
     assert np.allclose(q_minus, hankel_log_derivative(k_minus), rtol=2e-4, atol=2e-6)
 
 
+def test_complex_scaled_exterior_selector_is_order_invariant():
+    background = FlatVacuumBackground()
+    sigma = 0.4 - 0.05j
+    lower_sheet = SidebandSheet.physical_lower_half_plane()
+    order_one = exterior_basis(
+        14.0,
+        sigma,
+        background,
+        asymptotic_order=1,
+        exterior_method="complex_scaled",
+        sheet=lower_sheet,
+    )
+    order_three = exterior_basis(
+        14.0,
+        sigma,
+        background,
+        asymptotic_order=3,
+        exterior_method="complex_scaled",
+        sheet=lower_sheet,
+    )
+    for column in range(3):
+        rows = slice(2 * column, 2 * column + 2)
+        ratio_one = order_one[rows, column][0] / order_one[rows, column][1]
+        ratio_three = order_three[rows, column][0] / order_three[rows, column][1]
+        assert np.allclose(ratio_one, ratio_three, rtol=2e-11, atol=2e-12)
+
+
+def test_complex_scaled_flat_vacuum_basis_has_outgoing_hankel_orientation():
+    radius = 14.0
+    sigma = 0.4 - 0.05j
+    sheet = SidebandSheet.physical_lower_half_plane()
+    basis = exterior_basis(
+        radius,
+        sigma,
+        FlatVacuumBackground(),
+        exterior_method="complex_scaled",
+        sheet=sheet,
+    )
+    _, k_plus, k_minus = exterior_channel_wavenumbers(sigma, 0.8, sheet)
+
+    def hankel_log_derivative(wavenumber):
+        z = wavenumber * radius
+        polynomial = 1.0 + 3j / z - 3.0 / z**2
+        polynomial_prime = -3j / z**2 + 6.0 / z**3
+        return wavenumber * (
+            1j - 1.0 / z + polynomial_prime / polynomial
+        )
+
+    expected_gravity = 1j * (
+        2.0 / radius + hankel_log_derivative(sigma)
+    ) / sigma
+    assert np.allclose(basis[0, 0] / basis[1, 0], expected_gravity, rtol=2e-9)
+    assert np.allclose(
+        basis[3, 1] / basis[2, 1], hankel_log_derivative(k_plus), rtol=2e-9
+    )
+    assert np.allclose(
+        basis[5, 2] / basis[4, 2], hankel_log_derivative(k_minus), rtol=2e-9
+    )
+
+
+def test_complex_scaled_exterior_basis_never_normalizes_one_component():
+    basis = exterior_basis(
+        14.0,
+        0.4 - 0.05j,
+        FlatVacuumBackground(),
+        exterior_method="complex_scaled",
+        sheet=SidebandSheet.physical_lower_half_plane(),
+    )
+    for column in range(3):
+        pair = basis[2 * column : 2 * column + 2, column]
+        assert np.all(np.isfinite(pair))
+        assert np.linalg.norm(pair) > 0.0
+
+
 def test_flat_regular_center_scattering_has_unit_gravitational_reflection():
     result = scattering_amplitudes(
         0.08,

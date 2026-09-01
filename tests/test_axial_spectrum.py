@@ -6,6 +6,7 @@ from nonradial.axial_spectrum import (
     count_modes_adaptive,
     quadtree_census,
     rectangular_contour,
+    refine_scaled_root,
     winding_number,
 )
 from nonradial.riemann_sheet import SidebandSheet
@@ -67,6 +68,23 @@ def test_adaptive_count_rejects_invalid_stability_requirements():
         )
 
 
+def test_scaled_root_refinement_does_not_assume_holomorphic_normalization():
+    root = 0.31 - 0.27j
+
+    def determinant(sigma, _background, **_options):
+        return (sigma - root) * (1.0 + 0.4 * abs(sigma))
+
+    result = refine_scaled_root(
+        0.29 - 0.25j,
+        object(),
+        determinant=determinant,
+        derivative_step=1.0e-5,
+        maximum_iterations=12,
+    )
+    assert result.converged
+    assert abs(result.pole - root) < 1.0e-10
+
+
 def test_sideband_sheet_declares_branch_points_and_cut_intersection():
     sheet = SidebandSheet.physical_lower_half_plane()
     points = sheet.branch_points(0.8)
@@ -95,6 +113,21 @@ def test_quadtree_census_assigns_every_polynomial_zero():
     assert len(census.assigned_poles) == len(roots)
     for expected in roots:
         assert min(abs(observed - expected) for observed in census.assigned_poles) < 1e-9
+
+
+def test_quadtree_contour_moment_handles_off_center_single_root():
+    root = 0.97 - 0.015j
+    census = quadtree_census(
+        SimpleNamespace(omega=0.8),
+        real_bounds=(-1.0, 1.0),
+        imaginary_bounds=(-1.0, -0.001),
+        sheet=SidebandSheet.physical_lower_half_plane(),
+        determinant=lambda sigma, _background, **_options: sigma - root,
+        initial_points_per_edge=4,
+        maximum_depth=2,
+    )
+    assert census.complete
+    assert abs(census.assigned_poles[0] - root) < 1e-9
 
 
 def test_quadtree_census_explicitly_excludes_cut_cells():
