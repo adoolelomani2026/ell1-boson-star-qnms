@@ -54,6 +54,25 @@ class SidebandSheet:
         k_minus = self.minus_sign * self._finite_cut_root(omega + sigma, mass)
         return complex(k_plus), complex(k_minus)
 
+    def sigma_from_minus_wavenumber(
+        self, wavenumber: complex, omega: float, mass: float = 1.0
+    ) -> complex:
+        """Map a declared minus-channel wavenumber back to frequency.
+
+        The root with ``omega + sigma`` near positive ``mass`` is the local
+        inverse used for keyholes around the upper minus-channel threshold.
+        The supplied wavenumber must belong to this sheet; checking the
+        round trip prevents an accidental quadrant or sheet mismatch.
+        """
+
+        k = complex(wavenumber)
+        channel_frequency = complex(np.sqrt(mass**2 + k**2 + 0.0j))
+        sigma = channel_frequency - omega
+        reconstructed = self.wavenumbers(sigma, omega, mass)[1]
+        if not np.allclose(reconstructed, k, rtol=2.0e-11, atol=2.0e-13):
+            raise ValueError("wavenumber is not on the declared local minus sheet")
+        return complex(sigma)
+
     @staticmethod
     def branch_points(omega: float, mass: float = 1.0) -> dict[str, tuple[float, float]]:
         """Return the two real branch-point pairs in the sigma plane."""
@@ -77,4 +96,3 @@ class SidebandSheet:
         if not (y0 <= 0.0 <= y1):
             return False
         return any(x0 <= right and left <= x1 for left, right in self.branch_points(omega, mass).values())
-

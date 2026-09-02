@@ -3,6 +3,7 @@ from types import SimpleNamespace
 import numpy as np
 
 from nonradial.axial_spectrum import (
+    annular_sector_contour,
     count_modes_adaptive,
     quadtree_census,
     rectangular_contour,
@@ -17,6 +18,18 @@ def test_rectangular_contour_is_counter_clockwise_and_has_no_duplicate_corners()
     assert contour.shape == (20,)
     assert len(np.unique(contour)) == len(contour)
     assert contour[0] == 1.0 - 2.0j
+
+
+def test_annular_sector_contour_has_correct_orientation_and_unique_corners():
+    contour = annular_sector_contour((0.2, 0.7), (0.6, 2.1), 8)
+    assert contour.shape == (32,)
+    assert len(np.unique(contour)) == len(contour)
+    closed = np.concatenate((contour, contour[:1]))
+    signed_area = 0.5 * np.sum(
+        closed[:-1].real * closed[1:].imag
+        - closed[1:].real * closed[:-1].imag
+    )
+    assert signed_area > 0.0
 
 
 def test_winding_number_counts_known_linear_zero():
@@ -92,6 +105,15 @@ def test_sideband_sheet_declares_branch_points_and_cut_intersection():
     np.testing.assert_allclose(points["minus"], (-1.8, 0.2))
     assert sheet.cell_intersects_cut((-0.1, 0.1), (-0.2, 0.2), 0.8)
     assert not sheet.cell_intersects_cut((-0.1, 0.1), (-0.2, -0.01), 0.8)
+
+
+def test_minus_wavenumber_keyhole_map_round_trips_on_physical_lower_sheet():
+    sheet = SidebandSheet.physical_lower_half_plane()
+    wavenumber = 0.23 * np.exp(0.72j * np.pi)
+    sigma = sheet.sigma_from_minus_wavenumber(wavenumber, omega=0.8)
+    _, reconstructed = sheet.wavenumbers(sigma, omega=0.8)
+    assert np.allclose(reconstructed, wavenumber, rtol=2e-11, atol=2e-13)
+    assert sigma.imag < 0.0
 
 
 def test_quadtree_census_assigns_every_polynomial_zero():

@@ -448,6 +448,34 @@ def rectangular_contour(
     )
 
 
+def annular_sector_contour(
+    radial_bounds: tuple[float, float],
+    angular_bounds: tuple[float, float],
+    points_per_segment: int,
+) -> np.ndarray:
+    """Counter-clockwise keyhole sector without repeated corner points."""
+
+    inner, outer = radial_bounds
+    theta0, theta1 = angular_bounds
+    if not 0.0 < inner < outer:
+        raise ValueError("sector radii must satisfy 0 < inner < outer")
+    if not theta0 < theta1:
+        raise ValueError("sector angles must be strictly increasing")
+    if points_per_segment < 3:
+        raise ValueError("points_per_segment must be at least three")
+    n = points_per_segment
+    return np.concatenate(
+        (
+            np.linspace(inner, outer, n, endpoint=False) * np.exp(1j * theta0),
+            outer
+            * np.exp(1j * np.linspace(theta0, theta1, n, endpoint=False)),
+            np.linspace(outer, inner, n, endpoint=False) * np.exp(1j * theta1),
+            inner
+            * np.exp(1j * np.linspace(theta1, theta0, n, endpoint=False)),
+        )
+    )
+
+
 def winding_number(values: np.ndarray) -> tuple[int, float]:
     """Return phase winding and the largest resolved phase increment."""
 
