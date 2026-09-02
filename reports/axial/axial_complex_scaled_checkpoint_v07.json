@@ -122,27 +122,75 @@
     "imaginary": 9.928691297060913e-15
   },
   "local_contour": {
-    "winding_number": 1,
-    "initial_winding_number": 1,
-    "initial_points_per_edge": 8,
-    "initial_maximum_phase_increment": 2.905331055791196,
-    "final_contour_points": 167,
-    "refinement_levels": 8,
-    "winding_history": [
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1
+    "real_bounds": [
+      0.0493,
+      0.0495
     ],
+    "imaginary_bounds": [
+      -1.5e-06,
+      -1e-07
+    ],
+    "uniform_history": [
+      {
+        "points_per_edge": 16,
+        "winding_number": 1,
+        "maximum_phase_increment": 2.878180400188635
+      },
+      {
+        "points_per_edge": 32,
+        "winding_number": 1,
+        "maximum_phase_increment": 2.8023387397632553
+      },
+      {
+        "points_per_edge": 64,
+        "winding_number": 1,
+        "maximum_phase_increment": 2.400595935452061
+      },
+      {
+        "points_per_edge": 128,
+        "winding_number": 1,
+        "maximum_phase_increment": 2.003469940488917
+      }
+    ],
+    "adaptive_history": [
+      {
+        "level": 0,
+        "contour_points": 512,
+        "winding_number": 1,
+        "maximum_phase_increment": 2.003469940488918
+      },
+      {
+        "level": 1,
+        "contour_points": 518,
+        "winding_number": 1,
+        "maximum_phase_increment": 1.107434598431937
+      },
+      {
+        "level": 2,
+        "contour_points": 526,
+        "winding_number": 1,
+        "maximum_phase_increment": 0.7159468507547765
+      },
+      {
+        "level": 3,
+        "contour_points": 535,
+        "winding_number": 1,
+        "maximum_phase_increment": 0.3876273811566479
+      },
+      {
+        "level": 4,
+        "contour_points": 543,
+        "winding_number": 1,
+        "maximum_phase_increment": 0.19553771858291424
+      }
+    ],
+    "winding_number": 1,
+    "final_contour_points": 543,
+    "maximum_phase_increment": 0.19553771858291424,
+    "minimum_boundary_determinant": 1.501964417110077e-05,
+    "phase_resolution_pass": true,
     "count_stability_pass": true,
-    "minimum_boundary_determinant": 1.5019644170717427e-05,
-    "maximum_phase_increment": 0.19553771907463172,
-    "phase_resolution_pass": true
+    "determinant_evaluations": 543
   },
   "acceptance": {
     "all_refinements_converged": true,
