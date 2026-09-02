@@ -859,6 +859,47 @@ def integrate_outgoing_basis(
     return result.y[:, -1].reshape((6, 3), order="F")
 
 
+def _integrate_orthonormal_basis(
+    initial_basis: np.ndarray,
+    interval: tuple[float, float],
+    sigma: complex,
+    background: RadialBackground,
+    *,
+    rtol: float,
+    atol: float,
+) -> np.ndarray:
+    """Propagate a three-plane while suppressing fundamental-matrix collapse."""
+
+    basis, _ = np.linalg.qr(np.asarray(initial_basis, dtype=complex), mode="reduced")
+    left, target = interval
+    direction = 1.0 if target > left else -1.0
+    while direction * (target - left) > 0.0:
+        right = left + direction * min(0.5, abs(target - left))
+
+        def rhs(radius: float, flattened: np.ndarray) -> np.ndarray:
+            matrix = flattened.reshape((6, 3), order="F")
+            return axial_rhs(radius, matrix, sigma, background).reshape(
+                -1, order="F"
+            )
+
+        result = solve_ivp(
+            rhs,
+            (left, right),
+            basis.reshape(-1, order="F"),
+            method="DOP853",
+            rtol=rtol,
+            atol=atol,
+        )
+        if not result.success:
+            raise RuntimeError(
+                f"orthonormal basis integration failed: {result.message}"
+            )
+        propagated = result.y[:, -1].reshape((6, 3), order="F")
+        basis, _ = np.linalg.qr(propagated, mode="reduced")
+        left = right
+    return basis
+
+
 def matching_matrix(
     sigma: complex,
     background: RadialBackground,
@@ -972,17 +1013,27 @@ def _integrate_wedge(
         generator = axial_rhs(radius, identity, sigma, background)
         return _third_compound_generator(generator) @ wedge
 
-    result = solve_ivp(
-        rhs,
-        interval,
-        _plucker_coordinates(initial_basis),
-        method="DOP853",
-        rtol=rtol,
-        atol=atol,
-    )
-    if not result.success:
-        raise RuntimeError(f"exterior-algebra integration failed: {result.message}")
-    return result.y[:, -1]
+    left, target = interval
+    wedge = _plucker_coordinates(initial_basis)
+    direction = 1.0 if target > left else -1.0
+    while direction * (target - left) > 0.0:
+        right = left + direction * min(4.0, abs(target - left))
+        result = solve_ivp(
+            rhs,
+            (left, right),
+            wedge,
+            method="DOP853",
+            rtol=rtol,
+            atol=atol,
+        )
+        if not result.success:
+            raise RuntimeError(
+                f"exterior-algebra integration failed: {result.message}"
+            )
+        wedge = result.y[:, -1]
+        wedge /= max(float(np.max(np.abs(wedge))), 1.0e-300)
+        left = right
+    return wedge
 
 
 def matching_evans_determinant(
@@ -1104,28 +1155,41 @@ def matching_singular_value(
     rtol: float = 2e-6,
     atol: float = 2e-8,
 ) -> float:
-    """Smallest normalized matching singular value for robust mode searches."""
+    """Smallest principal-angle singular value of the matched three-planes.
 
-    interior = integrate_regular_basis(
-        sigma, background, r_end=r_match, rtol=rtol, atol=atol
-    )
-    exterior = integrate_outgoing_basis(
+    Each basis is reorthogonalized between short integration segments.  This
+    diagnostic therefore remains sensitive to a true subspace intersection
+    even where direct fundamental-matrix columns collapse numerically.
+    """
+
+    left = max(background.r_min, 2e-4)
+    interior = _integrate_orthonormal_basis(
+        center_basis(left, sigma, background),
+        (left, r_match),
         sigma,
         background,
-        r_match=r_match,
-        r_end=r_end,
-        r_far=r_far,
-        asymptotic_order=asymptotic_order,
-        exterior_method=exterior_method,
-        sheet=sheet,
         rtol=rtol,
         atol=atol,
     )
-    matrix = np.column_stack((interior, -exterior))
-    row_norms = np.maximum(np.linalg.norm(matrix, axis=1), 1e-300)
-    scaled = matrix / row_norms[:, None]
-    column_norms = np.maximum(np.linalg.norm(scaled, axis=0), 1e-300)
-    singular_values = np.linalg.svd(scaled / column_norms, compute_uv=False)
+    exterior = _integrate_orthonormal_basis(
+        exterior_basis(
+            r_end,
+            sigma,
+            background,
+            riccati_radius=r_far,
+            asymptotic_order=asymptotic_order,
+            exterior_method=exterior_method,
+            sheet=sheet,
+        ),
+        (r_end, r_match),
+        sigma,
+        background,
+        rtol=rtol,
+        atol=atol,
+    )
+    singular_values = np.linalg.svd(
+        np.column_stack((interior, -exterior)), compute_uv=False
+    )
     return float(singular_values[-1])
 
 

@@ -29,6 +29,30 @@ def test_third_compound_generator_matches_minor_derivative():
     np.testing.assert_allclose(observed, expected, rtol=2e-8, atol=2e-8)
 
 
+def test_segmented_wedge_and_qr_propagate_the_same_three_plane():
+    from nonradial.axial_ekg import (
+        _integrate_orthonormal_basis,
+        _integrate_wedge,
+        _plucker_coordinates,
+    )
+
+    rng = np.random.default_rng(20260902)
+    initial = rng.normal(size=(6, 3)) + 1j * rng.normal(size=(6, 3))
+    sigma = 0.4 - 0.05j
+    background = FlatVacuumBackground()
+    wedge = _integrate_wedge(
+        initial, (8.0, 12.0), sigma, background, rtol=2e-10, atol=2e-12
+    )
+    orthonormal = _integrate_orthonormal_basis(
+        initial, (8.0, 12.0), sigma, background, rtol=2e-10, atol=2e-12
+    )
+    qr_wedge = _plucker_coordinates(orthonormal)
+    overlap = abs(
+        np.vdot(wedge / np.linalg.norm(wedge), qr_wedge / np.linalg.norm(qr_wedge))
+    )
+    assert np.isclose(overlap, 1.0, rtol=2e-9, atol=2e-9)
+
+
 class FlatVacuumBackground:
     omega = 0.8
     ell = 1
