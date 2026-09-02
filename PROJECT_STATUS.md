@@ -57,18 +57,17 @@ and the half-width to `4.5e-5`.
 
 ## v0.7 development finding
 
-- A wide physical-lower-sheet rectangle,
-  `0.005 <= Re(sigma) <= 0.8` and `-0.2 <= Im(sigma) <= -1e-5`, was counted
-  with both the raw six-column determinant and the independent third-compound
-  Evans determinant. After mandatory uniform refinement, both histories end
-  at a provisional winding of 12.
-- The result does **not** pass: both determinants retain a maximum boundary
-  phase increment near `3.01`, well above `pi/4`, at the declared refinement
-  cap. Earlier endpoint-triggered counts of seven were underresolved and have
-  been superseded.
-- The unresolved phase is localized near the massive-sideband threshold. The
-  next census must use threshold keyhole contours and bounded uniform
-  convergence rather than promoting the provisional integer.
+- Exterior complex scaling replaces exponentially ill-conditioned inward
+  shooting on the real axis.  A local contour now isolates one pole at
+  `sigma = 0.04939773083 - 5.9651913e-7 i` with every phase increment below
+  `pi/16`.
+- Four matching-radius/ray-length configurations agree within `1.3e-13` in
+  the real part and `1.0e-14` in the imaginary part.  The direct determinant
+  agrees within `4.3e-11`, and an independently QR-stabilized subspace match
+  gives a smallest singular value below `3.6e-10`.
+- A separate near-threshold Evans winding has no accompanying subspace rank
+  loss.  It is not classified as a QNM; the global census remains open until
+  that threshold topology is enclosed by an explicit wavenumber keyhole.
 
 ## Disclosed open boundaries
 

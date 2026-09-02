@@ -15,7 +15,7 @@ Prefix | Contents
 `axial_projection_*` | Exact and numerical angular-reduction controls
 `axial_qnm_*` | Declared search, refined pole, far-boundary campaign, and seven-star continuation
 `axial_quadtree_census_pilot.json` | Explicit-sheet adaptive Evans census in one declared cut-free validation window
-`axial_wide_count_v07.json` | Cross-determinant wide-window count; records the unresolved threshold phase and failed v0.7 gate
+`axial_complex_scaled_checkpoint_v07.json` | Complex-scaled isolated-pole count, domain controls, cross-determinant refinement, and stabilized subspace-rank check
 `axial_constraint_*` | Independent unused-Einstein-equation monitor
 `axial_scattering_*`, `axial_resonant_*`, `axial_static_*` | Open-channel, driven, and zero-frequency responses
 `axial_time_domain_*` | Time-evolution checkpoint and current resolution/Courant matrix
@@ -39,7 +39,7 @@ python -m experiments.schwarzschild_qnm_benchmark
 python -m experiments.ordinary_ell0_background_benchmark
 python -m experiments.axial_qnm_discovery
 python -m experiments.axial_quadtree_census
-python -m experiments.axial_wide_count_v07
+python -m experiments.axial_complex_scaled_checkpoint_v07
 python -m experiments.axial_qnm_checkpoint
 python -m experiments.axial_qnm_far_boundary
 python -m experiments.axial_qnm_branch

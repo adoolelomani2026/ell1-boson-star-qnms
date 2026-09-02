@@ -1,0 +1,157 @@
+{
+  "calculation": "v0.7 complex-scaled isolated-pole checkpoint",
+  "background": {
+    "a1_0": 0.08,
+    "omega": 0.8518974043710469,
+    "adm_mass": 1.1712711606475235
+  },
+  "sheet": {
+    "name": "physical-lower",
+    "signs": [
+      1,
+      -1
+    ],
+    "branch_points": {
+      "plus": [
+        -0.14810259562895312,
+        1.851897404371047
+      ],
+      "minus": [
+        -1.851897404371047,
+        0.14810259562895312
+      ]
+    }
+  },
+  "normalization_note": "Positive real segment scalings preserve Evans phase and zeros; root refinement solves real and imaginary equations without a holomorphy assumption.",
+  "configuration_rows": [
+    {
+      "r_match": 12.0,
+      "r_end": 35.0,
+      "ray_endpoint_control": 300.0,
+      "evans_refinement": {
+        "pole_real": 0.049397730827635364,
+        "pole_imag": -5.965191260809123e-07,
+        "relative_residual": 7.706179426347784e-11,
+        "converged": true,
+        "iterations": 2,
+        "evaluations": 13
+      },
+      "direct_determinant_refinement": {
+        "pole_real": 0.04939773078494346,
+        "pole_imag": -5.965190534708419e-07,
+        "relative_residual": 8.710611557309619e-07,
+        "converged": true,
+        "iterations": 2,
+        "evaluations": 13
+      },
+      "cross_determinant_pole_difference": 4.269196731355719e-11,
+      "orthonormal_subspace_singular_value": 1.883522716794411e-10
+    },
+    {
+      "r_match": 12.0,
+      "r_end": 35.0,
+      "ray_endpoint_control": 400.0,
+      "evans_refinement": {
+        "pole_real": 0.04939773082763537,
+        "pole_imag": -5.965191260796854e-07,
+        "relative_residual": 1.187552044605551e-09,
+        "converged": true,
+        "iterations": 1,
+        "evaluations": 8
+      },
+      "direct_determinant_refinement": {
+        "pole_real": 0.049397730784977015,
+        "pole_imag": -5.965190526320923e-07,
+        "relative_residual": 3.501560841022231e-07,
+        "converged": true,
+        "iterations": 2,
+        "evaluations": 13
+      },
+      "cross_determinant_pole_difference": 4.2658419243886245e-11,
+      "orthonormal_subspace_singular_value": 1.8835179518177988e-10
+    },
+    {
+      "r_match": 14.0,
+      "r_end": 35.0,
+      "ray_endpoint_control": 300.0,
+      "evans_refinement": {
+        "pole_real": 0.04939773082775859,
+        "pole_imag": -5.965191360083767e-07,
+        "relative_residual": 6.607533102496884e-09,
+        "converged": true,
+        "iterations": 1,
+        "evaluations": 8
+      },
+      "direct_determinant_refinement": {
+        "pole_real": 0.04939773078601779,
+        "pole_imag": -5.965190515917475e-07,
+        "relative_residual": 4.4098467602172586e-07,
+        "converged": true,
+        "iterations": 2,
+        "evaluations": 13
+      },
+      "cross_determinant_pole_difference": 4.1740883679804914e-11,
+      "orthonormal_subspace_singular_value": 3.53013379943807e-10
+    },
+    {
+      "r_match": 14.0,
+      "r_end": 35.0,
+      "ray_endpoint_control": 400.0,
+      "evans_refinement": {
+        "pole_real": 0.04939773082775992,
+        "pole_imag": -5.965191360057067e-07,
+        "relative_residual": 1.3498874164857655e-08,
+        "converged": true,
+        "iterations": 1,
+        "evaluations": 8
+      },
+      "direct_determinant_refinement": {
+        "pole_real": 0.04939773078598913,
+        "pole_imag": -5.965190517427431e-07,
+        "relative_residual": 6.991250891056599e-08,
+        "converged": true,
+        "iterations": 2,
+        "evaluations": 13
+      },
+      "cross_determinant_pole_difference": 4.177087320770376e-11,
+      "orthonormal_subspace_singular_value": 3.5303044002209344e-10
+    }
+  ],
+  "evans_pole_spread": {
+    "real": 1.2455314557513475e-13,
+    "imaginary": 9.928691297060913e-15
+  },
+  "local_contour": {
+    "winding_number": 1,
+    "initial_winding_number": 1,
+    "initial_points_per_edge": 8,
+    "initial_maximum_phase_increment": 2.905331055791196,
+    "final_contour_points": 167,
+    "refinement_levels": 8,
+    "winding_history": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "count_stability_pass": true,
+    "minimum_boundary_determinant": 1.5019644170717427e-05,
+    "maximum_phase_increment": 0.19553771907463172,
+    "phase_resolution_pass": true
+  },
+  "acceptance": {
+    "all_refinements_converged": true,
+    "orthonormal_rank_loss_confirmed": true,
+    "matching_and_ray_controls_stable": true,
+    "cross_determinant_agreement": true,
+    "local_count_is_one": true,
+    "local_contour_phase_resolved": true,
+    "local_count_stable": true
+  },
+  "checkpoint_pass": true
+}

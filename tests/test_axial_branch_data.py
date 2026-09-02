@@ -130,17 +130,18 @@ def test_ordinary_ell0_background_matches_published_turning_point():
     assert result["absolute_errors"]["critical_phi_c"] < 5e-4
 
 
-def test_v07_wide_count_records_unresolved_threshold_gate():
+def test_v07_complex_scaled_checkpoint_passes_all_local_pole_controls():
     report = json.loads(
-        (ROOT / "reports" / "axial" / "axial_wide_count_v07.json").read_text(
+        (ROOT / "reports" / "axial" / "axial_complex_scaled_checkpoint_v07.json").read_text(
             encoding="utf-8"
         )
     )
-    raw = report["raw_determinant"]
-    evans = report["exterior_algebra_evans_determinant"]
-    assert raw["winding_number"] == evans["winding_number"] == 12
-    assert raw["count_stability_pass"] and evans["count_stability_pass"]
-    assert not raw["phase_resolution_pass"]
-    assert not evans["phase_resolution_pass"]
-    assert not report["cross_determinant_count_pass"]
-    assert not report["v07_complete_spectrum_gate"]
+    assert report["checkpoint_pass"]
+    assert all(report["acceptance"].values())
+    assert report["local_contour"]["winding_number"] == 1
+    assert report["local_contour"]["maximum_phase_increment"] < np.pi / 16
+    assert report["evans_pole_spread"]["real"] < 2e-13
+    assert max(
+        row["orthonormal_subspace_singular_value"]
+        for row in report["configuration_rows"]
+    ) < 4e-10
