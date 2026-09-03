@@ -86,6 +86,29 @@ def store_rows(connection: sqlite3.Connection, name: str, rows) -> None:
     connection.commit()
 
 
+def evaluate_missing(
+    pool: ProcessPoolExecutor,
+    missing: list[complex],
+    connection: sqlite3.Connection,
+    name: str,
+    cache: dict[complex, complex],
+) -> None:
+    """Evaluate and checkpoint small batches so interrupted runs resume."""
+
+    batch = []
+    for row in pool.map(evaluate, missing, chunksize=1):
+        batch.append(row)
+        if len(batch) >= 12:
+            store_rows(connection, name, batch)
+            cache.update(
+                {complex(x, y): complex(u, v) for x, y, u, v in batch}
+            )
+            batch.clear()
+    if batch:
+        store_rows(connection, name, batch)
+        cache.update({complex(x, y): complex(u, v) for x, y, u, v in batch})
+
+
 def audit_configuration(
     connection: sqlite3.Connection, r_match: float, r_far: float
 ) -> dict:
@@ -107,9 +130,7 @@ def audit_configuration(
                 )
             )
             missing = list(dict.fromkeys(point for point in points if point not in cache))
-            rows = list(pool.map(evaluate, missing, chunksize=1))
-            store_rows(connection, name, rows)
-            cache.update({complex(x, y): complex(u, v) for x, y, u, v in rows})
+            evaluate_missing(pool, missing, connection, name, cache)
             statistics = contour_statistics(points, cache)
             statistics["points_per_segment"] = count
             uniform_history.append(statistics)
@@ -117,9 +138,7 @@ def audit_configuration(
 
         for level in range(15):
             missing = list(dict.fromkeys(point for point in points if point not in cache))
-            rows = list(pool.map(evaluate, missing, chunksize=1))
-            store_rows(connection, name, rows)
-            cache.update({complex(x, y): complex(u, v) for x, y, u, v in rows})
+            evaluate_missing(pool, missing, connection, name, cache)
             statistics = contour_statistics(points, cache)
             statistics["level"] = level
             adaptive_history.append(statistics)
@@ -152,6 +171,97 @@ def audit_configuration(
     }
 
 
+def audit_partition(connection: sqlite3.Connection) -> list[dict]:
+    """Resolve an additive 3-by-3 radial/angular partition at ray 300."""
+
+    r_match, r_far = 14.0, 300.0
+    name = f"match-{r_match:g}-far-{r_far:g}"
+    cache = load_cache(connection, name)
+    radii = (0.05, 0.1, 0.2, 0.4)
+    angles = tuple(np.linspace(ANGULAR_BOUNDS[0], ANGULAR_BOUNDS[1], 4))
+    cells = [(i, j) for i in range(3) for j in range(3)]
+    contours = [
+        list(
+            map(
+                complex,
+                annular_sector_contour(
+                    (radii[i], radii[i + 1]),
+                    (angles[j], angles[j + 1]),
+                    16,
+                ),
+            )
+        )
+        for i, j in cells
+    ]
+    final_statistics = [None] * len(cells)
+    workers = min(6, os.cpu_count() or 1)
+    with ProcessPoolExecutor(
+        max_workers=workers,
+        initializer=initialize_worker,
+        initargs=(r_match, r_far),
+    ) as pool:
+        for level in range(15):
+            missing = list(
+                dict.fromkeys(
+                    point
+                    for contour in contours
+                    for point in contour
+                    if point not in cache
+                )
+            )
+            evaluate_missing(pool, missing, connection, name, cache)
+            complete = True
+            refined_contours = []
+            for position, (cell, points) in enumerate(zip(cells, contours)):
+                statistics = contour_statistics(points, cache)
+                statistics["level"] = level
+                final_statistics[position] = statistics
+                if statistics["violating_segments"]:
+                    complete = False
+                    values = np.asarray([cache[point] for point in points])
+                    increments = np.angle(np.roll(values, -1) / values)
+                    flagged = set(
+                        np.flatnonzero(np.abs(increments) >= MAXIMUM_PHASE_STEP)
+                    )
+                    refined = []
+                    for index, point in enumerate(points):
+                        refined.append(point)
+                        if index in flagged:
+                            refined.append(
+                                0.5 * (point + points[(index + 1) % len(points)])
+                            )
+                    refined_contours.append(refined)
+                else:
+                    refined_contours.append(points)
+            print(
+                name,
+                "partition-level",
+                level,
+                "missing",
+                len(missing),
+                "counts",
+                [row["winding_number"] for row in final_statistics],
+                "violations",
+                [row["violating_segments"] for row in final_statistics],
+                flush=True,
+            )
+            contours = refined_contours
+            if complete:
+                break
+
+    output = []
+    for (i, j), statistics in zip(cells, final_statistics):
+        output.append(
+            {
+                "radial_bounds_k_minus": [radii[i], radii[i + 1]],
+                "angular_bounds_k_minus": [angles[j], angles[j + 1]],
+                **statistics,
+                "phase_resolution_pass": statistics["violating_segments"] == 0,
+            }
+        )
+    return output
+
+
 def main() -> None:
     cache_path = ROOT / "tmp" / "axial_threshold_keyhole_v07.sqlite3"
     cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -166,10 +276,12 @@ def main() -> None:
             audit_configuration(connection, 14.0, 300.0),
             audit_configuration(connection, 14.0, 400.0),
         ]
+        partition = audit_partition(connection)
 
     counts = [row["winding_number"] for row in configurations]
     phase_pass = all(row["phase_resolution_pass"] for row in configurations)
     ray_count_stable = len(set(counts)) == 1
+    partition_additive = sum(row["winding_number"] for row in partition) == counts[0]
     report = {
         "calculation": "v0.7 Coulomb-resummed minus-threshold keyhole",
         "sheet": SHEET.name,
@@ -178,9 +290,14 @@ def main() -> None:
         "maximum_phase_step": MAXIMUM_PHASE_STEP,
         "exterior_method": "complex_scaled_coulomb",
         "configurations": configurations,
+        "ray_300_additive_partition": partition,
         "acceptance": {
             "all_contours_phase_resolved": phase_pass,
             "ray_count_stable": ray_count_stable,
+            "partition_phase_resolved": all(
+                row["phase_resolution_pass"] for row in partition
+            ),
+            "partition_additive": partition_additive,
             "zero_count_requires_no_root_assignment": counts == [0, 0],
         },
         "checkpoint_pass": bool(phase_pass and ray_count_stable and counts == [0, 0]),
