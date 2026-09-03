@@ -112,7 +112,7 @@ def evaluate_missing(
 def audit_configuration(
     connection: sqlite3.Connection, r_match: float, r_far: float
 ) -> dict:
-    name = f"match-{r_match:g}-far-{r_far:g}"
+    name = f"whittaker-match-{r_match:g}-far-{r_far:g}"
     cache = load_cache(connection, name)
     workers = min(6, os.cpu_count() or 1)
     uniform_history = []
@@ -175,7 +175,7 @@ def audit_partition(connection: sqlite3.Connection) -> list[dict]:
     """Resolve an additive 3-by-3 radial/angular partition at ray 300."""
 
     r_match, r_far = 14.0, 300.0
-    name = f"match-{r_match:g}-far-{r_far:g}"
+    name = f"whittaker-match-{r_match:g}-far-{r_far:g}"
     cache = load_cache(connection, name)
     radii = (0.05, 0.1, 0.2, 0.4)
     angles = tuple(np.linspace(ANGULAR_BOUNDS[0], ANGULAR_BOUNDS[1], 4))

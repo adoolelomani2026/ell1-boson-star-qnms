@@ -581,38 +581,35 @@ def exterior_complex_scaled_basis(
         exponent = 2j * mass * wavenumber + 1j * mass * MU**2 / wavenumber - 1.0
         def initial_pair(complex_radius: complex) -> tuple[complex, complex]:
             if use_coulomb:
-                # Coulomb H^(+) resums the complete long-range 1/r tail.
-                # This remains well conditioned where the inverse-radius
-                # coefficients grow as high powers of 1/k near threshold.
-                rho_estimate = wavenumber * complex_radius
-                cancellation_digits = int(
-                    np.ceil(2.0 * abs(rho_estimate.imag) / np.log(10.0))
-                )
-                with mp.workdps(max(50, cancellation_digits + 20)):
+                # A single Whittaker W represents outgoing Coulomb H^(+)
+                # without combining the separately branched and exponentially
+                # large F and G solutions.  Apart from an irrelevant nonzero
+                # scalar normalization,
+                # H^(+)_L(eta,rho) = W_{-i eta,L+1/2}(-2 i rho).
+                with mp.workdps(50):
                     eta = -(2.0 * mass * wavenumber + mass * MU**2 / wavenumber)
                     rho = wavenumber * complex_radius
-                    def outgoing(degree: int):
-                        return (
-                            mp.coulombg(degree, eta, rho)
-                            + 1j * mp.coulombf(degree, eta, rho)
-                        )
-
-                    outgoing_value = outgoing(L)
-                    outgoing_derivative = (
-                        ((L + 1.0) / rho + eta / (L + 1.0))
-                        * outgoing_value
-                        - mp.sqrt(1.0 + eta**2 / (L + 1.0) ** 2)
-                        * outgoing(L + 1)
+                    argument = -2j * rho
+                    kappa = -1j * eta
+                    order_parameter = L + 0.5
+                    outgoing_value = mp.whitw(kappa, order_parameter, argument)
+                    outgoing_argument_derivative = mp.diff(
+                        lambda value: mp.whitw(
+                            kappa, order_parameter, value
+                        ),
+                        argument,
                     )
                     value = outgoing_value / complex_radius
                     derivative = (
-                        wavenumber * outgoing_derivative / complex_radius
+                        -2j
+                        * wavenumber
+                        * outgoing_argument_derivative
+                        / complex_radius
                         - outgoing_value / complex_radius**2
                     )
                     asymptotic_factor = mp.exp(
-                        1j * wavenumber * complex_radius
-                        + exponent * mp.log(complex_radius)
-                    )
+                        -0.5 * argument + kappa * mp.log(argument)
+                    ) / complex_radius
                     value /= asymptotic_factor
                     derivative /= asymptotic_factor
                     scale = max(abs(value), abs(derivative), mp.mpf("1e-300"))
