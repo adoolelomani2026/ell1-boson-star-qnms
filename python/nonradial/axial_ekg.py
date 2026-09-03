@@ -9,6 +9,7 @@ not from a convention-dependent master-equation transcription.
 from __future__ import annotations
 
 from itertools import combinations
+import mpmath as mp
 import numpy as np
 from scipy.integrate import solve_ivp
 from types import SimpleNamespace
@@ -458,9 +459,12 @@ def exterior_basis(
     method = exterior_method
     if method is None:
         method = "complex_scaled" if asymptotic_order > 3 else "real_axis"
-    if method not in {"real_axis", "complex_scaled"}:
-        raise ValueError("exterior_method must be 'real_axis' or 'complex_scaled'")
-    if method == "complex_scaled":
+    if method not in {"real_axis", "complex_scaled", "complex_scaled_coulomb"}:
+        raise ValueError(
+            "exterior_method must be 'real_axis', 'complex_scaled', or "
+            "'complex_scaled_coulomb'"
+        )
+    if method in {"complex_scaled", "complex_scaled_coulomb"}:
         return exterior_complex_scaled_basis(
             radius,
             sigma,
@@ -469,6 +473,7 @@ def exterior_basis(
             order=asymptotic_order,
             sheet=sheet,
             ray_length=max(80.0, riccati_radius - radius),
+            coulomb_resummed=method == "complex_scaled_coulomb",
         )
     gravity, plus, minus = exterior_log_derivatives(
         radius,
@@ -496,16 +501,18 @@ def exterior_complex_scaled_basis(
     order: int = 12,
     sheet: SidebandSheet | None = None,
     ray_length: float = 286.0,
+    coulomb_resummed: bool = False,
 ) -> np.ndarray:
     """Pole-free outgoing basis from exterior complex scaling.
 
-    Each channel starts from its analytic leading Coulomb/tortoise Jost pair
-    on a fixed complex ray.  The ray is integrated directly to the real match
-    point.  No component division or rational high-order recurrence is used,
-    avoiding both real-axis shooting contamination and basis-chart poles.
-    ``order`` is retained only for compatibility with the legacy public
-    boundary selector; convergence is controlled by ``ray_length`` (passed
-    through ``r_far``).
+    Each channel starts from an outgoing Coulomb/tortoise Jost pair on a fixed
+    complex ray, which is integrated directly to the real match point.  The
+    standard path uses an ``order``-term inverse-radius scalar recurrence; the
+    ``complex_scaled_coulomb`` selector instead resums the near-threshold
+    minus-channel Coulomb tail with high-precision Coulomb functions.  Both
+    paths propagate analytic value/derivative pairs without component
+    division.  Convergence must be checked in both ``order`` (where relevant)
+    and ``ray_length`` (passed through ``r_far``).
     """
 
     _, k_plus, k_minus = exterior_channel_wavenumbers(sigma, omega, sheet)
@@ -565,11 +572,112 @@ def exterior_complex_scaled_basis(
         return state
 
     def scalar_pair(
-        frequency: complex, wavenumber: complex, *, direction: complex
+        frequency: complex,
+        wavenumber: complex,
+        *,
+        direction: complex,
+        use_coulomb: bool = False,
     ) -> np.ndarray:
         exponent = 2j * mass * wavenumber + 1j * mass * MU**2 / wavenumber - 1.0
         def initial_pair(complex_radius: complex) -> tuple[complex, complex]:
-            return 1.0 + 0.0j, 1j * wavenumber + exponent / complex_radius
+            if use_coulomb:
+                # Coulomb H^(+) resums the complete long-range 1/r tail.
+                # This remains well conditioned where the inverse-radius
+                # coefficients grow as high powers of 1/k near threshold.
+                rho_estimate = wavenumber * complex_radius
+                cancellation_digits = int(
+                    np.ceil(2.0 * abs(rho_estimate.imag) / np.log(10.0))
+                )
+                with mp.workdps(max(50, cancellation_digits + 20)):
+                    eta = -(2.0 * mass * wavenumber + mass * MU**2 / wavenumber)
+                    rho = wavenumber * complex_radius
+                    def outgoing(degree: int):
+                        return (
+                            mp.coulombg(degree, eta, rho)
+                            + 1j * mp.coulombf(degree, eta, rho)
+                        )
+
+                    outgoing_value = outgoing(L)
+                    outgoing_derivative = (
+                        ((L + 1.0) / rho + eta / (L + 1.0))
+                        * outgoing_value
+                        - mp.sqrt(1.0 + eta**2 / (L + 1.0) ** 2)
+                        * outgoing(L + 1)
+                    )
+                    value = outgoing_value / complex_radius
+                    derivative = (
+                        wavenumber * outgoing_derivative / complex_radius
+                        - outgoing_value / complex_radius**2
+                    )
+                    asymptotic_factor = mp.exp(
+                        1j * wavenumber * complex_radius
+                        + exponent * mp.log(complex_radius)
+                    )
+                    value /= asymptotic_factor
+                    derivative /= asymptotic_factor
+                    scale = max(abs(value), abs(derivative), mp.mpf("1e-300"))
+                    return complex(value / scale), complex(derivative / scale)
+            # For u=e^(ikr) r^exponent sum_n a_n r^-n, substitute directly
+            # into the exact exterior scalar equation.  The recurrence is
+            # inexpensive and, unlike a fixed three-term log derivative,
+            # remains controllable when inverse powers of k grow close to a
+            # massive threshold.
+            coefficients = [1.0 + 0.0j]
+            p_series = np.zeros(order + 2, dtype=complex)
+            q_series = np.zeros(order + 2, dtype=complex)
+            for power in range(1, order + 2):
+                p_series[power] = (
+                    2.0
+                    if power == 1
+                    else 2.0 * mass * (2.0 * mass) ** (power - 2)
+                )
+                q_series[power] = (
+                    frequency**2 * (power + 1) * (2.0 * mass) ** power
+                    - MU**2 * (2.0 * mass) ** power
+                    - (
+                        L * (L + 1.0) * (2.0 * mass) ** (power - 2)
+                        if power >= 2
+                        else 0.0
+                    )
+                )
+            for index in range(1, order + 1):
+                target = index + 1
+                total = 0.0j
+                source = target - 2
+                total += (
+                    (exponent - source)
+                    * (exponent - source - 1.0)
+                    * coefficients[source]
+                )
+                for power in range(1, target + 1):
+                    source = target - power
+                    if source < len(coefficients):
+                        total += (
+                            p_series[power] * 1j * wavenumber
+                            + q_series[power]
+                        ) * coefficients[source]
+                    source = target - power - 1
+                    if 0 <= source < len(coefficients):
+                        total += (
+                            p_series[power]
+                            * (exponent - source)
+                            * coefficients[source]
+                        )
+                coefficients.append(-total / (-2j * wavenumber * index))
+            powers = complex_radius ** (-np.arange(order + 1))
+            series = np.dot(coefficients, powers)
+            derivative_series = np.dot(
+                [
+                    (exponent - index) * coefficients[index]
+                    for index in range(order + 1)
+                ],
+                powers,
+            ) / complex_radius
+            # Keep the analytic two-component series pair.  Dividing by
+            # ``series`` would reintroduce a meromorphic line chart: a zero
+            # of the truncated amplitude would masquerade as a negative
+            # Evans winding even though the outgoing one-plane is regular.
+            return series, 1j * wavenumber * series + derivative_series
 
         def scalar_rhs(complex_radius: complex, state: np.ndarray) -> np.ndarray:
             lapse_squared = 1.0 - 2.0 * mass / complex_radius
@@ -598,7 +706,15 @@ def exterior_complex_scaled_basis(
 
     rw_exponent = 2j * mass * sigma
     def rw_initial(complex_radius: complex) -> tuple[complex, complex]:
-        return 1.0 + 0.0j, 1j * sigma + rw_exponent / complex_radius
+        psi_log_star = 1j * sigma
+        if order >= 2:
+            psi_log_star += (-3j / sigma) / complex_radius**2
+        if order >= 3:
+            psi_log_star += (
+                -3.0 / sigma**2 + 9j * mass / sigma
+            ) / complex_radius**3
+        lapse_squared = 1.0 - 2.0 * mass / complex_radius
+        return 1.0 + 0.0j, psi_log_star / lapse_squared
 
     def rw_rhs(complex_radius: complex, state: np.ndarray) -> np.ndarray:
         lapse_squared = 1.0 - 2.0 * mass / complex_radius
@@ -631,7 +747,10 @@ def exterior_complex_scaled_basis(
     ) / (-1j * sigma)
     plus = scalar_pair(omega - sigma, k_plus, direction=1.0 + 0.0j)
     minus = scalar_pair(
-        omega + sigma, k_minus, direction=np.exp(-1j * np.pi / 3.0)
+        omega + sigma,
+        k_minus,
+        direction=np.exp(-1j * np.pi / 3.0),
+        use_coulomb=coulomb_resummed,
     )
     basis = np.zeros((6, 3), dtype=complex)
     basis[0:2, 0] = (gravity_h0, gravity_h1)

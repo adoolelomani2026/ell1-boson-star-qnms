@@ -225,6 +225,35 @@ def test_complex_scaled_flat_vacuum_basis_has_outgoing_hankel_orientation():
     )
 
 
+def test_coulomb_resummed_flat_basis_has_outgoing_hankel_orientation():
+    radius = 14.0
+    sigma = 0.4 - 0.05j
+    sheet = SidebandSheet.physical_lower_half_plane()
+    basis = exterior_basis(
+        radius,
+        sigma,
+        FlatVacuumBackground(),
+        exterior_method="complex_scaled_coulomb",
+        sheet=sheet,
+    )
+    _, k_plus, k_minus = exterior_channel_wavenumbers(sigma, 0.8, sheet)
+
+    def hankel_log_derivative(wavenumber):
+        z = wavenumber * radius
+        polynomial = 1.0 + 3j / z - 3.0 / z**2
+        polynomial_prime = -3j / z**2 + 6.0 / z**3
+        return wavenumber * (
+            1j - 1.0 / z + polynomial_prime / polynomial
+        )
+
+    assert np.allclose(
+        basis[3, 1] / basis[2, 1], hankel_log_derivative(k_plus), rtol=2e-9
+    )
+    assert np.allclose(
+        basis[5, 2] / basis[4, 2], hankel_log_derivative(k_minus), rtol=2e-9
+    )
+
+
 def test_complex_scaled_exterior_basis_never_normalizes_one_component():
     basis = exterior_basis(
         14.0,
